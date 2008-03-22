@@ -1,0 +1,46 @@
+Title                   : Killer Episode
+Filename                : killer.wad
+Author                  : John Kugelman
+Email Address           : Khalad5131@aol.com
+                          kugelman@mnsinc.com
+Additional Credits to   : Billy Trobianni, Chris Klie
+================================================================
+
+* Play Information *
+
+Episode and Level #     : E1M1-5
+Single Player           : Yes
+Cooperative 2-4 Player  : Yes
+Deathmatch 2-4 Player   : Yes
+Difficulty Settings     : Yes
+New Sounds              : No
+New Graphics            : No
+New Music               : No
+Demos Replaced          : None
+                          If you try to watch the regular demos though,
+                          the first will be messed up.
+
+* Construction *
+
+Base                    : New level from scratch
+Editor(s) used          : Doomed- The Real thing, DEU 5.2GCC, BSP 1.2
+Known Bugs              : None known of.  (Spent weeks trying to fix everything)
+                          In level 5, it will get jerky in a few places, but
+                          there is no way to fix without changing it.
+
+* Copyright / Permissions *
+
+Authors MAY use this level as a base to build additional
+levels.  But please E-mail me your new level if you do.
+
+You MAY distribute this WAD, provided you include this file, with
+no modifications.  You may distribute this file in any electronic
+format (BBS, Diskette, CD, etc) as long as you include this file
+intact.
+
+* Where to get this WAD *
+
+FTP sites: ftp.cdrom.com
+
+Other: America On-line
+
