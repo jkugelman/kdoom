@@ -69,7 +69,7 @@ public class Wad {
 
             System.out.printf("Lump %d:\t%s at offset %d, size %d%n", i, lumpName, lumpOffset, lumpSize);
 
-            lumps.set(i, new Lump(this, lumpOffset, lumpSize, lumpName));
+            lumps.set(i, new Lump(this, i, lumpOffset, lumpSize, lumpName));
         }
     }
 
@@ -83,5 +83,15 @@ public class Wad {
 
     public List<Lump> lumps() {
         return Collections.unmodifiableList(lumps);
+    }
+
+    public Lump find(String name) {
+        for (Lump lump: lumps) {
+            if (lump.getName().equals(name)) {
+                return lump;
+            }
+        }
+
+        return null;
     }
 }
