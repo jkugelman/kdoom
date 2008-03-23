@@ -7,19 +7,19 @@ import javax.swing.*;
 import name.kugelman.john.kdoom.file.*;
 import name.kugelman.john.kdoom.model.*;
 
-public class PatchPanel extends JPanel {
-    private Patch   patch;
+public class FlatPanel extends JPanel {
+    private Flat    flat;
     private Palette palette;
 
-    public PatchPanel(Patch patch, Palette palette) {
-        this.patch   = patch;
+    public FlatPanel(Flat flat, Palette palette) {
+        this.flat    = flat;
         this.palette = palette;
 
-        setPreferredSize(patch.getSize());
+        setPreferredSize(flat.getSize());
     }
 
     @Override
     public void paint(Graphics graphics) {
-        graphics.drawImage(createImage(patch.getImageProducer(palette)), 0, 0, Color.CYAN, this);
+        graphics.drawImage(createImage(flat.getImageProducer(palette)), 0, 0, Color.CYAN, this);
     }
 }
