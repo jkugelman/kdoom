@@ -67,6 +67,8 @@ public class Wad {
             buffer.get(nameBytes);
             lumpName = new String(nameBytes, "ISO-8859-1").trim();
 
+            System.out.printf("Lump %d:\t%s at offset %d, size %d%n", i, lumpName, lumpOffset, lumpSize);
+
             lumps.set(i, new Lump(this, lumpOffset, lumpSize, lumpName));
         }
     }
