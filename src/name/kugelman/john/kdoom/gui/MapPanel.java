@@ -78,6 +78,10 @@ public class MapPanel extends JPanel {
             frame.pack();
             frame.setVisible(true);
         }
+        catch (IllegalArgumentException exception) {
+            System.err.println(exception.getLocalizedMessage());
+            System.exit(1);
+        }
         catch (IOException exception) {
             exception.printStackTrace();
             System.exit(-1);

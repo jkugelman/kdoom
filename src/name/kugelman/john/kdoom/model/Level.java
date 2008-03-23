@@ -17,20 +17,9 @@ public class Level {
     private List<Line>   lines;
     private short        minX, minY, maxX, maxY;
 
-    public Level(Wad wad, String name) throws IOException {
+    public Level(Wad wad, String name) throws IllegalArgumentException, IOException {
         this.wad       = wad;
-        this.lumpIndex = -1;
-
-        for (int i = 0; i < wad.lumps().size(); ++i) {
-            if (wad.lumps().get(i).getName().equals(name)) {
-                lumpIndex = i;
-                break;
-            }
-        }
-
-        if (lumpIndex == -1) {
-            throw new IOException("Level " + name + " not found.");
-        }
+        this.lumpIndex = findNameLump(name);
 
         minX = minY = Short.MAX_VALUE;
         maxX = maxY = Short.MIN_VALUE;
@@ -41,13 +30,31 @@ public class Level {
         readLines   (wad.lumps().get(lumpIndex + 2));
     }
 
+    private int findNameLump(String name) {
+        name = name.toUpperCase();
+
+        if (!name.matches("E\\dM\\d|MAP\\d\\d")) {
+            throw new IllegalArgumentException("Invalid map name " + name + ".");
+        }
+
+        Lump nameLump = wad.find(name);
+
+        if (nameLump == null) {
+            throw new IllegalArgumentException(name + " not found.");
+        }
+
+        return nameLump.getIndex();
+    }
+
     private void readName(Lump lump) throws IOException {
         this.name = lump.getName();
     }
 
     private void readThings(Lump lump) throws IOException {
-        assert lump.getName().equals("THINGS");
-        
+        if (!lump.getName().equals("THINGS")) {
+            throw new IOException(name + " has no THINGS.");
+        }
+
         ShortBuffer buffer = lump.getData().asShortBuffer();
 
         things = new ArrayList<Thing>();
@@ -69,8 +76,10 @@ public class Level {
     }
 
     private void readVertices(Lump lump) throws IOException {
-        assert lump.getName().equals("VERTEXES");
-        
+        if (!lump.getName().equals("VERTEXES")) {
+            throw new IOException(name + " has no VERTEXES.");
+        }
+
         ShortBuffer buffer = lump.getData().asShortBuffer();
 
         vertices = new ArrayList<Vertex>();
@@ -89,7 +98,9 @@ public class Level {
     }
 
     private void readLines(Lump lump) throws IOException {
-        assert lump.getName().equals("LINEDEFS");
+        if (!lump.getName().equals("LINEDEFS")) {
+            throw new IOException(name + " has no LINEDEFS.");
+        }
 
         ShortBuffer buffer = lump.getData().asShortBuffer();
 
