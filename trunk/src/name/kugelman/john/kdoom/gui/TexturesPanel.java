@@ -43,14 +43,13 @@ public class TexturesPanel extends JPanel {
                         patch.getName(),
                         patch.getSize().width, patch.getSize().height,
                         origin.x, origin.y);
+                    if (patch.getOffset().x != patch.getSize().width / 2 - 1 || patch.getOffset().y != patch.getSize().height - 5) {
+                        patches += String.format(" - offset at (%d, %d)", patch.getOffset().x, patch.getOffset().y);
+                    }
                 }
                 else {
                     patches += String.format("%s <b>***NOT FOUND***</b> at (%d, %d)", patch.getName(),
                         origin.x, origin.y);
-                }
-
-                if (patch.getOffset().x != patch.getSize().width / 2 - 1 || patch.getOffset().y != patch.getSize().height - 5) {
-                    patches += String.format(" - offset at (%d, %d)", patch.getOffset().x, patch.getOffset().y);
                 }
             }
             JLabel label   = new JLabel("<html>" + patches + "</html>");

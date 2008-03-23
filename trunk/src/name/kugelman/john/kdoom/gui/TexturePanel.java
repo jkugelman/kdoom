@@ -19,7 +19,7 @@ public class TexturePanel extends JPanel {
     }
 
     @Override
-    public void paint(Graphics g) {
-        g.drawImage(createImage(texture.getImageProducer(palette)), 0, 0, Color.CYAN, this);
+    public void paint(Graphics graphics) {
+        graphics.drawImage(createImage(texture.getImageProducer(palette)), 0, 0, Color.CYAN, this);
     }
 }

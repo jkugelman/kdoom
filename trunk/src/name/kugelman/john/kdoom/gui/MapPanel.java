@@ -21,32 +21,32 @@ public class MapPanel extends JPanel {
     }
 
     @Override
-    public void paint(Graphics g) {
+    public void paint(Graphics graphics) {
         for (Line line: level.lines()) {
             if (line.isSecret()) {
-                g.setColor(Color.GREEN);
+                graphics.setColor(Color.GREEN);
             }
             else if (line.isTwoSided()) {
-                g.setColor(Color.GRAY);
+                graphics.setColor(Color.GRAY);
             }
             else {
-                g.setColor(Color.BLACK);
+                graphics.setColor(Color.BLACK);
             }
 
-            g.drawLine(screenX(line.getStart().getX()), screenY(line.getStart().getY()),
-                       screenX(line.getEnd  ().getX()), screenY(line.getEnd  ().getY()));
+            graphics.drawLine(screenX(line.getStart().getX()), screenY(line.getStart().getY()),
+                              screenX(line.getEnd  ().getX()), screenY(line.getEnd  ().getY()));
         }
 
-        g.setColor(Color.BLUE);
+        graphics.setColor(Color.BLUE);
 
         for (Vertex vertex: level.vertices()) {
-            g.fillRect(screenX(vertex.getX()) - 1, screenY(vertex.getY()) - 1, 3, 3);
+            graphics.fillRect(screenX(vertex.getX()) - 1, screenY(vertex.getY()) - 1, 3, 3);
         }
 
-        g.setColor(Color.RED);
+        graphics.setColor(Color.RED);
 
         for (Thing thing: level.things()) {
-            g.drawOval(screenX(thing.getX()) - 2, screenY(thing.getY()) - 2, 5, 5);
+            graphics.drawOval(screenX(thing.getX()) - 2, screenY(thing.getY()) - 2, 5, 5);
         }
     }
 
