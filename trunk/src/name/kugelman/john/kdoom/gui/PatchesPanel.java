@@ -21,12 +21,16 @@ public class PatchesPanel extends JPanel {
 
         constraints.gridx = 0;
         constraints.gridy = 0;
+        constraints.anchor = GridBagConstraints.NORTH;
 
-        for (Patch patch: patchList) {
-            add(new JLabel(patch.getName()), constraints);
+        for (int i = 0; i < patchList.size(); ++i) {
+            constraints.insets.bottom = 4;
+            add(new JLabel(patchList.getName(i)), constraints);
 
             ++constraints.gridy;
-            add(new PatchPanel(patch, palette), constraints);
+            constraints.insets.bottom = 20;
+            Patch patch = patchList.get(i);
+            add(patch == null ? new JLabel("NOT FOUND") : new PatchPanel(patch, palette), constraints);
             
             --constraints.gridy;
             ++constraints.gridx;
