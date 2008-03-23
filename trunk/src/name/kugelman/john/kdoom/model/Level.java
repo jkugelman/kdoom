@@ -59,7 +59,7 @@ public class Level {
 
         things = new ArrayList<Thing>();
 
-        for (int i = 0; i < lump.getSize() / 10; ++i) {
+        while (buffer.hasRemaining()) {
             short x     = buffer.get();
             short y     = buffer.get();
             short angle = buffer.get();
@@ -84,7 +84,7 @@ public class Level {
 
         vertices = new ArrayList<Vertex>();
 
-        for (int i = 0; i < lump.getSize() / 4; ++i) {
+        while (buffer.hasRemaining()) {
             short x = buffer.get();
             short y = buffer.get();
 
@@ -106,7 +106,7 @@ public class Level {
 
         lines = new ArrayList<Line>();
 
-        for (int i = 0; i < lump.getSize() / 14; ++i) {
+        while (buffer.hasRemaining()) {
             Vertex start       = vertices.get(buffer.get());
             Vertex end         = vertices.get(buffer.get());
             short  flags       = buffer.get();
