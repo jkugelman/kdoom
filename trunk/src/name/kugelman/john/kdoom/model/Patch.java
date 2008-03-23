@@ -10,12 +10,10 @@ import name.kugelman.john.kdoom.file.*;
 
 public class Patch {
     Lump      lump;
-    Palette   palette;
     Dimension size;
 
-    public Patch(Lump lump, Palette palette) throws IOException { 
+    public Patch(Lump lump) throws IOException { 
         this.lump    = lump;
-        this.palette = palette;
         this.size    = new Dimension();
 
         ShortBuffer buffer = lump.getData().asShortBuffer();
@@ -33,7 +31,7 @@ public class Patch {
         return size;
     }
 
-    public ImageProducer getSource() {
+    public ImageProducer getImageProducer(final Palette palette) {
         return new ImageProducer() {
             Set<ImageConsumer> consumers = new HashSet<ImageConsumer>();
 
