@@ -12,32 +12,72 @@ public class Level {
     private Lump nameLump, vertexesLump;
 
     private String       name;
+    private List<Thing>  things;
     private List<Vertex> vertices;
+    private List<Line>   lines;
     private short        minX, minY, maxX, maxY;
 
-    public Level(Wad wad, int lumpIndex) throws IOException {
+    public Level(Wad wad, String name) throws IOException {
         this.wad       = wad;
-        this.lumpIndex = lumpIndex;
+        this.lumpIndex = -1;
+
+        for (int i = 0; i < wad.lumps().size(); ++i) {
+            if (wad.lumps().get(i).getName().equals(name)) {
+                lumpIndex = i;
+                break;
+            }
+        }
+
+        if (lumpIndex == -1) {
+            throw new IOException("Level " + name + " not found.");
+        }
+
+        minX = minY = Short.MAX_VALUE;
+        maxX = maxY = Short.MIN_VALUE;
 
         readName    (wad.lumps().get(lumpIndex + 0));
+        readThings  (wad.lumps().get(lumpIndex + 1));
         readVertices(wad.lumps().get(lumpIndex + 4));
+        readLines   (wad.lumps().get(lumpIndex + 2));
     }
 
     private void readName(Lump lump) throws IOException {
         this.name = lump.getName();
     }
 
+    private void readThings(Lump lump) throws IOException {
+        assert lump.getName().equals("THINGS");
+        
+        ShortBuffer buffer = lump.getData().asShortBuffer();
+
+        things = new ArrayList<Thing>();
+
+        for (int i = 0; i < lump.getSize() / 10; ++i) {
+            short x     = buffer.get();
+            short y     = buffer.get();
+            short angle = buffer.get();
+            short type  = buffer.get();
+            short flags = buffer.get();
+
+            things.add(new Thing(x, y, angle));
+
+            if (x < minX) minX = x;
+            if (y < minY) minY = y;
+            if (x > maxX) maxX = x;
+            if (y > maxY) maxY = y;
+        }       
+    }
+
     private void readVertices(Lump lump) throws IOException {
-        this.vertices = new ArrayList<Vertex>();
+        assert lump.getName().equals("VERTEXES");
+        
+        ShortBuffer buffer = lump.getData().asShortBuffer();
 
-        ShortBuffer vertexData = lump.getData().asShortBuffer();
-
-        minX = minY = Short.MAX_VALUE;
-        maxX = maxY = Short.MIN_VALUE;
+        vertices = new ArrayList<Vertex>();
 
         for (int i = 0; i < lump.getSize() / 4; ++i) {
-            short x = vertexData.get();
-            short y = vertexData.get();
+            short x = buffer.get();
+            short y = buffer.get();
 
             vertices.add(new Vertex(x, y));
 
@@ -48,42 +88,46 @@ public class Level {
         }
     }
 
+    private void readLines(Lump lump) throws IOException {
+        assert lump.getName().equals("LINEDEFS");
+
+        ShortBuffer buffer = lump.getData().asShortBuffer();
+
+        lines = new ArrayList<Line>();
+
+        for (int i = 0; i < lump.getSize() / 14; ++i) {
+            Vertex start       = vertices.get(buffer.get());
+            Vertex end         = vertices.get(buffer.get());
+            short  flags       = buffer.get();
+            short  specialType = buffer.get();
+            short  sectorTag   = buffer.get();
+            short  rightSide   = buffer.get();
+            short  leftSide    = buffer.get();
+
+            lines.add(new Line(start, end, (flags & 0x0020) != 0, (flags & 0x0004) != 0));
+        }
+    }
+
 
     public String getName() {
         return name;
+    }
+
+    public List<Thing> things() {
+        return Collections.unmodifiableList(things);
     }
 
     public List<Vertex> vertices() {
         return Collections.unmodifiableList(vertices);
     }
 
+    public List<Line> lines() {
+        return Collections.unmodifiableList(lines);
+    }
+
+
     public short getMinX() { return minX; }
     public short getMinY() { return minY; }
     public short getMaxX() { return maxX; }
     public short getMaxY() { return maxY; }
-
-
-    public static void main(String[] arguments) {
-        try {
-            Wad   wad   = new Wad(new File(arguments[0]));
-            Level level = new Level(wad, 0);
-
-            System.out.printf("Level:    %s%n", level.getName());
-            System.out.printf("Vertices: %d%n", level.vertices().size());
-            System.out.println();
-
-            for (int i = 0; i < level.vertices().size(); ++i) {
-                Vertex vertex = level.vertices().get(i);
-
-                System.out.printf("#%d -\t(%d, %d)%n", i + 1, vertex.getX(), vertex.getY());
-            }
-
-            System.out.println();
-            System.out.printf("Map extents: (%d, %d) to (%d, %d)%n",
-                level.getMinX(), level.getMinY(), level.getMaxX(), level.getMaxY());
-        }
-        catch (IOException exception) {
-            exception.printStackTrace();
-        }
-    }
 }
