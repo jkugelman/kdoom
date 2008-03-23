@@ -1,9 +1,10 @@
 package name.kugelman.john.kdoom.model;
 
-public class Vertex {
+public class Thing {
     private short x, y;
+    private short angle;
 
-    public Vertex(short x, short y) {
+    public Thing(short x, short y, short angle) {
         this.x = x;
         this.y = y;
     }
@@ -15,5 +16,9 @@ public class Vertex {
 
     public short getY() {
         return y;
+    }
+
+    public short getAngle() {
+        return angle;
     }
 }
