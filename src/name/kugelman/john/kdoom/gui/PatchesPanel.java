@@ -26,7 +26,7 @@ public class PatchesPanel extends JPanel {
             add(new JLabel(patch.getName()), constraints);
 
             ++constraints.gridy;
-            add(new TexturePanel(patch, palette), constraints);
+            add(new PatchPanel(patch, palette), constraints);
             
             --constraints.gridy;
             ++constraints.gridx;

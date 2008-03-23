@@ -7,11 +7,11 @@ import javax.swing.*;
 import name.kugelman.john.kdoom.file.*;
 import name.kugelman.john.kdoom.model.*;
 
-public class TexturePanel extends JPanel {
+public class PatchPanel extends JPanel {
     private Patch   patch;
     private Palette palette;
 
-    public TexturePanel(Patch patch, Palette palette) {
+    public PatchPanel(Patch patch, Palette palette) {
         this.patch   = patch;
         this.palette = palette;
 
@@ -31,12 +31,12 @@ public class TexturePanel extends JPanel {
         }
 
         try {
-            Wad          wad     = new Wad    (new File(arguments[0]));
-            Palette      palette = new Palette(wad.getLump("PLAYPAL"));
-            Patch        patch   = new Patch  (wad.getLump(arguments[1]));
+            Wad        wad     = new Wad    (new File(arguments[0]));
+            Palette    palette = new Palette(wad.getLump("PLAYPAL"));
+            Patch      patch   = new Patch  (wad.getLump(arguments[1]));
 
-            JFrame       frame   = new JFrame("KDOOM - " + arguments[0] + " - " + patch.getName());
-            TexturePanel panel   = new TexturePanel(patch, palette);
+            JFrame     frame   = new JFrame("KDOOM - " + arguments[0] + " - " + patch.getName());
+            PatchPanel panel   = new PatchPanel(patch, palette);
 
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
