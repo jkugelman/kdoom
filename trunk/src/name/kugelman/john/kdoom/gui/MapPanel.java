@@ -8,14 +8,16 @@ import name.kugelman.john.kdoom.file.*;
 import name.kugelman.john.kdoom.model.*;
 
 public class MapPanel extends JPanel {
+    private static final int SCALE = 4;
+
     private Level level;
 
     public MapPanel(Level level) {
         this.level = level;
 
         setPreferredSize(new Dimension(
-            (level.getMaxX() - level.getMinX() + 1) / 4 + 8,
-            (level.getMaxY() - level.getMinY() + 1) / 4 + 8));
+            (level.getMaxX() - level.getMinX() + 1) / SCALE + 8,
+            (level.getMaxY() - level.getMinY() + 1) / SCALE + 8));
     }
 
     @Override
@@ -31,27 +33,29 @@ public class MapPanel extends JPanel {
                 g.setColor(Color.BLACK);
             }
 
-            g.drawLine((line.getStart().getX() - level.getMinX()) / 4 + 1,
-                       (line.getStart().getY() - level.getMinY()) / 4 + 1,
-                       (line.getEnd  ().getX() - level.getMinX()) / 4 + 1,
-                       (line.getEnd  ().getY() - level.getMinY()) / 4 + 1);
+            g.drawLine(screenX(line.getStart().getX()), screenY(line.getStart().getY()),
+                       screenX(line.getEnd  ().getX()), screenY(line.getEnd  ().getY()));
         }
 
         g.setColor(Color.BLUE);
 
         for (Vertex vertex: level.vertices()) {
-            g.fillRect((vertex.getX() - level.getMinX()) / 4 + 1 - 1,
-                       (vertex.getY() - level.getMinY()) / 4 + 1 - 1,
-                       3, 3);
+            g.fillRect(screenX(vertex.getX()) - 1, screenY(vertex.getY()) - 1, 3, 3);
         }
 
         g.setColor(Color.RED);
 
         for (Thing thing: level.things()) {
-            g.drawOval((thing.getX() - level.getMinX()) / 4 + 1 - 2,
-                       (thing.getY() - level.getMinY()) / 4 + 1 - 2,
-                       5, 5);
+            g.drawOval(screenX(thing.getX()) - 2, screenY(thing.getY()) - 2, 5, 5);
         }
+    }
+
+    private int screenX(short x) {
+        return (x - level.getMinX()) / SCALE + 1;
+    }
+
+    private int screenY(short y) {
+        return (level.getMaxY() - y) / SCALE + 1;
     }
 
 
