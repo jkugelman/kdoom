@@ -11,14 +11,12 @@ import name.kugelman.john.kdoom.file.*;
 public class Patch {
     Lump      lump;
     Palette   palette;
-    int       paletteNumber;
     Dimension size;
 
     public Patch(Lump lump, Palette palette) throws IOException { 
-        this.lump          = lump;
-        this.palette       = palette;
-        this.paletteNumber = 0;
-        this.size          = new Dimension();
+        this.lump    = lump;
+        this.palette = palette;
+        this.size    = new Dimension();
 
         ShortBuffer buffer = lump.getData().asShortBuffer();
 
@@ -74,7 +72,7 @@ public class Patch {
                     short top    = buffer.getShort();
                     short left   = buffer.getShort();
         
-                    ColorModel colorModel = palette.getColorModel(paletteNumber);
+                    ColorModel colorModel = palette.getColorModel();
         
                     for (ImageConsumer consumer: consumers) {
                         consumer.setColorModel(colorModel);
