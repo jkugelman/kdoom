@@ -10,19 +10,17 @@ import name.kugelman.john.kdoom.model.*;
 public class TexturePanel extends JPanel {
     private Patch     patch;
     private Image     image;
-    private ImageIcon icon;
 
     public TexturePanel(Patch patch) {
         this.patch = patch;
         this.image = createImage(patch.getSource());
-        this.icon  = new ImageIcon(image);
 
-        setPreferredSize(new Dimension(icon.getIconWidth(), icon.getIconHeight()));
+        setPreferredSize(patch.getSize());
     }
 
     @Override
     public void paint(Graphics g) {
-        icon.paintIcon(this, g, 0, 0);
+        g.drawImage(image, 0, 0, Color.CYAN, this);
     }
 
 
