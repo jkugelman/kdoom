@@ -9,26 +9,38 @@ import java.util.*;
 import name.kugelman.john.kdoom.file.*;
 
 public class Patch {
+    String    name;
     Lump      lump;
     Dimension size;
+    Point     offset;
 
-    public Patch(Lump lump) throws IOException { 
-        this.lump    = lump;
-        this.size    = new Dimension();
+    public Patch(Wad wad, String name) throws IOException {
+        this.name = name;
+        this.lump = wad.lookupLump(name);
 
-        ShortBuffer buffer = lump.getData().asShortBuffer();
+        if (lump != null) {
+            ShortBuffer buffer = lump.getData().asShortBuffer();
 
-        size.width  = buffer.get();
-        size.height = buffer.get();
+            this.size   = new Dimension(buffer.get(), buffer.get());
+            this.offset = new Point    (buffer.get(), buffer.get());
+        }
     }
 
 
     public String getName() {
-        return lump.getName();
+        return name;
+    }
+
+    public boolean exists() {
+        return lump != null;
     }
 
     public Dimension getSize() {
         return size;
+    }
+
+    public Point getOffset() {
+        return offset;
     }
 
     public ImageProducer getImageProducer(final Palette palette) {
@@ -59,7 +71,6 @@ public class Patch {
                                     | ImageConsumer.SINGLEPASS
                                     | ImageConsumer.RANDOMPIXELORDER);
                 }
-        
              
                 try {
                     ByteBuffer buffer = lump.getData();
