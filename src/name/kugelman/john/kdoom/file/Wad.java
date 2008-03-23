@@ -85,7 +85,7 @@ public class Wad {
         return Collections.unmodifiableList(lumps);
     }
 
-    public Lump find(String name) {
+    public Lump lookupLump(String name) throws IOException {
         for (Lump lump: lumps) {
             if (lump.getName().equals(name)) {
                 return lump;
@@ -94,4 +94,16 @@ public class Wad {
 
         return null;
     }
+    
+    public Lump getLump(String name) throws IOException {
+        Lump lump = lookupLump(name);
+
+        if (lump == null) {
+            throw new IOException(name + " not found.");
+        }
+
+        return lump;
+    }
+
+
 }

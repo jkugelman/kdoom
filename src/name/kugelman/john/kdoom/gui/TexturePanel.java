@@ -8,19 +8,19 @@ import name.kugelman.john.kdoom.file.*;
 import name.kugelman.john.kdoom.model.*;
 
 public class TexturePanel extends JPanel {
-    private Patch     patch;
-    private Image     image;
+    private Patch   patch;
+    private Palette palette;
 
-    public TexturePanel(Patch patch) {
-        this.patch = patch;
-        this.image = createImage(patch.getSource());
+    public TexturePanel(Patch patch, Palette palette) {
+        this.patch   = patch;
+        this.palette = palette;
 
         setPreferredSize(patch.getSize());
     }
 
     @Override
     public void paint(Graphics g) {
-        g.drawImage(image, 0, 0, Color.CYAN, this);
+        g.drawImage(createImage(patch.getImageProducer(palette)), 0, 0, Color.CYAN, this);
     }
 
 
@@ -32,11 +32,11 @@ public class TexturePanel extends JPanel {
 
         try {
             Wad          wad     = new Wad    (new File(arguments[0]));
-            Palette      palette = new Palette(wad.find("PLAYPAL"));
-            Patch        patch   = new Patch  (wad.find(arguments[1]), palette);
+            Palette      palette = new Palette(wad.getLump("PLAYPAL"));
+            Patch        patch   = new Patch  (wad.getLump(arguments[1]));
 
             JFrame       frame   = new JFrame("KDOOM - " + arguments[0] + " - " + patch.getName());
-            TexturePanel panel   = new TexturePanel(patch);
+            TexturePanel panel   = new TexturePanel(patch, palette);
 
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 

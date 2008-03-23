@@ -7,10 +7,6 @@ import java.util.*;
 import name.kugelman.john.kdoom.file.*;
 
 public class Level {
-    private Wad  wad;
-    private int  lumpIndex;
-    private Lump nameLump, vertexesLump;
-
     private String       name;
     private List<Thing>  things;
     private List<Vertex> vertices;
@@ -18,32 +14,19 @@ public class Level {
     private short        minX, minY, maxX, maxY;
 
     public Level(Wad wad, String name) throws IllegalArgumentException, IOException {
-        this.wad       = wad;
-        this.lumpIndex = findNameLump(name);
-
-        minX = minY = Short.MAX_VALUE;
-        maxX = maxY = Short.MIN_VALUE;
-
-        readName    (wad.lumps().get(lumpIndex + 0));
-        readThings  (wad.lumps().get(lumpIndex + 1));
-        readVertices(wad.lumps().get(lumpIndex + 4));
-        readLines   (wad.lumps().get(lumpIndex + 2));
-    }
-
-    private int findNameLump(String name) {
-        name = name.toUpperCase();
-
         if (!name.matches("E\\dM\\d|MAP\\d\\d")) {
             throw new IllegalArgumentException("Invalid map name " + name + ".");
         }
 
-        Lump nameLump = wad.find(name);
+        Lump nameLump = wad.getLump(name);
 
-        if (nameLump == null) {
-            throw new IllegalArgumentException(name + " not found.");
-        }
+        minX = minY = Short.MAX_VALUE;
+        maxX = maxY = Short.MIN_VALUE;
 
-        return nameLump.getIndex();
+        readName    (wad.lumps().get(nameLump.getIndex() + 0));
+        readThings  (wad.lumps().get(nameLump.getIndex() + 1));
+        readVertices(wad.lumps().get(nameLump.getIndex() + 4));
+        readLines   (wad.lumps().get(nameLump.getIndex() + 2));
     }
 
     private void readName(Lump lump) throws IOException {
