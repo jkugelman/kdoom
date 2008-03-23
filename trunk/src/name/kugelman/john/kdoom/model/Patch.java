@@ -1,5 +1,6 @@
 package name.kugelman.john.kdoom.model;
 
+import java.awt.*;
 import java.awt.image.*;
 import java.io.*;
 import java.nio.*;
@@ -8,19 +9,30 @@ import java.util.*;
 import name.kugelman.john.kdoom.file.*;
 
 public class Patch {
-    Lump    lump;
-    Palette palette;
-    int     paletteNumber;
+    Lump      lump;
+    Palette   palette;
+    int       paletteNumber;
+    Dimension size;
 
     public Patch(Lump lump, Palette palette) throws IOException { 
         this.lump          = lump;
         this.palette       = palette;
         this.paletteNumber = 0;
+        this.size          = new Dimension();
+
+        ShortBuffer buffer = lump.getData().asShortBuffer();
+
+        size.width  = buffer.get();
+        size.height = buffer.get();
     }
 
 
     public String getName() {
         return lump.getName();
+    }
+
+    public Dimension getSize() {
+        return size;
     }
 
     public ImageProducer getSource() {
