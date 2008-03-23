@@ -7,12 +7,12 @@ import java.util.*;
 public class Wad {
     RandomAccessFile file;
 
-    private boolean          isComplete;
-    private int              directoryOffset;
-    private ArrayList<Lump>  lumps;
+    private boolean    isComplete;
+    private int        directoryOffset;
+    private List<Lump> lumps;
 
-    public Wad(RandomAccessFile file) throws IOException {
-        this.file = file;
+    public Wad(File file) throws IOException {
+        this.file = new RandomAccessFile(file, "r");
 
         readHeader   ();
         readDirectory();
@@ -67,7 +67,7 @@ public class Wad {
             buffer.get(nameBytes);
             lumpName = new String(nameBytes, "ISO-8859-1");
 
-            lumps.set(i, new Lump(this, i, lumpOffset, lumpSize, lumpName));
+            lumps.set(i, new Lump(this, lumpOffset, lumpSize, lumpName));
         }
     }
 
@@ -81,20 +81,5 @@ public class Wad {
 
     public List<Lump> lumps() {
         return Collections.unmodifiableList(lumps);
-    }
-
-    public static void main(String[] arguments) {
-        try {
-            Wad wad = new Wad(new RandomAccessFile(arguments[0], "r"));
-
-            System.out.printf("identification = %s%n", wad.isComplete() ? "IWAD" : "PWAD");
-
-            for (Lump lump: wad.lumps()) {
-                System.out.printf("lump = %s%n", lump.getName());
-            }
-        }
-        catch (IOException exception) {
-            exception.printStackTrace();
-        }
     }
 }
