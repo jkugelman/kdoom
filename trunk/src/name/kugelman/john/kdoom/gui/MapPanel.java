@@ -21,7 +21,10 @@ public class MapPanel extends JPanel {
     }
 
     @Override
-    public void paint(Graphics graphics) {
+    protected void paintComponent(Graphics graphics) {
+        graphics.setColor(Color.WHITE);
+        graphics.fillRect(0, 0, getSize().width, getSize().height);
+        
         for (Line line: level.lines()) {
             if (line.isSecret()) {
                 graphics.setColor(Color.GREEN);
@@ -66,15 +69,18 @@ public class MapPanel extends JPanel {
         }
 
         try {
-            Wad      wad      = new Wad     (new File(arguments[0]));
-            Level    level    = new Level   (wad, arguments[1]);
-            MapPanel mapPanel = new MapPanel(level);
+            Wad         wad        = new Wad     (new File(arguments[0]));
+            Level       level      = new Level   (wad, arguments[1]);
 
-            JFrame   frame    = new JFrame("KDOOM - " + arguments[0] + " - " + level.getName());
+            JFrame      frame      = new JFrame("KDOOM - " + arguments[0] + " - " + level.getName());
+            MapPanel    mapPanel   = new MapPanel(level);
+            JScrollPane scrollPane = new JScrollPane(mapPanel);
+
+            scrollPane.setPreferredSize(new Dimension(800, 600));
 
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-            frame.add(mapPanel);
+            frame.add(scrollPane);
             frame.pack();
             frame.setVisible(true);
         }
