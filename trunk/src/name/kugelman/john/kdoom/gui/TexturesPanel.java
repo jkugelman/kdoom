@@ -4,6 +4,7 @@ import java.awt.*;
 import java.io.*;
 import javax.swing.*;
 
+import name.kugelman.john.gui.*;
 import name.kugelman.john.kdoom.file.*;
 import name.kugelman.john.kdoom.model.*;
 
@@ -19,53 +20,47 @@ public class TexturesPanel extends JPanel {
 
         GridBagConstraints constraints = new GridBagConstraints();
 
-        constraints.gridx = 0;
-        constraints.gridy = 0;
-        constraints.anchor = GridBagConstraints.NORTH;
+        int x = 0, y = 0;
 
         for (Texture texture: textureList) {
-            constraints.insets.bottom = 4;
-            add(new JLabel(String.format("%s (%dx%d)", texture.getName(), texture.getSize().width, texture.getSize().height)), constraints);
+            String        name    = String.format("%s (%dx%d)", texture.getName(), texture.getSize().width, texture.getSize().height);
+            StringBuilder patches = new StringBuilder();
 
-            ++constraints.gridy;
-            constraints.insets.bottom = 4;
-            String patches = "";
             for (int i = 0; i < texture.patches().size(); ++i) {
                 Patch patch  = texture.patches().get(i);
                 Point origin = texture.origins().get(i);
 
-                if (i > 0) {
-                    patches += "<br>";
+                if (patches.length() > 0) {
+                    patches.append("<br>");
                 }
 
                 if (patch.exists()) {
-                    patches += String.format("%s %dx%d at (%d, %d)",
+                    patches.append(String.format("%s %dx%d at (%d, %d)",
                         patch.getName(),
                         patch.getSize().width, patch.getSize().height,
-                        origin.x, origin.y);
-                    if (patch.getOffset().x != patch.getSize().width / 2 - 1 || patch.getOffset().y != patch.getSize().height - 5) {
-                        patches += String.format(" - offset at (%d, %d)", patch.getOffset().x, patch.getOffset().y);
-                    }
+                        origin.x, origin.y
+                    ));
                 }
                 else {
-                    patches += String.format("%s <b>***NOT FOUND***</b> at (%d, %d)", patch.getName(),
-                        origin.x, origin.y);
+                    patches.append(String.format("%s <b>***NOT FOUND***</b> at (%d, %d)",
+                        patch.getName(), origin.x, origin.y
+                    ));
                 }
             }
-            JLabel label   = new JLabel("<html>" + patches + "</html>");
-            label.setFont(label.getFont().deriveFont(Font.ITALIC, 8));
-            add(label, constraints);
 
-            ++constraints.gridy;
-            constraints.insets.bottom = 20;
-            add(new TexturePanel(texture, palette), constraints);
+            JLabel       nameLabel    = new JLabel(name);
+            TexturePanel texturePanel = new TexturePanel(texture, palette);
+            JLabel       patchesLabel = new JLabel("<html>" + patches + "</html>");
             
-            constraints.gridy -= 2;
-            constraints.gridx += 1;
+            patchesLabel.setFont(patchesLabel.getFont().deriveFont(Font.ITALIC, 8));
+            
+            add(nameLabel,    new Constraints(x, y)    .insets(4, 0, 4,  4));
+            add(texturePanel, new Constraints(x, y + 1).insets(4, 0, 4,  4).anchorNorth());
+            add(patchesLabel, new Constraints(x, y + 2).insets(4, 0, 20, 4).anchorNorth());
 
-            if (constraints.gridx >= 4) {
-                constraints.gridx  = 0;
-                constraints.gridy += 3;
+            if (++x >= 4) {
+                x  = 0;
+                y += 3;
             }
         }
     }
