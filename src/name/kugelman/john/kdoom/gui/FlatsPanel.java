@@ -21,8 +21,8 @@ public class FlatsPanel extends JPanel {
         int x = 0, y = 0;
 
         for (Flat flat: flatList) {
-            add(new JLabel   (flat.getName()), new Constraints(x, y)    .insets(0, 0, 0, 4));
-            add(new FlatPanel(flat, palette),  new Constraints(x, y + 1).insets(0, 0, 0, 20));
+            add(new JLabel   (flat.getName()), new Constraints(x, y)    .insets(4, 4, 4,  4));
+            add(new FlatPanel(flat, palette),  new Constraints(x, y + 1).insets(4, 4, 20, 4));
             
             if (++x >= 8) {
                 x  = 0;
