@@ -151,7 +151,7 @@ public class Texture {
                         }
                     };
 
-                    ImageProducer producer = patch.getImageProducer(palette);
+                    ImageProducer producer = patch.getImageProducer(palette, i == 0);
 
                     producer.startProduction(consumer);
                     producer.removeConsumer (consumer);

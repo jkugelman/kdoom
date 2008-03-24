@@ -43,7 +43,11 @@ public class Patch {
         return offset;
     }
 
-    public ImageProducer getImageProducer(final Palette palette) {
+    public ImageProducer getImageProducer(Palette palette) {
+        return getImageProducer(palette, true);
+    }
+
+    public ImageProducer getImageProducer(final Palette palette, final boolean drawTransparent) {
         return new ImageProducer() {
             Set<ImageConsumer> consumers = new HashSet<ImageConsumer>();
 
@@ -86,7 +90,7 @@ public class Patch {
                     for (ImageConsumer consumer: consumers) {
                         consumer.setColorModel(colorModel);
                         consumer.setDimensions(width, height);
-                    }
+                    }                    
 
                     // Read column offsets.
                     int[] columnOffsets = new int[width];
@@ -98,6 +102,8 @@ public class Patch {
                     // Read pixel data for each column.
                     for (int column = 0; column < columnOffsets.length; ++column) {
                         buffer.position(columnOffsets[column]);
+
+                        int y = 0;
 
                         for (;;) {
                             int rowStart = buffer.get() & 0xFF;
@@ -113,7 +119,18 @@ public class Patch {
                             buffer.get();
 
                             for (ImageConsumer consumer: consumers) {
+                                if (rowStart > y && drawTransparent) {
+                                    consumer.setPixels(column, y, 1, rowStart - y, new IndexColorModel(8, 1, new byte[3], 0, false, 0), new byte[rowStart - y], 0, 1);
+                                }
                                 consumer.setPixels(column, rowStart, 1, pixels.length, colorModel, pixels, 0, 1);
+                            }
+
+                            y = rowStart + pixels.length;
+                        }
+
+                        if (y < height && drawTransparent) {
+                            for (ImageConsumer consumer: consumers) {
+                                consumer.setPixels(column, y, 1, height - y, new IndexColorModel(8, 1, new byte[3], 0, false, 0), new byte[height - y], 0, 1);
                             }
                         }
                     }
