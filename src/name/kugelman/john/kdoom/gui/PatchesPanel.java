@@ -4,6 +4,7 @@ import java.awt.*;
 import java.io.*;
 import javax.swing.*;
 
+import name.kugelman.john.gui.*;
 import name.kugelman.john.kdoom.file.*;
 import name.kugelman.john.kdoom.model.*;
 
@@ -17,26 +18,15 @@ public class PatchesPanel extends JPanel {
 
         setLayout(new GridBagLayout());
 
-        GridBagConstraints constraints = new GridBagConstraints();
-
-        constraints.gridx = 0;
-        constraints.gridy = 0;
-        constraints.anchor = GridBagConstraints.NORTH;
+        int x = 0, y = 0;
 
         for (Patch patch: patchList) {
-            constraints.insets.bottom = 4;
-            add(new JLabel(patch.getName()), constraints);
-
-            ++constraints.gridy;
-            constraints.insets.bottom = 20;
-            add(!patch.exists() ? new JLabel("NOT FOUND") : new PatchPanel(patch, palette), constraints);
+            add(new JLabel(patch.getName()),                                                new Constraints(x, y)    .insets(0, 0, 0, 4));
+            add(!patch.exists() ? new JLabel("NOT FOUND") : new PatchPanel(patch, palette), new Constraints(x, y + 1).insets(0, 0, 0, 20).anchorNorth());
             
-            --constraints.gridy;
-            ++constraints.gridx;
-
-            if (constraints.gridx >= 4) {
-                constraints.gridx  = 0;
-                constraints.gridy += 2;
+            if (++x >= 4) {
+                x  = 0;
+                y += 2;
             }
         }
     }
