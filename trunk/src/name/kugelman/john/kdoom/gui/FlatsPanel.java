@@ -4,6 +4,7 @@ import java.awt.*;
 import java.io.*;
 import javax.swing.*;
 
+import name.kugelman.john.gui.*;
 import name.kugelman.john.kdoom.file.*;
 import name.kugelman.john.kdoom.model.*;
 
@@ -17,26 +18,15 @@ public class FlatsPanel extends JPanel {
 
         setLayout(new GridBagLayout());
 
-        GridBagConstraints constraints = new GridBagConstraints();
-
-        constraints.gridx = 0;
-        constraints.gridy = 0;
-        constraints.anchor = GridBagConstraints.NORTH;
+        int x = 0, y = 0;
 
         for (Flat flat: flatList) {
-            constraints.insets.bottom = 4;
-            add(new JLabel(flat.getName()), constraints);
-
-            ++constraints.gridy;
-            constraints.insets.bottom = 20;
-            add(new FlatPanel(flat, palette), constraints);
+            add(new JLabel   (flat.getName()), new Constraints(x, y)    .insets(0, 0, 0, 4));
+            add(new FlatPanel(flat, palette),  new Constraints(x, y + 1).insets(0, 0, 0, 20));
             
-            --constraints.gridy;
-            ++constraints.gridx;
-
-            if (constraints.gridx >= 8) {
-                constraints.gridx  = 0;
-                constraints.gridy += 2;
+            if (++x >= 8) {
+                x  = 0;
+                y += 2;
             }
         }
     }
