@@ -1,6 +1,7 @@
 package name.kugelman.john.kdoom.gui;
 
 import java.awt.*;
+import java.awt.event.*;
 import java.io.*;
 import javax.swing.*;
 
@@ -15,6 +16,13 @@ public class MapPanel extends JPanel {
     public MapPanel(Level level) {
         this.level = level;
 
+        addMouseMotionListener(new MouseMotionAdapter() {
+            @Override
+            public void mouseMoved(MouseEvent event) {
+                repaint();
+            }
+        });
+
         setPreferredSize(new Dimension(
             (level.getMaxX() - level.getMinX() + 1) / SCALE + 8,
             (level.getMaxY() - level.getMinY() + 1) / SCALE + 8));
@@ -24,9 +32,14 @@ public class MapPanel extends JPanel {
     protected void paintComponent(Graphics graphics) {
         graphics.setColor(Color.WHITE);
         graphics.fillRect(0, 0, getSize().width, getSize().height);
+
+        Line closestLine = getClosestLine();
         
         for (Line line: level.lines()) {
-            if (line.isSecret()) {
+            if (line == closestLine) {
+                graphics.setColor(Color.YELLOW.darker());
+            }
+            else if (line.isSecret()) {
                 graphics.setColor(Color.GREEN);
             }
             else if (line.isTwoSided()) {
@@ -59,6 +72,24 @@ public class MapPanel extends JPanel {
 
     private int screenY(short y) {
         return (level.getMaxY() - y) / SCALE + 1;
+    }
+
+    private short mapX(int x) {
+        return (short) ((x - 1) * SCALE + level.getMinX());
+    }
+
+    private short mapY(int y) {
+        return (short) (level.getMaxY() - (y - 1) * SCALE);
+    }
+
+    private Line getClosestLine() {
+        Point mousePosition = getMousePosition();
+
+        if (mousePosition == null) {
+            return null;
+        }
+
+        return level.getLineClosestTo(mapX(mousePosition.x), mapY(mousePosition.y), 64);
     }
 
 

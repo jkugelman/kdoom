@@ -16,4 +16,12 @@ public class Vertex {
     public short getY() {
         return y;
     }
+
+
+    public double distanceTo(Vertex vertex) {
+        int xDiff = x - vertex.x;
+        int yDiff = y - vertex.y;
+        
+        return Math.sqrt(xDiff * xDiff + yDiff * yDiff);
+    }
 }

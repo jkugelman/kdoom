@@ -124,4 +124,33 @@ public class Level {
     public short getMinY() { return minY; }
     public short getMaxX() { return maxX; }
     public short getMaxY() { return maxY; }
+
+
+    public Line getLineClosestTo(Vertex vertex) {
+        return getLineClosestTo(vertex.getX(), vertex.getY());
+    }
+
+    public Line getLineClosestTo(short x, short y) {
+        return getLineClosestTo(x, y, Double.MAX_VALUE);
+    }
+
+    public Line getLineClosestTo(Vertex vertex, double maximumDistance) {
+        return getLineClosestTo(vertex.getX(), vertex.getY(), maximumDistance);
+    }
+
+    public Line getLineClosestTo(short x, short y, double maximumDistance) {
+        Line   closestLine     = null;
+        double closestDistance = maximumDistance;
+                        
+        for (Line line: lines) {
+            double distance = line.distanceTo(x, y);
+
+            if (distance < closestDistance) {
+                closestLine     = line;
+                closestDistance = distance;
+            }
+        }
+
+        return closestLine;
+    }
 }
