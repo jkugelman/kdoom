@@ -22,7 +22,7 @@ public class TexturesPanel extends JPanel {
 
         int x = 0, y = 0;
 
-        for (Texture texture: textureList) {
+        for (Texture texture: textureList.values()) {
             String        name    = String.format("%s (%dx%d)", texture.getName(), texture.getSize().width, texture.getSize().height);
             StringBuilder patches = new StringBuilder();
 
