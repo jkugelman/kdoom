@@ -140,8 +140,48 @@ public class LevelPanel extends JPanel {
         }
 
         for (Thing thing: level.things()) {
-            graphics.setColor(closestThings.contains(thing) ? Color.GREEN : Color.RED);
-            graphics.drawOval(screenX(thing.getLocation().getX()) - 2, screenY(thing.getLocation().getY()) - 2, 5, 5);
+            if (closestThings.contains(thing)) {
+                graphics.setColor(Color.RED);
+            }
+            else {
+                switch (thing.getKind()) {
+                    case PLAYER:     graphics.setColor(Color.GREEN);         break;
+                    case MONSTER:    graphics.setColor(new Color(0x8b4513)); break;
+                    case WEAPON:     graphics.setColor(Color.RED);           break;
+                    case AMMO:       graphics.setColor(Color.RED);           break;
+                    case HEALTH:     graphics.setColor(Color.GREEN);         break;
+                    case ARMOR:      graphics.setColor(Color.BLUE);          break;
+                    case POWER_UP:   graphics.setColor(Color.MAGENTA);       break;
+                    case KEY:        graphics.setColor(Color.MAGENTA);       break;
+                    case OBSTACLE:   graphics.setColor(Color.GRAY);          break;
+                    case DECORATION: graphics.setColor(Color.LIGHT_GRAY);    break;
+                    case SPECIAL:    graphics.setColor(Color.MAGENTA);       break;
+                    case UNKNOWN:    graphics.setColor(Color.MAGENTA);       break;
+                }
+            }
+
+            int screenRadius = thing.getRadius() / scale;
+
+            graphics.drawOval(screenX(thing.getLocation().getX()) - screenRadius,
+                              screenY(thing.getLocation().getY()) - screenRadius,
+                              screenRadius * 2, screenRadius * 2);
+
+            if (thing.isDirectional()) {
+                double   startX = thing.getLocation().getX();
+                double   startY = thing.getLocation().getY();
+                double   endX   = startX + thing.getRadius() * Math.cos( thing.getAngle()        * Math.PI / 180);
+                double   endY   = startY + thing.getRadius() * Math.sin( thing.getAngle()        * Math.PI / 180);
+                double   leftX  = endX   + thing.getRadius() * Math.cos((thing.getAngle() + 135) * Math.PI / 180) * 1 / 3;
+                double   leftY  = endY   + thing.getRadius() * Math.sin((thing.getAngle() + 135) * Math.PI / 180) * 1 / 3;
+                double   rightX = endX   + thing.getRadius() * Math.cos((thing.getAngle() - 135) * Math.PI / 180) * 1 / 3;
+                double   rightY = endY   + thing.getRadius() * Math.sin((thing.getAngle() - 135) * Math.PI / 180) * 1 / 3;
+                graphics.drawLine(screenX((short) startX), screenY((short) startY),
+                                  screenX((short) endX),   screenY((short) endY));
+                graphics.drawLine(screenX((short) endX),   screenY((short) endY),
+                                  screenX((short) leftX),  screenY((short) leftY));
+                graphics.drawLine(screenX((short) endX),   screenY((short) endY),
+                                  screenX((short) rightX), screenY((short) rightY));
+            }
         }
     }
 
