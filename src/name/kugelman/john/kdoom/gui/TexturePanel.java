@@ -8,31 +8,38 @@ import name.kugelman.john.kdoom.file.*;
 import name.kugelman.john.kdoom.model.*;
 
 public class TexturePanel extends JPanel {
-    private Texture texture;
-    private Palette palette;
+    private Texture   texture;
+    private Palette   palette;
+
+    private boolean   isDynamic;
 
     public TexturePanel(Palette palette) {
-        this(null, palette);
+        this(null, palette, true);
     }
 
     public TexturePanel(Texture texture, Palette palette) {
-        this.palette = palette;
+        this(texture, palette, false);
+    }
 
-        setPreferredSize(new Dimension(128, 128));
+    public TexturePanel(Texture texture, Palette palette, boolean isDynamic) {
+        this.palette   = palette;
+        this.isDynamic = isDynamic;
+
+        if (isDynamic) {
+            setMinimumSize  (new Dimension(128, 128));
+            setPreferredSize(new Dimension(128, 128));
+        }
+        else {
+            setMinimumSize  (texture.getSize());
+            setPreferredSize(texture.getSize());
+        }
+
         show(texture);
     }
 
     public void show(Texture texture) {
         this.texture = texture;
         
-        if (texture == null) {
-            setSize(0, 0);
-        }
-        else {
-            setSize(texture.getSize().width, texture.getSize().height);
-        }
-
-        revalidate();
         repaint();
     }
 

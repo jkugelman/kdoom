@@ -19,6 +19,7 @@ public class FlatPanel extends JPanel {
         this.flat    = flat;
         this.palette = palette;
 
+        setMinimumSize  (Flat.getSize());
         setPreferredSize(Flat.getSize());
     }
 
