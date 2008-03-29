@@ -235,15 +235,21 @@ public class Level {
         return closestLines;
     }
 
-    public Sector getSectorContaining(short x, short y) {
+    public Collection<Sector> getSectorsContaining(Vertex vertex) {
+        return getSectorsContaining(vertex.getX(), vertex.getY());
+    }
+
+    public Collection<Sector> getSectorsContaining(short x, short y) {
+        Collection<Sector> sectors = new ArrayList<Sector>();
+        
         for (Line line: getLinesClosestTo(x, y)) {
             Side facingSide = line.sideFacing(x, y);
 
             if (facingSide != null && facingSide.getSector() != null) {
-                return facingSide.getSector();
+                sectors.add(facingSide.getSector());
             }
         }
 
-        return null; 
+        return sectors; 
     }
 }
