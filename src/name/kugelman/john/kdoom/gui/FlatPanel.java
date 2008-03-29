@@ -11,15 +11,28 @@ public class FlatPanel extends JPanel {
     private Flat    flat;
     private Palette palette;
 
+    public FlatPanel(Palette palette) {
+        this(null, palette);
+    }
+
     public FlatPanel(Flat flat, Palette palette) {
         this.flat    = flat;
         this.palette = palette;
 
-        setPreferredSize(flat.getSize());
+        setPreferredSize(Flat.getSize());
+    }
+
+    public void show(Flat flat) {
+        this.flat = flat;
+        repaint();
     }
 
     @Override
     public void paint(Graphics graphics) {
+        if (flat == null) {
+            return;
+        }
+
         graphics.drawImage(createImage(flat.getImageProducer(palette)), 0, 0, Color.CYAN, this);
     }
 }

@@ -8,13 +8,17 @@ import name.kugelman.john.kdoom.file.*;
 
 public class Level {
     private String       name;
+
+    private Wad          wad;
     private FlatList     flats;
     private TextureList  textures;
+
     private List<Thing>  things;
     private List<Vertex> vertices;
     private List<Side>   sides;
     private List<Line>   lines;
     private List<Sector> sectors;
+
     private short        minX, minY, maxX, maxY;
 
     public Level(Wad wad, String name, FlatList flats, TextureList textures)
@@ -24,6 +28,7 @@ public class Level {
             throw new IllegalArgumentException("Invalid map name " + name + ".");
         }
 
+        this.wad      = wad;
         this.flats    = flats;
         this.textures = textures;    
         
@@ -179,6 +184,10 @@ public class Level {
 
     public String getName() {
         return name;
+    }
+
+    public Wad getWad() {
+        return wad;
     }
 
     public List<Thing> things() {

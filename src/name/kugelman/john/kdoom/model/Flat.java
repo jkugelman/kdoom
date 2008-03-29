@@ -28,7 +28,7 @@ public class Flat {
         return lump.getName();
     }
 
-    public Dimension getSize() {
+    public static Dimension getSize() {
         return new Dimension(WIDTH, HEIGHT);
     }
 
