@@ -15,6 +15,7 @@ public class LevelViewer extends JFrame {
 
     private LevelPanel  levelPanel;
     private SectorPanel sectorPanel;
+    private LinePanel   linePanel;
     private SidePanel   sidePanel;
 
     public LevelViewer(Level level, Palette palette) {
@@ -24,11 +25,13 @@ public class LevelViewer extends JFrame {
 
         this.levelPanel  = new LevelPanel (level);
         this.sectorPanel = new SectorPanel(palette);
+        this.linePanel   = new LinePanel  ();
         this.sidePanel   = new SidePanel  (palette);
 
         levelPanel.addSelectionListener(new LevelPanel.SelectionListener() {
             public void lineSelected(Line line, Side side) {
-                sidePanel.show(line, side);
+                linePanel.show(line);
+                sidePanel.show(side);
             }
 
             public void sectorSelected(Sector sector) {
@@ -39,14 +42,12 @@ public class LevelViewer extends JFrame {
         JScrollPane levelScrollPane = new JScrollPane(levelPanel);
         levelScrollPane.setPreferredSize(new Dimension(800, 800));
 
-        sectorPanel.setBorder(BorderFactory.createTitledBorder("Sector"));
-        sidePanel  .setBorder(BorderFactory.createTitledBorder("Linedef"));
-
         setLayout(new GridBagLayout());
-        add(levelScrollPane,  new Constraints(0, 0).height(3));
-        add(sectorPanel,      new Constraints(1, 0).anchorWest().fillHorizontal());
-        add(sidePanel,        new Constraints(1, 1).anchorWest().fillHorizontal());
-        add(Box.createGlue(), new Constraints(2, 2).weight(1, 1));
+        add(levelScrollPane,  new Constraints(0, 0).height(4));
+        add(sectorPanel,      new Constraints(1, 0).fillHorizontal());
+        add(linePanel,        new Constraints(1, 1).fillHorizontal());
+        add(sidePanel,        new Constraints(1, 2).fillHorizontal());
+        add(Box.createGlue(), new Constraints(2, 3).weight(1, 1));
 
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         

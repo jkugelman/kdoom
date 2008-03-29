@@ -3,6 +3,7 @@ package name.kugelman.john.kdoom.model;
 import java.util.*;
 
 public class Sector {
+    private short      number;
     private short      floorHeight, ceilingHeight;
     private Flat       floorFlat,   ceilingFlat;
     private short      lightLevel;
@@ -10,10 +11,12 @@ public class Sector {
     private short      tagNumber;
             List<Side> sides;
 
-    public Sector(short floorHeight, short ceilingHeight,
+    public Sector(short number,
+                  short floorHeight, short ceilingHeight,
                   Flat  floorFlat,   Flat  ceilingFlat,
                   short lightLevel, short type, short tagNumber)
     {
+        this.number        = number;
         this.floorHeight   = floorHeight;
         this.ceilingHeight = ceilingHeight;
         this.floorFlat     = floorFlat;
@@ -25,6 +28,10 @@ public class Sector {
         this.sides         = new ArrayList<Side>();
     }
 
+
+    public short getNumber() {
+        return number;
+    }
 
     public short getFloorHeight() {
         return floorHeight;

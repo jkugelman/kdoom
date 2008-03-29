@@ -1,22 +1,22 @@
 package name.kugelman.john.kdoom.model;
 
 public class Line {
+    private short   number;
     private Vertex  start, end;
     private Side    leftSide, rightSide;
-    private boolean isSecret, isTwoSided;
+    private short   flags;
 
     private double  xDiff, yDiff;
     private double  slope;
     private int     leftSign;
     
-    public Line(Vertex start, Vertex end, Side leftSide, Side rightSide, boolean isSecret, boolean isTwoSided) {
+    public Line(short number, Vertex start, Vertex end, Side leftSide, Side rightSide, short flags) {
+        this.number     = number;
         this.start      = start;
         this.end        = end;
         this.leftSide   = leftSide;
         this.rightSide  = rightSide;
-
-        this.isSecret   = isSecret;
-        this.isTwoSided = isTwoSided;
+        this.flags      = flags;
 
         this.xDiff      = end.getX() - start.getX();
         this.yDiff      = end.getY() - start.getY();
@@ -24,6 +24,10 @@ public class Line {
         this.leftSign   = end.getX() < start.getX() ? -1 : +1;
     }
 
+
+    public short getNumber() {
+        return number;
+    }
 
     public Vertex getStart() {
         return start;
@@ -40,6 +44,21 @@ public class Line {
     public Side getRightSide() {
         return rightSide;
     }
+
+
+    public short getFlags() {
+        return flags;
+    }
+
+    public boolean isTwoSided() {
+        return (flags & 0x0004) == 0x0004;
+    }
+
+    public boolean isSecret() {
+        return (flags & 0x0020) == 0x0020;
+    }
+
+
 
 
     public double getLength() {
@@ -68,6 +87,10 @@ public class Line {
     }
 
     public Side sideFacing(Vertex vertex) {
+        // If the line is one-sided then just return that side.
+        if (leftSide  == null) return rightSide;
+        if (rightSide == null) return leftSide;
+
         // See http://mathforum.org/library/drmath/view/54823.html
         int sign = (int) Math.signum((vertex.getY() - start.getY())
                            - slope * (vertex.getX() - start.getX()));
@@ -85,15 +108,6 @@ public class Line {
     }
 
     
-    public boolean isSecret() {
-        return isSecret;
-    }
-
-    public boolean isTwoSided() {
-        return isTwoSided;
-    }
-
-
     @Override
     public String toString() {
         return String.format("%s-%s", start, end);
