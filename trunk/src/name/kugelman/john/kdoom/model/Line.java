@@ -50,15 +50,15 @@ public class Line {
         return flags;
     }
 
-    public boolean isTwoSided() {
-        return (flags & 0x0004) == 0x0004;
-    }
-
-    public boolean isSecret() {
-        return (flags & 0x0020) == 0x0020;
-    }
-
-
+    public boolean arePlayersBlocked     () { return (flags & 0x0001) == 0x0001; }
+    public boolean areMonstersBlocked    () { return (flags & 0x0002) == 0x0002; }
+    public boolean isTwoSided            () { return (flags & 0x0004) == 0x0004; }
+    public boolean isUpperTextureUnpegged() { return (flags & 0x0008) == 0x0008; }
+    public boolean isLowerTextureUnpegged() { return (flags & 0x0010) == 0x0010; }
+    public boolean isSecret              () { return (flags & 0x0020) == 0x0020; }
+    public boolean isSoundBlocked        () { return (flags & 0x0040) == 0x0040; }
+    public boolean isInvisible           () { return (flags & 0x0080) == 0x0080; }
+    public boolean isAlwaysVisible       () { return (flags & 0x0100) == 0x0100; }
 
 
     public double getLength() {
