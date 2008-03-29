@@ -167,20 +167,13 @@ public class LevelPanel extends JPanel {
                               screenRadius * 2, screenRadius * 2);
 
             if (thing.isDirectional()) {
-                double   startX = thing.getLocation().getX();
-                double   startY = thing.getLocation().getY();
-                double   endX   = startX + thing.getRadius() * Math.cos( thing.getAngle()        * Math.PI / 180);
-                double   endY   = startY + thing.getRadius() * Math.sin( thing.getAngle()        * Math.PI / 180);
-                double   leftX  = endX   + thing.getRadius() * Math.cos((thing.getAngle() + 135) * Math.PI / 180) * 1 / 3;
-                double   leftY  = endY   + thing.getRadius() * Math.sin((thing.getAngle() + 135) * Math.PI / 180) * 1 / 3;
-                double   rightX = endX   + thing.getRadius() * Math.cos((thing.getAngle() - 135) * Math.PI / 180) * 1 / 3;
-                double   rightY = endY   + thing.getRadius() * Math.sin((thing.getAngle() - 135) * Math.PI / 180) * 1 / 3;
+                double startX = thing.getLocation().getX();
+                double startY = thing.getLocation().getY();
+                double endX   = startX + thing.getRadius() * Math.cos(thing.getAngle() * Math.PI / 180);
+                double endY   = startY + thing.getRadius() * Math.sin(thing.getAngle() * Math.PI / 180);
+                
                 graphics.drawLine(screenX((short) startX), screenY((short) startY),
                                   screenX((short) endX),   screenY((short) endY));
-                graphics.drawLine(screenX((short) endX),   screenY((short) endY),
-                                  screenX((short) leftX),  screenY((short) leftY));
-                graphics.drawLine(screenX((short) endX),   screenY((short) endY),
-                                  screenX((short) rightX), screenY((short) rightY));
             }
         }
     }
