@@ -11,13 +11,13 @@ public class Sector {
             List<Side> sides;
 
     public Sector(short floorHeight, short ceilingHeight,
-//                  Flat  floorFlat,   Flat  ceilingFlat,
+                  Flat  floorFlat,   Flat  ceilingFlat,
                   short lightLevel, short type, short tagNumber)
     {
         this.floorHeight   = floorHeight;
         this.ceilingHeight = ceilingHeight;
-//        this.floorFlat     = floorFlat;
-//        this.ceilingFlat   = ceilingFlat;
+        this.floorFlat     = floorFlat;
+        this.ceilingFlat   = ceilingFlat;
         this.lightLevel    = lightLevel;
         this.type          = type;
         this.tagNumber     = tagNumber;

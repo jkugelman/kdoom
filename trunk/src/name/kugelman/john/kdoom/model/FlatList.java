@@ -9,14 +9,14 @@ import java.util.List;
 
 import name.kugelman.john.kdoom.file.*;
 
-public class FlatList extends AbstractList<Flat> {
-    private List<Flat> flats;
+public class FlatList extends AbstractMap<String, Flat> implements SortedMap<String, Flat> {
+    private SortedMap<String, Flat> flats;
 
     public FlatList(Wad wad) throws IOException {
         Lump startLump = wad.getLump("F_START");
         Lump endLump   = wad.getLump("F_END");
 
-        this.flats = new ArrayList<Flat>(endLump.getIndex() - startLump.getIndex() - 1);
+        this.flats = new TreeMap<String, Flat>();
 
         for (int i = startLump.getIndex() + 1; i < endLump.getIndex(); ++i) {
             Lump lump = wad.lumps().get(i);
@@ -25,17 +25,44 @@ public class FlatList extends AbstractList<Flat> {
                 continue;
             }
 
-            flats.add(new Flat(lump));
+            Flat flat = new Flat(lump);
+
+            flats.put(flat.getName(), flat);
         }
     }
 
-    @Override
-    public int size() {
-        return flats.size();
-    }
+
+    // Implementation of AbstractMap
 
     @Override
-    public Flat get(int index) throws IndexOutOfBoundsException {
-        return flats.get(index);
+    public Set<Map.Entry<String, Flat>> entrySet() {
+        return flats.entrySet();
+    }
+
+
+    // Implementation of SortedMap
+
+    public Comparator<? super String> comparator() {
+        return flats.comparator();
+    }
+
+    public String firstKey() {
+        return flats.firstKey();
+    }
+
+    public String lastKey() {
+        return flats.lastKey();
+    }
+
+    public SortedMap<String, Flat> headMap(String toKey) {
+        return flats.headMap(toKey);
+    }
+
+    public SortedMap<String, Flat> subMap(String fromKey, String toKey) {
+        return flats.subMap(fromKey, toKey);
+    }
+
+    public SortedMap<String, Flat> tailMap(String fromKey) {
+        return flats.tailMap(fromKey);
     }
 }

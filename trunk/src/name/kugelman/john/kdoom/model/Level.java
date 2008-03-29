@@ -8,6 +8,8 @@ import name.kugelman.john.kdoom.file.*;
 
 public class Level {
     private String       name;
+    private FlatList     flats;
+    private TextureList  textures;
     private List<Thing>  things;
     private List<Vertex> vertices;
     private List<Side>   sides;
@@ -15,15 +17,20 @@ public class Level {
     private List<Sector> sectors;
     private short        minX, minY, maxX, maxY;
 
-    public Level(Wad wad, String name) throws IllegalArgumentException, IOException {
+    public Level(Wad wad, String name, FlatList flats, TextureList textures)
+        throws IllegalArgumentException, IOException
+    {
         if (!name.matches("E\\dM\\d|MAP\\d\\d")) {
             throw new IllegalArgumentException("Invalid map name " + name + ".");
         }
 
-        Lump nameLump = wad.getLump(name);
+        this.flats    = flats;
+        this.textures = textures;    
+        
+        this.minX = this.minY = Short.MAX_VALUE;
+        this.maxX = this.maxY = Short.MIN_VALUE;
 
-        minX = minY = Short.MAX_VALUE;
-        maxX = maxY = Short.MIN_VALUE;
+        Lump nameLump = wad.getLump(name);
 
         readName    (wad.lumps().get(nameLump.getIndex() + 0));
         readThings  (wad.lumps().get(nameLump.getIndex() + 1));
@@ -100,13 +107,13 @@ public class Level {
             short  ceilingHeight  = buffer.getShort(); 
                                     buffer.get(floorBytes);
                                     buffer.get(ceilingBytes);
-            String floorFlat      = new String(floorBytes,   "ISO-8859-1").trim();
-            String ceilingFlat    = new String(ceilingBytes, "ISO-8859-1").trim();
+            Flat   floorFlat      = flats.get(new String(floorBytes,   "ISO-8859-1").trim());
+            Flat   ceilingFlat    = flats.get(new String(ceilingBytes, "ISO-8859-1").trim());
             short  lightLevel     = buffer.getShort();
             short  type           = buffer.getShort();
             short  tagNumber      = buffer.getShort();
 
-            sectors.add(new Sector(floorHeight, ceilingHeight, lightLevel, type, tagNumber));
+            sectors.add(new Sector(floorHeight, ceilingHeight, floorFlat, ceilingFlat, lightLevel, type, tagNumber));
         }
     }
 
@@ -160,12 +167,12 @@ public class Level {
                 sectorNumber = 0;
             }
 
-            String upperName   = new String(upperBytes,  "ISO-8859-1").trim();
-            String lowerName   = new String(lowerBytes,  "ISO-8859-1").trim();
-            String middleName  = new String(middleBytes, "ISO-8859-1").trim();
-            Sector sector      = sectors.get(sectorNumber);
+            Texture upperTexture  = textures.get(new String(upperBytes,  "ISO-8859-1").trim());
+            Texture lowerTexture  = textures.get(new String(lowerBytes,  "ISO-8859-1").trim());
+            Texture middleTexture = textures.get(new String(middleBytes, "ISO-8859-1").trim());
+            Sector sector         = sectors.get(sectorNumber);
 
-            sides.add(new Side(xOffset, yOffset, sector));
+            sides.add(new Side(xOffset, yOffset, upperTexture, lowerTexture, middleTexture, sector));
         }
     }
 
