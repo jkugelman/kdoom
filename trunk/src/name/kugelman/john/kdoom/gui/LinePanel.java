@@ -11,19 +11,22 @@ import name.kugelman.john.kdoom.model.*;
 public class LinePanel extends JPanel {
     private Line line;
 
+    private TitledBorder titledBorder;
     private JLabel       startLabel, endLabel;
     private JLabel       flagsLabel;
-    private TitledBorder titledBorder;
+    private JLabel       leftSideLabel, rightSideLabel;
 
     public LinePanel() {
         this(null);
     }
 
     public LinePanel(Line line) {
-        titledBorder = new TitledBorder("");
-        startLabel   = new JLabel();
-        endLabel     = new JLabel();
-        flagsLabel   = new JLabel();
+        titledBorder   = new TitledBorder("");
+        startLabel     = new JLabel();
+        endLabel       = new JLabel();
+        flagsLabel     = new JLabel();
+        leftSideLabel  = new JLabel();
+        rightSideLabel = new JLabel();
 
         setBorder(titledBorder);
 
@@ -34,7 +37,11 @@ public class LinePanel extends JPanel {
         add(endLabel,                     new Constraints(1, 1).anchorNorthwest());
         add(new JLabel("Flags: "),        new Constraints(0, 2).anchorNortheast());
         add(flagsLabel,                   new Constraints(1, 2).anchorNorthwest());
-        add(Box.createGlue(),             new Constraints(2, 3).weight(1, 1));
+        add(new JLabel("Left side: "),    new Constraints(0, 3).anchorNortheast());
+        add(leftSideLabel,                new Constraints(1, 3).anchorNorthwest());
+        add(new JLabel("Right side: "),   new Constraints(0, 4).anchorNortheast());
+        add(rightSideLabel,               new Constraints(1, 4).anchorNorthwest());
+        add(Box.createGlue(),             new Constraints(2, 5).weight(1, 1));
 
         show(line);
     }
@@ -43,16 +50,20 @@ public class LinePanel extends JPanel {
         this.line = line;
 
         if (line == null) {
-            titledBorder.setTitle("Line");
-            startLabel  .setText ("N/A");
-            endLabel    .setText ("N/A");
-            flagsLabel  .setText ("N/A");
+            titledBorder  .setTitle("Line");
+            startLabel    .setText ("N/A");
+            endLabel      .setText ("N/A");
+            flagsLabel    .setText ("N/A");
+            leftSideLabel .setText ("N/A");
+            rightSideLabel.setText ("N/A");
         }
         else {
-            titledBorder.setTitle("Line #" + line.getNumber());
-            startLabel  .setText (line.getStart().toString());
-            endLabel    .setText (line.getEnd  ().toString());
-            flagsLabel  .setText (String.format("0x%04X", line.getFlags()));
+            titledBorder  .setTitle("Line #" + line.getNumber());
+            startLabel    .setText (line.getStart().toString());
+            endLabel      .setText (line.getEnd  ().toString());
+            flagsLabel    .setText (String.format("0x%04X", line.getFlags()));
+            leftSideLabel .setText (line.getLeftSide () == null ? "-" : "#" + line.getLeftSide ().getNumber());
+            rightSideLabel.setText (line.getRightSide() == null ? "-" : "#" + line.getRightSide().getNumber());
         }
 
         repaint();
