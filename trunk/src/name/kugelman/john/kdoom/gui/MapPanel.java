@@ -34,14 +34,23 @@ public class MapPanel extends JPanel {
         graphics.setColor(Color.WHITE);
         graphics.fillRect(0, 0, getSize().width, getSize().height);
 
-        Collection<Line> closestLines = getClosestLines();
-        Sector           activeSector = getActiveSector();
+        Collection<Line>   closestLines  = getClosestLines();
+        Collection<Sector> activeSectors = getActiveSectors();
         
         for (Line line: level.lines()) {
+            boolean isInActiveSector = false;
+
+            for (Sector sector: activeSectors) {
+                if (sector.containsLine(line)) {
+                    isInActiveSector = true;
+                    break;
+                }
+            }
+
             if (closestLines.contains(line)) {
                 graphics.setColor(Color.YELLOW.darker());
             }
-            else if (activeSector != null && activeSector.containsLine(line)) {
+            else if (isInActiveSector) {
                 graphics.setColor(Color.MAGENTA);
             }
             else if (line.isSecret()) {
@@ -97,14 +106,14 @@ public class MapPanel extends JPanel {
         return level.getLinesClosestTo(mapX(mousePosition.x), mapY(mousePosition.y));
     }
 
-    private Sector getActiveSector() {
+    private Collection<Sector> getActiveSectors() {
         Point mousePosition = getMousePosition();
 
         if (mousePosition == null) {
-            return null;
+            return Collections.<Sector>emptyList();
         }
 
-        return level.getSectorContaining(mapX(mousePosition.x), mapY(mousePosition.y));
+        return level.getSectorsContaining(mapX(mousePosition.x), mapY(mousePosition.y));
     }
 
 
