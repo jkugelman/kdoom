@@ -5,14 +5,16 @@ import java.nio.*;
 import java.util.*;
 
 public class Wad {
+    File             path;
     RandomAccessFile file;
 
     private boolean    isComplete;
     private int        directoryOffset;
     private List<Lump> lumps;
 
-    public Wad(File file) throws IOException {
-        this.file = new RandomAccessFile(file, "r");
+    public Wad(File path) throws IOException {
+        this.path = path;
+        this.file = new RandomAccessFile(path, "r");
 
         readHeader   ();
         readDirectory();
@@ -62,15 +64,20 @@ public class Wad {
 
             int    lumpOffset = buffer.getInt();
             int    lumpSize   = buffer.getInt();
-            String lumpName;
-
-            buffer.get(nameBytes);
-            lumpName = new String(nameBytes, "ISO-8859-1").trim();
-
-            System.out.printf("Lump %d:\t%s at offset %d, size %d%n", i, lumpName, lumpOffset, lumpSize);
+                                buffer.get(nameBytes);
+            String lumpName   = new String(nameBytes, "ISO-8859-1").trim();
 
             lumps.set(i, new Lump(this, i, lumpOffset, lumpSize, lumpName));
         }
+    }
+
+
+    public File getFile() {
+        return path;
+    }
+
+    public String getName() {
+        return path.toString();
     }
 
     public boolean isComplete() {

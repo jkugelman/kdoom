@@ -11,15 +11,37 @@ public class TexturePanel extends JPanel {
     private Texture texture;
     private Palette palette;
 
+    public TexturePanel(Palette palette) {
+        this(null, palette);
+    }
+
     public TexturePanel(Texture texture, Palette palette) {
-        this.texture = texture;
         this.palette = palette;
 
-        setPreferredSize(texture.getSize());
+        setPreferredSize(new Dimension(128, 128));
+        show(texture);
+    }
+
+    public void show(Texture texture) {
+        this.texture = texture;
+        
+        if (texture == null) {
+            setSize(0, 0);
+        }
+        else {
+            setSize(texture.getSize().width, texture.getSize().height);
+        }
+
+        revalidate();
+        repaint();
     }
 
     @Override
     public void paint(Graphics graphics) {
+        if (texture == null) {
+            return;
+        }
+    
         graphics.drawImage(createImage(texture.getImageProducer(palette)), 0, 0, Color.CYAN, this);
     }
 }
