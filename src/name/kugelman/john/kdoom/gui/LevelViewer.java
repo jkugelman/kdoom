@@ -17,6 +17,7 @@ public class LevelViewer extends JFrame {
     private SectorPanel sectorPanel;
     private LinePanel   linePanel;
     private SidePanel   sidePanel;
+    private ThingPanel  thingPanel;
 
     public LevelViewer(Level level, Palette palette) {
         super("KDOOM - " + level.getWad().getName() + " - " + level.getName());
@@ -27,6 +28,7 @@ public class LevelViewer extends JFrame {
         this.sectorPanel = new SectorPanel(palette);
         this.linePanel   = new LinePanel  ();
         this.sidePanel   = new SidePanel  (palette);
+        this.thingPanel  = new ThingPanel (palette);
 
         levelPanel.addSelectionListener(new LevelPanel.SelectionListener() {
             public void lineSelected(Line line, Side side) {
@@ -36,6 +38,10 @@ public class LevelViewer extends JFrame {
 
             public void sectorSelected(Sector sector) {
                 sectorPanel.show(sector);
+            }
+
+            public void thingSelected(Thing thing) {
+                thingPanel.show(thing);
             }
         });
 
@@ -47,6 +53,7 @@ public class LevelViewer extends JFrame {
         add(sectorPanel,      new Constraints(1, 0).fillHorizontal());
         add(linePanel,        new Constraints(1, 1).fillHorizontal());
         add(sidePanel,        new Constraints(1, 2).fillHorizontal());
+        add(thingPanel,       new Constraints(2, 0).height(3).anchorNorthwest());
 
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         

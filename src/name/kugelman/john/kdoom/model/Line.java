@@ -10,7 +10,7 @@ public class Line {
     private double  slope;
     private int     leftSign;
     
-    public Line(short number, Vertex start, Vertex end, Side leftSide, Side rightSide, short flags) {
+    Line(short number, Vertex start, Vertex end, Side leftSide, Side rightSide, short flags) {
         this.number     = number;
         this.start      = start;
         this.end        = end;
@@ -65,42 +65,34 @@ public class Line {
         return start.distanceTo(end);
     }
 
-    public double distanceTo(Vertex vertex) {
+    public double distanceTo(Location location) {
         // See http://www.codeguru.com/forum/printthread.php?t=194400
-        double rNumerator   = (vertex.getX() - start.getX()) * xDiff
-                            + (vertex.getY() - start.getY()) * yDiff;
+        double rNumerator   = (location.getX() - start.getX()) * xDiff
+                            + (location.getY() - start.getY()) * yDiff;
         double rDenominator = xDiff * xDiff + yDiff * yDiff;
         double r            = rNumerator / rDenominator;
 
         if (r >= 0 && r <= 1) {
-            return Math.abs(xDiff * (start.getY() - vertex.getY())
-                          - yDiff * (start.getX() - vertex.getX())) 
+            return Math.abs(xDiff * (start.getY() - location.getY())
+                          - yDiff * (start.getX() - location.getX())) 
                  / Math.sqrt(rDenominator);
         }
         else {
-            return Math.min(vertex.distanceTo(start), vertex.distanceTo(end));
+            return Math.min(location.distanceTo(start), location.distanceTo(end));
         }
     }
 
-    public double distanceTo(short x, short y) {
-        return distanceTo(new Vertex(x, y));
-    }
-
-    public Side sideClosestTo(Vertex vertex) {
+    public Side sideClosestTo(Location location) {
         if (leftSide  == null) return rightSide;
         if (rightSide == null) return leftSide;
 
-        return sideFacing(vertex);
+        return sideFacing(location);
     }
 
-    public Side sideClosestTo(short x, short y) {
-        return sideClosestTo(new Vertex(x, y));
-    }
-
-    public Side sideFacing(Vertex vertex) {
+    public Side sideFacing(Location location) {
         // See http://mathforum.org/library/drmath/view/54823.html
-        int sign = (int) Math.signum((vertex.getY() - start.getY())
-                           - slope * (vertex.getX() - start.getX()));
+        int sign = (int) Math.signum((location.getY() - start.getY())
+                           - slope * (location.getX() - start.getX()));
 
         // Vertex is on line, neither side is facing.
         if (sign == 0) {
@@ -108,10 +100,6 @@ public class Line {
         }
 
         return sign == leftSign ? leftSide : rightSide;
-    }
-
-    public Side sideFacing(short x, short y) {
-        return sideFacing(new Vertex(x, y));
     }
 
     

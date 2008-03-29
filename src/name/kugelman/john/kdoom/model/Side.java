@@ -6,9 +6,9 @@ public class Side {
     private Texture upperTexture, lowerTexture, middleTexture;
     private Sector  sector;
 
-    public Side(short number, short xOffset, short yOffset,
-                Texture upperTexture, Texture lowerTexture, Texture middleTexture,
-                Sector sector)
+    Side(short number, short xOffset, short yOffset,
+         Texture upperTexture, Texture lowerTexture, Texture middleTexture,
+         Sector sector)
     {
         this.number        = number;
         this.xOffset       = xOffset;

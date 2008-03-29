@@ -65,7 +65,7 @@ public class Level {
             short type  = buffer.get();
             short flags = buffer.get();
 
-            things.add(new Thing(x, y, angle));
+            things.add(new Thing((short) things.size(), new Location(x, y), angle, type, flags));
 
             if (x < minX) minX = x;
             if (y < minY) minY = y;
@@ -87,7 +87,7 @@ public class Level {
             short x = buffer.get();
             short y = buffer.get();
 
-            vertices.add(new Vertex(x, y));
+            vertices.add(new Vertex((short) vertices.size(), x, y));
 
             if (x < minX) minX = x;
             if (y < minY) minY = y;
@@ -217,49 +217,39 @@ public class Level {
     public short getMaxY() { return maxY; }
 
 
-    public Collection<Line> getLinesClosestTo(Vertex vertex) {
-        return getLinesClosestTo(vertex.getX(), vertex.getY());
+    public Collection<Line> getLinesClosestTo(Location location) {
+        return getLinesClosestTo(location, Double.POSITIVE_INFINITY);
     }
 
-    public Collection<Line> getLinesClosestTo(short x, short y) {
-        return getLinesClosestTo(x, y, Double.MAX_VALUE);
-    }
-
-    public Collection<Line> getLinesClosestTo(Vertex vertex, double maximumDistance) {
-        return getLinesClosestTo(vertex.getX(), vertex.getY(), maximumDistance);
-    }
-
-    public Collection<Line> getLinesClosestTo(short x, short y, double maximumDistance) {
-        List<Line> closestLines = new ArrayList<Line>();
+    public Collection<Line> getLinesClosestTo(Location location, double maximumDistance) {
+        List<Line> closestLines    = new ArrayList<Line>();
         double     closestDistance = maximumDistance;
-                        
-        for (Line line: lines) {
-            double distance = line.distanceTo(x, y);
 
-            if (distance > closestDistance) {
-                continue;
+        if (location != null) {
+            for (Line line: lines) {
+                double distance = line.distanceTo(location);
+
+                if (distance > closestDistance) {
+                    continue;
+                }
+
+                if (distance < closestDistance) {
+                    closestLines.clear();
+                    closestDistance = distance;
+                }
+
+                closestLines.add(line);
             }
-
-            if (distance < closestDistance) {
-                closestLines.clear();
-                closestDistance = distance;
-            }
-
-            closestLines.add(line);
         }
 
         return closestLines;
     }
 
-    public Collection<Sector> getSectorsContaining(Vertex vertex) {
-        return getSectorsContaining(vertex.getX(), vertex.getY());
-    }
-
-    public Collection<Sector> getSectorsContaining(short x, short y) {
+    public Collection<Sector> getSectorsContaining(Location location) {
         Collection<Sector> sectors = new ArrayList<Sector>();
         
-        for (Line line: getLinesClosestTo(x, y)) {
-            Side facingSide = line.sideFacing(x, y);
+        for (Line line: getLinesClosestTo(location)) {
+            Side facingSide = line.sideFacing(location);
 
             if (facingSide != null && facingSide.getSector() != null) {
                 sectors.add(facingSide.getSector());
@@ -267,5 +257,33 @@ public class Level {
         }
 
         return sectors; 
+    }
+
+    public Collection<Thing> getThingsClosestTo(Location location) {
+        return getThingsClosestTo(location, Double.POSITIVE_INFINITY);
+    }
+
+    public Collection<Thing> getThingsClosestTo(Location location, double maximumDistance) {
+        List<Thing> closestThings   = new ArrayList<Thing>();
+        double      closestDistance = maximumDistance;
+
+        if (location != null) {
+            for (Thing thing: things) {
+                double distance = location.distanceTo(thing.getLocation());
+
+                if (distance > closestDistance) {
+                    continue;
+                }
+
+                if (distance < closestDistance) {
+                    closestThings.clear();
+                    closestDistance = distance;
+                }
+
+                closestThings.add(thing);
+            }
+        }
+
+        return closestThings;
     }
 }

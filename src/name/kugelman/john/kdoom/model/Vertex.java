@@ -1,33 +1,15 @@
 package name.kugelman.john.kdoom.model;
 
-public class Vertex {
-    private short x, y;
+public class Vertex extends Location {
+    private short number;
 
-    public Vertex(short x, short y) {
-        this.x = x;
-        this.y = y;
-    }
-
-
-    public short getX() {
-        return x;
-    }
-
-    public short getY() {
-        return y;
-    }
-
-
-    public double distanceTo(Vertex vertex) {
-        int xDiff = x - vertex.x;
-        int yDiff = y - vertex.y;
+    Vertex(short number, short x, short y) {
+        super(x, y);
         
-        return Math.sqrt(xDiff * xDiff + yDiff * yDiff);
+        this.number = number;
     }
 
-
-    @Override
-    public String toString() {
-        return String.format("(%d,%d)", x, y);
+    public short getNumber() {
+        return number;
     }
 }
