@@ -12,6 +12,7 @@ public class SidePanel extends JPanel {
     private Side side;
 
     private JLabel       xOffsetLabel, yOffsetLabel;
+    private JLabel       upperTextureLabel, middleTextureLabel, lowerTextureLabel;
     private TexturePanel upperTexturePanel, middleTexturePanel, lowerTexturePanel;
     private TitledBorder titledBorder;
 
@@ -23,8 +24,11 @@ public class SidePanel extends JPanel {
         titledBorder       = new TitledBorder("");
         xOffsetLabel       = new JLabel();
         yOffsetLabel       = new JLabel();
+        upperTextureLabel  = new JLabel();
         upperTexturePanel  = new TexturePanel(palette);
+        middleTextureLabel = new JLabel();
         middleTexturePanel = new TexturePanel(palette);
+        lowerTextureLabel  = new JLabel();
         lowerTexturePanel  = new TexturePanel(palette);
 
         setBorder(titledBorder);
@@ -34,13 +38,16 @@ public class SidePanel extends JPanel {
         add(xOffsetLabel,                   new Constraints(1, 0).anchorNorthwest());
         add(new JLabel("Y offset: "),       new Constraints(0, 1).anchorNortheast());
         add(yOffsetLabel,                   new Constraints(1, 1).anchorNorthwest());
-        add(new JLabel("Upper texture: "),  new Constraints(0, 2).anchorNortheast());
-        add(upperTexturePanel,              new Constraints(1, 2).anchorNorthwest());
-        add(new JLabel("Middle texture: "), new Constraints(0, 3).anchorNortheast());
-        add(middleTexturePanel,             new Constraints(1, 3).anchorNorthwest());
-        add(new JLabel("Lower texture: "),  new Constraints(0, 4).anchorNortheast());
-        add(lowerTexturePanel,              new Constraints(1, 4).anchorNorthwest());
-        add(Box.createGlue(),               new Constraints(2, 5).weight(1, 1));
+        add(new JLabel("Upper texture: "),  new Constraints(0, 2).anchorNortheast().height(2));
+        add(upperTextureLabel,              new Constraints(1, 2).anchorNorthwest());
+        add(upperTexturePanel,              new Constraints(1, 3).anchorNorthwest());
+        add(new JLabel("Middle texture: "), new Constraints(0, 4).anchorNortheast().height(2));
+        add(middleTextureLabel,             new Constraints(1, 4).anchorNorthwest());
+        add(middleTexturePanel,             new Constraints(1, 5).anchorNorthwest());
+        add(new JLabel("Lower texture: "),  new Constraints(0, 6).anchorNortheast().height(2));
+        add(lowerTextureLabel,              new Constraints(1, 6).anchorNorthwest());
+        add(lowerTexturePanel,              new Constraints(1, 7).anchorNorthwest());
+        add(Box.createGlue(),               new Constraints(2, 8).weight(1, 1));
 
         show(side);
     }
@@ -49,24 +56,30 @@ public class SidePanel extends JPanel {
         this.side = side;
 
         if (side == null) {
-            titledBorder.setTitle("Side");
+            titledBorder      .setTitle("Side");
 
-            xOffsetLabel.setText("N/A");
-            yOffsetLabel.setText("N/A");
+            xOffsetLabel      .setText ("N/A");
+            yOffsetLabel      .setText ("N/A");
                     
-            upperTexturePanel .show(null);
-            middleTexturePanel.show(null);
-            lowerTexturePanel .show(null);
+            upperTextureLabel .setText ("N/A");
+            upperTexturePanel .show    (null);
+            middleTextureLabel.setText ("N/A");
+            middleTexturePanel.show    (null);
+            lowerTextureLabel .setText ("N/A");
+            lowerTexturePanel .show    (null);
         }
         else {
-            titledBorder.setTitle("Side #" + side.getNumber());
+            titledBorder      .setTitle("Side #" + side.getNumber());
 
-            xOffsetLabel.setText("" + side.getXOffset());
-            yOffsetLabel.setText("" + side.getYOffset());
+            xOffsetLabel      .setText ("" + side.getXOffset());
+            yOffsetLabel      .setText ("" + side.getYOffset());
             
-            upperTexturePanel .show(side.getUpperTexture ());
-            middleTexturePanel.show(side.getMiddleTexture());
-            lowerTexturePanel .show(side.getLowerTexture ());
+            upperTextureLabel .setText (side.getUpperTexture () == null ? "-" : side.getUpperTexture ().getName());
+            upperTexturePanel .show    (side.getUpperTexture ());
+            middleTextureLabel.setText (side.getMiddleTexture() == null ? "-" : side.getMiddleTexture().getName());
+            middleTexturePanel.show    (side.getMiddleTexture());
+            lowerTextureLabel .setText (side.getLowerTexture () == null ? "-" : side.getLowerTexture ().getName());
+            lowerTexturePanel .show    (side.getLowerTexture ());
         }
 
         repaint();

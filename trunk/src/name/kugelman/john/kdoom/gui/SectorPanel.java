@@ -13,6 +13,7 @@ public class SectorPanel extends JPanel {
 
     private TitledBorder titledBorder;
     private JLabel       floorHeightLabel, ceilingHeightLabel;
+    private JLabel       floorFlatLabel,   ceilingFlatLabel;
     private FlatPanel    floorFlatPanel,   ceilingFlatPanel;
 
     public SectorPanel(Palette palette) {
@@ -23,7 +24,9 @@ public class SectorPanel extends JPanel {
         titledBorder       = new TitledBorder("");
         floorHeightLabel   = new JLabel();
         ceilingHeightLabel = new JLabel();
+        floorFlatLabel     = new JLabel();
         floorFlatPanel     = new FlatPanel(palette);
+        ceilingFlatLabel   = new JLabel();
         ceilingFlatPanel   = new FlatPanel(palette);
 
         setBorder(titledBorder);
@@ -33,11 +36,13 @@ public class SectorPanel extends JPanel {
         add(floorHeightLabel,               new Constraints(1, 0).anchorNorthwest());
         add(new JLabel("Ceiling height: "), new Constraints(0, 1).anchorNortheast());
         add(ceilingHeightLabel,             new Constraints(1, 1).anchorNorthwest());
-        add(new JLabel("Floor flat: "),     new Constraints(0, 2).anchorNortheast());
-        add(floorFlatPanel,                 new Constraints(1, 2).anchorNorthwest());
-        add(new JLabel("Ceiling flat: "),   new Constraints(0, 3).anchorNortheast());
-        add(ceilingFlatPanel,               new Constraints(1, 3).anchorNorthwest());
-        add(Box.createGlue(),               new Constraints(2, 4).weight(1, 1));
+        add(new JLabel("Floor flat: "),     new Constraints(0, 2).anchorNortheast().height(2));
+        add(floorFlatLabel,                 new Constraints(1, 2).anchorNorthwest());
+        add(floorFlatPanel,                 new Constraints(1, 3).anchorNorthwest());
+        add(new JLabel("Ceiling flat: "),   new Constraints(0, 4).anchorNortheast().height(2));
+        add(ceilingFlatLabel,               new Constraints(1, 4).anchorNorthwest());
+        add(ceilingFlatPanel,               new Constraints(1, 5).anchorNorthwest());
+        add(Box.createGlue(),               new Constraints(2, 6).weight(1, 1));
 
         show(sector);
     }
@@ -50,9 +55,10 @@ public class SectorPanel extends JPanel {
 
             floorHeightLabel  .setText("N/A");
             ceilingHeightLabel.setText("N/A");
-        
-            floorFlatPanel  .show(null);
-            ceilingFlatPanel.show(null);
+            floorFlatLabel    .setText("N/A");
+            floorFlatPanel    .show   (null);
+            ceilingFlatLabel  .setText("N/A");
+            ceilingFlatPanel  .show   (null);
         }
         else {
             titledBorder.setTitle("Sector #" + sector.getNumber());
@@ -60,8 +66,10 @@ public class SectorPanel extends JPanel {
             floorHeightLabel  .setText("" + sector.getFloorHeight  ());
             ceilingHeightLabel.setText("" + sector.getCeilingHeight());
         
-            floorFlatPanel  .show(sector.getFloorFlat  ());
-            ceilingFlatPanel.show(sector.getCeilingFlat());
+            floorFlatLabel    .setText(sector.getFloorFlat  () == null ? "-" : sector.getFloorFlat  ().getName());
+            floorFlatPanel    .show   (sector.getFloorFlat  ());
+            ceilingFlatLabel  .setText(sector.getCeilingFlat() == null ? "-" : sector.getCeilingFlat().getName());
+            ceilingFlatPanel  .show   (sector.getCeilingFlat());
         }
 
         repaint();
