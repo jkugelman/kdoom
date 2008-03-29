@@ -44,7 +44,7 @@ public class ThingPanel extends JPanel {
 
         show(thing);
         
-        setPreferredSize(new Dimension(200, getPreferredSize().height));
+        setPreferredSize(new Dimension(300, getPreferredSize().height));
     }
 
     public void show(Thing thing) {
