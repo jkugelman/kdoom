@@ -86,11 +86,18 @@ public class Line {
         return distanceTo(new Vertex(x, y));
     }
 
-    public Side sideFacing(Vertex vertex) {
-        // If the line is one-sided then just return that side.
+    public Side sideClosestTo(Vertex vertex) {
         if (leftSide  == null) return rightSide;
         if (rightSide == null) return leftSide;
 
+        return sideFacing(vertex);
+    }
+
+    public Side sideClosestTo(short x, short y) {
+        return sideClosestTo(new Vertex(x, y));
+    }
+
+    public Side sideFacing(Vertex vertex) {
         // See http://mathforum.org/library/drmath/view/54823.html
         int sign = (int) Math.signum((vertex.getY() - start.getY())
                            - slope * (vertex.getX() - start.getX()));
