@@ -10,7 +10,9 @@ public class Level {
     private String       name;
     private List<Thing>  things;
     private List<Vertex> vertices;
+    private List<Side>   sides;
     private List<Line>   lines;
+    private List<Sector> sectors;
     private short        minX, minY, maxX, maxY;
 
     public Level(Wad wad, String name) throws IllegalArgumentException, IOException {
@@ -26,6 +28,8 @@ public class Level {
         readName    (wad.lumps().get(nameLump.getIndex() + 0));
         readThings  (wad.lumps().get(nameLump.getIndex() + 1));
         readVertices(wad.lumps().get(nameLump.getIndex() + 4));
+        readSectors (wad.lumps().get(nameLump.getIndex() + 8));
+        readSides   (wad.lumps().get(nameLump.getIndex() + 3));
         readLines   (wad.lumps().get(nameLump.getIndex() + 2));
     }
 
@@ -80,6 +84,32 @@ public class Level {
         }
     }
 
+    private void readSectors(Lump lump) throws IOException {
+        if (!lump.getName().equals("SECTORS")) {
+            throw new IOException(name + " has no SECTORS.");
+        }
+
+        ByteBuffer buffer       = lump.getData();
+        byte[]     floorBytes   = new byte[8];
+        byte[]     ceilingBytes = new byte[8];
+
+        sectors = new ArrayList<Sector>();
+
+        while (buffer.hasRemaining()) {
+            short  floorHeight    = buffer.getShort();
+            short  ceilingHeight  = buffer.getShort(); 
+                                    buffer.get(floorBytes);
+                                    buffer.get(ceilingBytes);
+            String floorFlat      = new String(floorBytes,   "ISO-8859-1").trim();
+            String ceilingFlat    = new String(ceilingBytes, "ISO-8859-1").trim();
+            short  lightLevel     = buffer.getShort();
+            short  type           = buffer.getShort();
+            short  tagNumber      = buffer.getShort();
+
+            sectors.add(new Sector(floorHeight, ceilingHeight, lightLevel, type, tagNumber));
+        }
+    }
+
     private void readLines(Lump lump) throws IOException {
         if (!lump.getName().equals("LINEDEFS")) {
             throw new IOException(name + " has no LINEDEFS.");
@@ -95,10 +125,47 @@ public class Level {
             short  flags       = buffer.get();
             short  specialType = buffer.get();
             short  sectorTag   = buffer.get();
-            short  rightSide   = buffer.get();
-            short  leftSide    = buffer.get();
+            short  right       = buffer.get();
+            short  left        = buffer.get();
 
-            lines.add(new Line(start, end, (flags & 0x0020) != 0, (flags & 0x0004) != 0));
+            Side   leftSide    = left  < 0 ? null : sides.get(left);
+            Side   rightSide   = right < 0 ? null : sides.get(right);
+
+            lines.add(new Line(start, end, leftSide, rightSide, (flags & 0x0020) != 0, (flags & 0x0004) != 0));
+        }
+    }
+
+    private void readSides(Lump lump) throws IOException {
+        if (!lump.getName().equals("SIDEDEFS")) {
+            throw new IOException(name + " has no SIDEDEFS.");
+        }
+
+        ByteBuffer buffer      = lump.getData();
+        byte[]     upperBytes  = new byte[8];
+        byte[]     lowerBytes  = new byte[8];
+        byte[]     middleBytes = new byte[8];
+
+        sides = new ArrayList<Side>();
+
+        while (buffer.hasRemaining()) {
+            short xOffset      = buffer.getShort();
+            short yOffset      = buffer.getShort();
+                                 buffer.get(upperBytes);
+                                 buffer.get(lowerBytes);
+                                 buffer.get(middleBytes);
+            int sectorNumber   = buffer.getShort() & 0xFFFF;
+
+            if (sectorNumber >= sectors.size()) {
+                System.err.println("SIDEDEF " + sides.size() + " has reference to non-existent SECTOR " + sectorNumber);
+                sectorNumber = 0;
+            }
+
+            String upperName   = new String(upperBytes,  "ISO-8859-1").trim();
+            String lowerName   = new String(lowerBytes,  "ISO-8859-1").trim();
+            String middleName  = new String(middleBytes, "ISO-8859-1").trim();
+            Sector sector      = sectors.get(sectorNumber);
+
+            sides.add(new Side(xOffset, yOffset, sector));
         }
     }
 
@@ -119,6 +186,14 @@ public class Level {
         return Collections.unmodifiableList(lines);
     }
 
+    public List<Side> sides() {
+        return Collections.unmodifiableList(sides);
+    }
+
+    public List<Sector> sectors() {
+        return Collections.unmodifiableList(sectors);
+    }
+
 
     public short getMinX() { return minX; }
     public short getMinY() { return minY; }
@@ -126,31 +201,49 @@ public class Level {
     public short getMaxY() { return maxY; }
 
 
-    public Line getLineClosestTo(Vertex vertex) {
-        return getLineClosestTo(vertex.getX(), vertex.getY());
+    public Collection<Line> getLinesClosestTo(Vertex vertex) {
+        return getLinesClosestTo(vertex.getX(), vertex.getY());
     }
 
-    public Line getLineClosestTo(short x, short y) {
-        return getLineClosestTo(x, y, Double.MAX_VALUE);
+    public Collection<Line> getLinesClosestTo(short x, short y) {
+        return getLinesClosestTo(x, y, Double.MAX_VALUE);
     }
 
-    public Line getLineClosestTo(Vertex vertex, double maximumDistance) {
-        return getLineClosestTo(vertex.getX(), vertex.getY(), maximumDistance);
+    public Collection<Line> getLinesClosestTo(Vertex vertex, double maximumDistance) {
+        return getLinesClosestTo(vertex.getX(), vertex.getY(), maximumDistance);
     }
 
-    public Line getLineClosestTo(short x, short y, double maximumDistance) {
-        Line   closestLine     = null;
-        double closestDistance = maximumDistance;
+    public Collection<Line> getLinesClosestTo(short x, short y, double maximumDistance) {
+        List<Line> closestLines = new ArrayList<Line>();
+        double     closestDistance = maximumDistance;
                         
         for (Line line: lines) {
             double distance = line.distanceTo(x, y);
 
+            if (distance > closestDistance) {
+                continue;
+            }
+
             if (distance < closestDistance) {
-                closestLine     = line;
+                closestLines.clear();
                 closestDistance = distance;
+            }
+
+            closestLines.add(line);
+        }
+
+        return closestLines;
+    }
+
+    public Sector getSectorContaining(short x, short y) {
+        for (Line line: getLinesClosestTo(x, y)) {
+            Side facingSide = line.sideFacing(x, y);
+
+            if (facingSide != null && facingSide.getSector() != null) {
+                return facingSide.getSector();
             }
         }
 
-        return closestLine;
+        return null; 
     }
 }

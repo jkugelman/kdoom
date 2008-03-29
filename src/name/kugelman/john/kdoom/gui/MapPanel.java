@@ -3,6 +3,7 @@ package name.kugelman.john.kdoom.gui;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
+import java.util.*;
 import javax.swing.*;
 
 import name.kugelman.john.kdoom.file.*;
@@ -33,11 +34,15 @@ public class MapPanel extends JPanel {
         graphics.setColor(Color.WHITE);
         graphics.fillRect(0, 0, getSize().width, getSize().height);
 
-        Line closestLine = getClosestLine();
+        Collection<Line> closestLines = getClosestLines();
+        Sector           activeSector = getActiveSector();
         
         for (Line line: level.lines()) {
-            if (line == closestLine) {
+            if (closestLines.contains(line)) {
                 graphics.setColor(Color.YELLOW.darker());
+            }
+            else if (activeSector != null && activeSector.containsLine(line)) {
+                graphics.setColor(Color.MAGENTA);
             }
             else if (line.isSecret()) {
                 graphics.setColor(Color.GREEN);
@@ -82,14 +87,24 @@ public class MapPanel extends JPanel {
         return (short) (level.getMaxY() - (y - 1) * SCALE);
     }
 
-    private Line getClosestLine() {
+    private Collection<Line> getClosestLines() {
+        Point mousePosition = getMousePosition();
+
+        if (mousePosition == null) {
+            return Collections.<Line>emptyList();
+        }
+
+        return level.getLinesClosestTo(mapX(mousePosition.x), mapY(mousePosition.y));
+    }
+
+    private Sector getActiveSector() {
         Point mousePosition = getMousePosition();
 
         if (mousePosition == null) {
             return null;
         }
 
-        return level.getLineClosestTo(mapX(mousePosition.x), mapY(mousePosition.y), 64);
+        return level.getSectorContaining(mapX(mousePosition.x), mapY(mousePosition.y));
     }
 
 
