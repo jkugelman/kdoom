@@ -43,11 +43,10 @@ public class LevelViewer extends JFrame {
         levelScrollPane.setPreferredSize(new Dimension(800, 800));
 
         setLayout(new GridBagLayout());
-        add(levelScrollPane,  new Constraints(0, 0).height(4));
+        add(levelScrollPane,  new Constraints(0, 0).height(4).weight(1, 1).fillBoth());
         add(sectorPanel,      new Constraints(1, 0).fillHorizontal());
         add(linePanel,        new Constraints(1, 1).fillHorizontal());
         add(sidePanel,        new Constraints(1, 2).fillHorizontal());
-        add(Box.createGlue(), new Constraints(2, 3).weight(1, 1));
 
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         
