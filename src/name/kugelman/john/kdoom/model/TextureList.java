@@ -9,13 +9,13 @@ import java.util.List;
 
 import name.kugelman.john.kdoom.file.*;
 
-public class TextureList extends AbstractList<Texture> {
-    List<Texture> textures;
+public class TextureList extends AbstractMap<String, Texture> implements SortedMap<String, Texture> {
+    SortedMap<String, Texture> textures;
 
     public TextureList(Wad wad) throws IOException {
         PatchList patchList = new PatchList(wad);
 
-        this.textures = new ArrayList<Texture>();
+        this.textures = new TreeMap<String, Texture>();
         
         readTextures(wad.getLump   ("TEXTURE1"), patchList);
         readTextures(wad.lookupLump("TEXTURE2"), patchList);
@@ -59,18 +59,42 @@ public class TextureList extends AbstractList<Texture> {
                 texture.addPatch(patch, new Point(x, y));
             }
 
-            textures.add(texture);
+            textures.put(name, texture);
         }
     }
 
 
-    @Override
-    public int size() {
-        return textures.size();
-    }
+    // Implementation of AbstractMap
 
     @Override
-    public Texture get(int index) throws IndexOutOfBoundsException {
-        return textures.get(index);
+    public Set<Map.Entry<String, Texture>> entrySet() {
+        return textures.entrySet();
+    }
+
+
+    // Implementation of SortedMap
+    
+    public Comparator<? super String> comparator() {
+        return textures.comparator();
+    }
+
+    public String firstKey() {
+        return textures.firstKey();
+    }
+
+    public String lastKey() {
+        return textures.lastKey();
+    }
+
+    public SortedMap<String, Texture> headMap(String toKey) {
+        return textures.headMap(toKey);
+    }
+                   
+    public SortedMap<String, Texture> subMap(String fromKey, String toKey) {
+        return textures.subMap(fromKey, toKey);
+    }
+                           
+    public SortedMap<String, Texture> tailMap(String fromKey) {
+        return textures.tailMap(fromKey);
     }
 }
