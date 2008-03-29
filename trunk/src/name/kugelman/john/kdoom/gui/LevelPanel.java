@@ -14,6 +14,7 @@ public class LevelPanel extends JPanel {
     public interface SelectionListener extends EventListener {
         void lineSelected  (Line line, Side side);
         void sectorSelected(Sector sector);
+        void thingSelected (Thing thing);
     }
 
     private Level level;
@@ -88,15 +89,18 @@ public class LevelPanel extends JPanel {
             return;
         }
 
-        Collection<Line>   closestLines  = getClosestLines();
-        Collection<Sector> activeSectors = getActiveSectors();
-        Sector             activeSector  = activeSectors.isEmpty() ? null : activeSectors.iterator().next();
+        Collection<Line>   closestLines  = level.getLinesClosestTo   (mouseLocation(), 32);
+        Collection<Sector> activeSectors = level.getSectorsContaining(mouseLocation());
+        Collection<Thing>  closestThings = level.getThingsClosestTo  (mouseLocation(), 32);
         Line               closestLine   = closestLines .isEmpty() ? null : closestLines .iterator().next();
-        Side               closestSide   = closestLine == null     ? null : closestLine.sideFacing(mouseX(), mouseY());
+        Side               closestSide   = closestLine == null     ? null : closestLine.sideFacing(mouseLocation());
+        Sector             activeSector  = activeSectors.isEmpty() ? null : activeSectors.iterator().next();
+        Thing              closestThing  = closestThings.isEmpty() ? null : closestThings.iterator().next();
 
         for (SelectionListener selectionListener: selectionListeners) {
             selectionListener.lineSelected  (closestLine, closestSide);
             selectionListener.sectorSelected(activeSector);
+            selectionListener.thingSelected (closestThing);
         }
 
         for (Line line: level.lines()) {
@@ -135,10 +139,9 @@ public class LevelPanel extends JPanel {
             graphics.fillRect(screenX(vertex.getX()) - 1, screenY(vertex.getY()) - 1, 3, 3);
         }
 
-        graphics.setColor(Color.RED);
-
         for (Thing thing: level.things()) {
-            graphics.drawOval(screenX(thing.getX()) - 2, screenY(thing.getY()) - 2, 5, 5);
+            graphics.setColor(closestThings.contains(thing) ? Color.GREEN : Color.RED);
+            graphics.drawOval(screenX(thing.getLocation().getX()) - 2, screenY(thing.getLocation().getY()) - 2, 5, 5);
         }
     }
 
@@ -150,39 +153,14 @@ public class LevelPanel extends JPanel {
         return (level.getMaxY() - y) / scale + 1;
     }
 
-    private short mapX(int x) {
-        return (short) ((x - 1) * scale + level.getMinX());
-    }
-
-    private short mapY(int y) {
-        return (short) (level.getMaxY() - (y - 1) * scale);
-    }
-
-    private short mouseX() {
-        return mapX(getMousePosition().x);
-    }
-
-    private short mouseY() {
-        return mapY(getMousePosition().y);
-    }
-
-    private Collection<Line> getClosestLines() {
+    private Location mouseLocation() {
         Point mousePosition = getMousePosition();
 
         if (mousePosition == null) {
-            return Collections.<Line>emptyList();
+            return null;
         }
 
-        return level.getLinesClosestTo(mapX(mousePosition.x), mapY(mousePosition.y), 64);
-    }
-
-    private Collection<Sector> getActiveSectors() {
-        Point mousePosition = getMousePosition();
-
-        if (mousePosition == null) {
-            return Collections.<Sector>emptyList();
-        }
-
-        return level.getSectorsContaining(mapX(mousePosition.x), mapY(mousePosition.y));
+        return new Location((short) ((mousePosition.x - 1) * scale + level.getMinX()),
+                            (short) (level.getMaxY() - (mousePosition.y - 1) * scale));
     }
 }
