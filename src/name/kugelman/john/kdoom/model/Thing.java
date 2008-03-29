@@ -273,6 +273,19 @@ public class Thing {
         return details.kind;
     }
 
+    public boolean isDirectional() {
+        switch (details.kind) {
+            case PLAYER:
+            case MONSTER:
+            case SPECIAL:
+            case UNKNOWN:
+                return true;
+
+            default:
+                return false;
+        }
+    }
+
     public short getRadius() {
         return details.radius;
     }
