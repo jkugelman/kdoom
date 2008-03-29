@@ -12,7 +12,7 @@ public class LinePanel extends JPanel {
     private Line line;
 
     private JLabel       startLabel, endLabel;
-    private TexturePanel upperTexturePanel, middleTexturePanel, lowerTexturePanel;
+    private JLabel       flagsLabel;
     private TitledBorder titledBorder;
 
     public LinePanel() {
@@ -23,6 +23,7 @@ public class LinePanel extends JPanel {
         titledBorder = new TitledBorder("");
         startLabel   = new JLabel();
         endLabel     = new JLabel();
+        flagsLabel   = new JLabel();
 
         setBorder(titledBorder);
 
@@ -31,7 +32,9 @@ public class LinePanel extends JPanel {
         add(startLabel,                   new Constraints(1, 0).anchorNorthwest());
         add(new JLabel("End vertex: "),   new Constraints(0, 1).anchorNortheast());
         add(endLabel,                     new Constraints(1, 1).anchorNorthwest());
-        add(Box.createGlue(),             new Constraints(2, 2).weight(1, 1));
+        add(new JLabel("Flags: "),        new Constraints(0, 2).anchorNortheast());
+        add(flagsLabel,                   new Constraints(1, 2).anchorNorthwest());
+        add(Box.createGlue(),             new Constraints(2, 3).weight(1, 1));
 
         show(line);
     }
@@ -43,11 +46,13 @@ public class LinePanel extends JPanel {
             titledBorder.setTitle("Line");
             startLabel  .setText ("N/A");
             endLabel    .setText ("N/A");
+            flagsLabel  .setText ("N/A");
         }
         else {
             titledBorder.setTitle("Line #" + line.getNumber());
             startLabel  .setText (line.getStart().toString());
             endLabel    .setText (line.getEnd  ().toString());
+            flagsLabel  .setText (String.format("0x%04X", line.getFlags()));
         }
 
         repaint();
