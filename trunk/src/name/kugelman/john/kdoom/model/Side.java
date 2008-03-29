@@ -1,14 +1,16 @@
 package name.kugelman.john.kdoom.model;
 
 public class Side {
+    private short   number;
     private short   xOffset, yOffset;
     private Texture upperTexture, lowerTexture, middleTexture;
     private Sector  sector;
 
-    public Side(short xOffset, short yOffset,
+    public Side(short number, short xOffset, short yOffset,
                 Texture upperTexture, Texture lowerTexture, Texture middleTexture,
                 Sector sector)
     {
+        this.number        = number;
         this.xOffset       = xOffset;
         this.yOffset       = yOffset;
         this.upperTexture  = upperTexture;
@@ -19,6 +21,10 @@ public class Side {
         sector.sides.add(this);
     }
 
+
+    public short getNumber() {
+        return number;
+    }
 
     public short getXOffset() {
         return xOffset;

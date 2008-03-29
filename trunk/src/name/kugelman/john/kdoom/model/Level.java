@@ -118,7 +118,7 @@ public class Level {
             short  type           = buffer.getShort();
             short  tagNumber      = buffer.getShort();
 
-            sectors.add(new Sector(floorHeight, ceilingHeight, floorFlat, ceilingFlat, lightLevel, type, tagNumber));
+            sectors.add(new Sector((short) sectors.size(), floorHeight, ceilingHeight, floorFlat, ceilingFlat, lightLevel, type, tagNumber));
         }
     }
 
@@ -143,7 +143,7 @@ public class Level {
             Side   leftSide    = left  < 0 ? null : sides.get(left);
             Side   rightSide   = right < 0 ? null : sides.get(right);
 
-            lines.add(new Line(start, end, leftSide, rightSide, (flags & 0x0020) != 0, (flags & 0x0004) != 0));
+            lines.add(new Line((short) lines.size(), start, end, leftSide, rightSide, flags));
         }
     }
 
@@ -177,7 +177,7 @@ public class Level {
             Texture middleTexture = textures.get(new String(middleBytes, "ISO-8859-1").trim());
             Sector sector         = sectors.get(sectorNumber);
 
-            sides.add(new Side(xOffset, yOffset, upperTexture, lowerTexture, middleTexture, sector));
+            sides.add(new Side((short) sides.size(), xOffset, yOffset, upperTexture, lowerTexture, middleTexture, sector));
         }
     }
 
