@@ -124,8 +124,10 @@ public class MapPanel extends JPanel {
         }
 
         try {
-            Wad         wad        = new Wad     (new File(arguments[0]));
-            Level       level      = new Level   (wad, arguments[1]);
+            Wad         wad        = new Wad        (new File(arguments[0]));
+            FlatList    flats      = new FlatList   (wad);
+            TextureList textures   = new TextureList(wad);
+            Level       level      = new Level      (wad, arguments[1], flats, textures);
 
             JFrame      frame      = new JFrame("KDOOM - " + arguments[0] + " - " + level.getName());
             MapPanel    mapPanel   = new MapPanel(level);

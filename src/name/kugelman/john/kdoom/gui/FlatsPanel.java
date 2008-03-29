@@ -20,7 +20,7 @@ public class FlatsPanel extends JPanel {
 
         int x = 0, y = 0;
 
-        for (Flat flat: flatList) {
+        for (Flat flat: flatList.values()) {
             add(new JLabel   (flat.getName()), new Constraints(x, y)    .insets(4, 4, 4,  4));
             add(new FlatPanel(flat, palette),  new Constraints(x, y + 1).insets(4, 4, 20, 4));
             
