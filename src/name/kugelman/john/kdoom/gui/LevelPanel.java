@@ -16,9 +16,8 @@ public class LevelPanel extends JPanel {
         void sectorSelected(Sector sector);
     }
 
-    private static final int SCALE = 4;
-
     private Level level;
+    private int   scale;
     private List<SelectionListener> selectionListeners;
 
     public LevelPanel() {
@@ -26,6 +25,7 @@ public class LevelPanel extends JPanel {
     }
 
     public LevelPanel(Level level) {
+        this.scale              = 4;
         this.selectionListeners = new ArrayList<SelectionListener>();
         
         addMouseMotionListener(new MouseMotionAdapter() {
@@ -35,14 +35,36 @@ public class LevelPanel extends JPanel {
             }
         });
 
+        addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent event) {
+                if (event.getKeyCode() == KeyEvent.VK_ADD && event.getKeyLocation() == KeyEvent.KEY_LOCATION_NUMPAD) {
+                    setScale(scale - 1);
+                }
+                else if (event.getKeyCode() == KeyEvent.VK_SUBTRACT && event.getKeyLocation() == KeyEvent.KEY_LOCATION_NUMPAD) {
+                    setScale(scale + 1);
+                }
+            }
+        });
+
+        setFocusable(true);
+
         show(level);
     }
 
     public void show(Level level) {
         this.level = level;
-        
-        setPreferredSize(new Dimension((level.getMaxX() - level.getMinX() + 1) / SCALE + 8,
-                                       (level.getMaxY() - level.getMinY() + 1) / SCALE + 8));
+        updateSize();   
+    }
+
+    public void setScale(int scale) {
+        this.scale = Math.max(1, Math.min(32, scale));
+        updateSize();
+    }
+    
+    private void updateSize() {    
+        setPreferredSize(new Dimension((level.getMaxX() - level.getMinX() + 1) / scale + 8,
+                                       (level.getMaxY() - level.getMinY() + 1) / scale + 8));
 
         revalidate();
         repaint   ();
@@ -121,19 +143,19 @@ public class LevelPanel extends JPanel {
     }
 
     private int screenX(short x) {
-        return (x - level.getMinX()) / SCALE + 1;
+        return (x - level.getMinX()) / scale + 1;
     }
 
     private int screenY(short y) {
-        return (level.getMaxY() - y) / SCALE + 1;
+        return (level.getMaxY() - y) / scale + 1;
     }
 
     private short mapX(int x) {
-        return (short) ((x - 1) * SCALE + level.getMinX());
+        return (short) ((x - 1) * scale + level.getMinX());
     }
 
     private short mapY(int y) {
-        return (short) (level.getMaxY() - (y - 1) * SCALE);
+        return (short) (level.getMaxY() - (y - 1) * scale);
     }
 
     private short mouseX() {
