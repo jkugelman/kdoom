@@ -4,8 +4,7 @@ import java.io.*;
 import java.nio.*;
 
 public class Lump {
-    Wad wad;
-
+    private Wad    wad;
     private int    index;
     private int    offset;
     private int    size;
@@ -20,6 +19,10 @@ public class Lump {
         this.name   = name;
     }
 
+
+    public Wad getWad() {
+        return wad;
+    }
 
     public int getIndex() {
         return index;

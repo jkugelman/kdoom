@@ -92,6 +92,7 @@ public class Wad {
         return Collections.unmodifiableList(lumps);
     }
 
+    
     public Lump lookupLump(String name) throws IOException {
         for (Lump lump: lumps) {
             if (lump.getName().equals(name)) {
@@ -112,5 +113,15 @@ public class Wad {
         return lump;
     }
 
+    public Collection<Lump> getLumpsWithPrefix(String prefix) {
+        List<Lump> lumps = new ArrayList<Lump>();
 
+        for (Lump lump: this.lumps) {
+            if (lump.getName().startsWith(prefix)) {
+                lumps.add(lump);
+            }
+        }
+
+        return lumps;
+    }
 }

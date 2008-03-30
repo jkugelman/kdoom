@@ -26,6 +26,10 @@ public class Patch {
         }
     }
 
+    public Patch(Lump lump) throws IOException {
+        this(lump.getWad(), lump.getName());
+    }
+
 
     public String getName() {
         return name;

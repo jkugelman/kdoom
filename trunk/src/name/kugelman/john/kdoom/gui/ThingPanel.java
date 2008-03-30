@@ -17,6 +17,7 @@ public class ThingPanel extends JPanel {
     private JLabel       angleLabel;
     private JLabel       typeLabel;
     private JLabel       flagsLabel;
+    private SpritePanel  spritePanel;
 
     public ThingPanel(Palette palette) {
         this(null, palette);
@@ -28,6 +29,7 @@ public class ThingPanel extends JPanel {
         angleLabel    = new JLabel();
         typeLabel     = new JLabel();
         flagsLabel    = new JLabel();
+        spritePanel   = new SpritePanel(palette);
 
         setBorder(titledBorder);
 
@@ -40,7 +42,8 @@ public class ThingPanel extends JPanel {
         add(typeLabel,                new Constraints(1, 2).anchorNorthwest());
         add(new JLabel("Flags: "),    new Constraints(0, 3).anchorNortheast());
         add(flagsLabel,               new Constraints(1, 3).anchorNorthwest());
-        add(Box.createGlue(),         new Constraints(2, 4).weight(1, 1));
+        add(spritePanel,              new Constraints(0, 4).width(2).anchorNorth().insets(8, 0, 0, 0));
+        add(Box.createGlue(),         new Constraints(2, 5).weight(1, 1));
 
         show(thing);
         
@@ -56,6 +59,7 @@ public class ThingPanel extends JPanel {
             angleLabel    .setText ("N/A");
             typeLabel     .setText ("N/A");
             flagsLabel    .setText ("N/A");
+            spritePanel   .show    (null);
         }
         else {
             titledBorder  .setTitle("Thing #" + thing.getNumber());
@@ -63,6 +67,7 @@ public class ThingPanel extends JPanel {
             angleLabel    .setText ("" + thing.getAngle() + "\u00B0");
             typeLabel     .setText ("" + thing.getTypeName());
             flagsLabel    .setText (String.format("0x%04X", thing.getFlags()));
+            spritePanel   .show    (thing.getSprite());
         }
 
         repaint();
