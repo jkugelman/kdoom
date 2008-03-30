@@ -8,27 +8,45 @@ import name.kugelman.john.kdoom.model.*;
 
 public class SpritePanel extends JPanel {
     private Sprite  sprite;
+    private String  frameSequence;
     private Palette palette;
 
+    private Image   image;
+    
     public SpritePanel(Palette palette) {
-        this(null, palette);
+        this(null, null, palette);
     }
 
-    public SpritePanel(Sprite sprite, Palette palette) {
-        this.sprite  = sprite;
-        this.palette = palette;
+    public SpritePanel(Sprite sprite, String frameSequence, Palette palette) {
+        this.sprite        = sprite;
+        this.frameSequence = frameSequence;
+        this.palette       = palette;
 
         setPreferredSize(new Dimension(128, 128));
     }
 
-    public void show(Sprite sprite) {
-        this.sprite = sprite;
+    public void show(Sprite sprite, String frameSequence) {
+        this.sprite        = sprite;
+        this.frameSequence = frameSequence;
+    
+        try {
+            this.image     = sprite == null ? null : createImage(sprite.getImageProducer(frameSequence));
+        }
+        catch (IOException exception) {
+            exception.printStackTrace();
+        }
+
         repaint();
     }
 
 
     @Override
     public void paint(Graphics graphics) {
-        // graphics.drawImage(createImage(patch.getImageProducer(palette)), 0, 0, Color.CYAN, this);
+        if (image == null) {
+            return;
+        }
+        
+        graphics.clearRect(0, 0, Integer.MAX_VALUE, Integer.MAX_VALUE);
+        graphics.drawImage(image, 0, 0, new Color(0, 0, 0, 0), this);
     }
 }

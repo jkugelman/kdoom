@@ -19,6 +19,11 @@ public class PatchPanel extends JPanel {
 
     @Override
     public void paint(Graphics graphics) {
-        graphics.drawImage(createImage(patch.getImageProducer(palette)), 0, 0, Color.CYAN, this);
+        try {
+            graphics.drawImage(patch.getImage(palette), 0, 0, Color.CYAN, this);
+        }
+        catch (IOException exception) {
+            exception.printStackTrace();
+        }
     }
 }
