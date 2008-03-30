@@ -11,7 +11,7 @@ import java.util.List;
 import name.kugelman.john.kdoom.file.*;
 
 public class Sprite {
-    private static final int FRAME_DELAY = 300;
+    private static final int FRAME_DELAY = 200;
     
     public class Frame {
         private String  number;
@@ -40,14 +40,15 @@ public class Sprite {
     String                   name;
     Palette                  palette;
     Dimension                size;
+    boolean                  isHanging;
     SortedMap<String, Frame> frames;
 
-    public Sprite(Wad wad, String name) throws IOException {
-        this.name    = name;
-        this.palette = new Palette(wad);
-        this.frames  = new TreeMap<String, Frame>();
-
-        this.size = new Dimension(0, 0);
+    public Sprite(Wad wad, String name, boolean isHanging) throws IOException {
+        this.name      = name;
+        this.palette   = new Palette(wad);
+        this.size      = new Dimension(0, 0);
+        this.isHanging = isHanging;
+        this.frames    = new TreeMap<String, Frame>();
         
         for (Lump lump: wad.getLumpsWithPrefix(name)) {
             if (!lump.getName().matches("....([A-Z][0-8])+")) {
@@ -91,8 +92,12 @@ public class Sprite {
 
 
     public Frame getFrame(String frameNumber) {
-        if (!frameNumber.matches("[A-Z][0-8]")) {
+        if (!frameNumber.matches("[A-Z][0-8]?")) {
             throw new IllegalArgumentException(frameNumber + " is not a valid sprite frame number.");
+        }
+
+        if (frameNumber.length() == 1) {
+            frameNumber += '0';
         }
 
         if (!frames.containsKey(frameNumber)) {
@@ -103,11 +108,65 @@ public class Sprite {
     }
 
     public List<Frame> getFrames(String frameSequence) {
-        if (!frameSequence.matches("([A-Z][0-8])+")) {
+        if (!frameSequence.matches("([A-Z][0-8](-[A-Z][0-8])*|[A-Z](-[A-Z])*)+")) {
             throw new IllegalArgumentException(frameSequence + " is not a valid sprite frame sequence.");
         }
+
+        // Add angle to single-letter frames: "A" becomes "A0".
+        frameSequence = frameSequence.replaceAll("([A-Z])(?![0-9])", "$10");
         
-        List<Frame> frames = new ArrayList<Frame>(frameSequence.length() / 2);
+        // Replace frame ranges with the individual frames: "A0-A3" becomes "A0A1A2A3".
+        for (int i = frameSequence.indexOf('-'); i != -1; i = frameSequence.indexOf('-')) {
+            String        frameRange  = frameSequence.substring(i - 2, i + 3);
+            char          startFrame  = frameRange.charAt(0);
+            char          startAngle  = frameRange.charAt(1);
+            char          endFrame    = frameRange.charAt(3);
+            char          endAngle    = frameRange.charAt(4);
+            StringBuilder replacement = new StringBuilder();
+
+            if (startAngle == endAngle) {
+                // Forward animation.
+                if (startFrame < endFrame) {
+                    for (char frame = startFrame; frame <= endFrame; ++frame) {
+                        replacement.append(frame);
+                        replacement.append(startAngle);
+                    }
+                }
+                // Reverse animation.
+                else {
+                    for (char frame = startFrame; frame >= endFrame; --frame) {
+                        replacement.append(frame);
+                        replacement.append(startAngle);
+                    }
+                }
+            }
+            else if (startFrame == endFrame) {
+                // Turning clockwise.
+                if (startAngle < endAngle) {
+                    for (char angle = startAngle; angle <= endAngle; ++angle) {
+                        replacement.append(startFrame);
+                        replacement.append(angle);
+                    }
+                }
+                // Turning counter-clockwise.
+                else {
+                    for (char angle = startAngle; angle >= endAngle; --angle) {
+                        replacement.append(startFrame);
+                        replacement.append(angle);
+                    }
+                }
+            }
+            else {
+                throw new IllegalArgumentException(frameSequence.substring(i - 2, i + 3) + ": Cannot change both frame letter and angle.");
+            }
+
+            frameSequence = frameSequence.replaceAll(frameRange, replacement.toString());
+        }
+
+        assert frameSequence.length() % 2 == 0;
+        
+        // Get frame for each frame number/angle.
+        List<Frame> frames = new ArrayList<Frame>();
     
         for (int i = 0; i < frameSequence.length(); i += 2) {
             frames.add(getFrame(frameSequence.substring(i, i + 2)));
@@ -160,6 +219,10 @@ public class Sprite {
                                    
                                     // Draw frame onto buffer.
                                     AffineTransform transform = new AffineTransform();
+
+                                    if (!isHanging) {
+                                        transform.translate(0, size.height - frame.patch.getSize().height);
+                                    }
 
                                     if (frame.isMirrored) {
                                         transform.translate(frame.patch.getSize().width, 0);
