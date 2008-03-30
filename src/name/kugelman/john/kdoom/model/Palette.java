@@ -11,8 +11,9 @@ public class Palette {
     public static final int COLORS = 256;
     public static final int SIZE   = COLORS * 3;
 
-    byte[][] paletteData;
-    int      activePalette;
+    byte[][]          paletteData;
+    IndexColorModel[] colorModels;
+    int               activePalette;
 
     public Palette(Wad wad) throws IOException {
         this(wad.getLump("PLAYPAL"));
@@ -28,6 +29,7 @@ public class Palette {
         }
          
         this.paletteData   = new byte[lump.getSize() / SIZE][];
+        this.colorModels   = new IndexColorModel[paletteData.length];
         this.activePalette = 0;
 
         ByteBuffer buffer = lump.getData();
@@ -35,6 +37,8 @@ public class Palette {
         for (int i = 0; i < paletteData.length; ++i) {
             paletteData[i] = new byte[SIZE];
             buffer.get(paletteData[i]);
+            
+            colorModels[i] = new IndexColorModel(8, COLORS, paletteData[i], 0, false);
         }
     }
 
@@ -52,6 +56,6 @@ public class Palette {
 
 
     public ColorModel getColorModel() {
-        return new IndexColorModel(8, COLORS, paletteData[activePalette], 0, false);
+        return colorModels[activePalette];
     }
 }
