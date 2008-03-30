@@ -1,6 +1,7 @@
 package name.kugelman.john.kdoom.model;
 
 import java.awt.*;
+import java.awt.geom.*;
 import java.awt.image.*;
 import java.io.*;
 import java.nio.*;
@@ -12,17 +13,41 @@ import name.kugelman.john.kdoom.file.*;
 public class Sprite {
     private static final int FRAME_DELAY = 300;
     
+    public class Frame {
+        private String  number;
+        private Patch   patch;
+        private boolean isMirrored;
+
+        Frame(String number, Patch patch, boolean isMirrored) throws IOException {
+            this.number     = number;
+            this.patch      = patch;
+            this.isMirrored = isMirrored;
+        }
+
+        public String getNumber() {
+            return number;
+        }
+
+        public Patch getPatch() {
+            return patch;
+        }
+
+        public boolean isMirrored() {
+            return isMirrored;
+        }
+    }
+
     String                   name;
     Palette                  palette;
     Dimension                size;
-    SortedMap<String, Patch> frames;
+    SortedMap<String, Frame> frames;
 
     public Sprite(Wad wad, String name) throws IOException {
         this.name    = name;
         this.palette = new Palette(wad);
-        this.frames  = new TreeMap<String, Patch>();
+        this.frames  = new TreeMap<String, Frame>();
 
-        this.size = new Dimension(128, 128);
+        this.size = new Dimension(0, 0);
         
         for (Lump lump: wad.getLumpsWithPrefix(name)) {
             if (!lump.getName().matches("....([A-Z][0-8])+")) {
@@ -30,19 +55,25 @@ public class Sprite {
             }
 
             Patch patch = new Patch(lump);
-       
-            if (size == null) { 
-                size = patch.getSize();
-            }
 
-            for (int i = 4; i < lump.getName().length(); i += 2) {
-                frames.put(lump.getName().substring(i, i + 2), patch);
+            addFrame(lump.getName().substring(4, 6), patch, false);
+
+            // Mirrored frame.
+            if (lump.getName().length() > 6) {
+                addFrame(lump.getName().substring(6, 8), patch, true);
             }
+            
+            size.width  = Math.max(size.width,  patch.getSize().width);
+            size.height = Math.max(size.height, patch.getSize().height);   
         }
 
         if (frames.isEmpty()) {
             throw new IOException("No frames found for sprite " + name);
         }
+    }
+
+    private void addFrame(String name, Patch patch, boolean isMirrored) throws IOException {
+        frames.put(name, new Frame(name, patch, isMirrored));
     }
 
 
@@ -54,66 +85,46 @@ public class Sprite {
         return size;
     }
 
-    public SortedMap<String, Patch> frames() {
+    public SortedMap<String, Frame> frames() {
         return Collections.unmodifiableSortedMap(frames);
     }
 
-    public Patch getFrame(char sequence) {
-        for (int i = 0; i <= 8; ++i) {
-            Patch patch = getFrame(sequence, 0);
-    
-            if (patch != null) {
-                return patch;
-            }
-        }
 
-        return null;
-    }
-
-    public Patch getFrame(char sequenceLetter, int angle) {
-        return getFrame("" + sequenceLetter + angle);
-    }
-
-    public Patch getFrame(String frameNumber) {
+    public Frame getFrame(String frameNumber) {
         if (!frameNumber.matches("[A-Z][0-8]")) {
             throw new IllegalArgumentException(frameNumber + " is not a valid sprite frame number.");
         }
 
         if (!frames.containsKey(frameNumber)) {
-            throw new RuntimeException(name + ": frame " + frameNumber + " not found.");
+            throw new RuntimeException(name + " frame " + frameNumber + " not found.");
         }
         
         return frames.get(frameNumber);
     }
 
-
-    public ImageProducer getImageProducer(final String frameSequence) throws IOException {
+    public List<Frame> getFrames(String frameSequence) {
         if (!frameSequence.matches("([A-Z][0-8])+")) {
             throw new IllegalArgumentException(frameSequence + " is not a valid sprite frame sequence.");
         }
         
-        if (frameSequence.length() == 2) {
-            return getFrame(frameSequence).getImage(palette).getSource();    
+        List<Frame> frames = new ArrayList<Frame>(frameSequence.length() / 2);
+    
+        for (int i = 0; i < frameSequence.length(); i += 2) {
+            frames.add(getFrame(frameSequence.substring(i, i + 2)));
         }
 
+        return frames;
+    }
+
+
+    public ImageProducer getImageProducer(final String frameSequence) throws IOException {
         return new ImageProducer() {
             List<ImageConsumer> consumers   = Collections.synchronizedList(new ArrayList<ImageConsumer>());
             Thread              thread      = null;
             ColorModel          colorModel  = ColorModel.getRGBdefault();
-            List<Patch>         frames      = new ArrayList<Patch>        (frameSequence.length() / 2);
-            List<BufferedImage> frameImages = new ArrayList<BufferedImage>(frameSequence.length() / 2);
+            List<Frame>         frames      = getFrames(frameSequence);
             BufferedImage       buffer      = new BufferedImage(size.width, size.height, BufferedImage.TYPE_INT_ARGB);
             int[]               pixels      = new int[size.width * size.height];
-
-            {
-                for (int i = 0; i < frameSequence.length(); i += 2) {
-                    String frameNumber = frameSequence.substring(i, i + 2);
-                    Patch  frame       = getFrame(frameNumber);
-
-                    frames     .add(frame);
-                    frameImages.add(frame.getImage(palette));
-                }
-            }
 
             public void addConsumer(ImageConsumer consumer) {
                 consumers.add(consumer);
@@ -140,17 +151,23 @@ public class Sprite {
                                     }
                                 }
 
-                                for (int i = 0; !isInterrupted(); i = (i + 1) % frameImages.size()) {
-//                                    System.out.printf("[%08x] Showing %s frame %s to %d consumers%n", hashCode(), name, frameSequence.substring(i * 2, i * 2 + 2), consumers.size());
-
+                                for (int i = 0; !isInterrupted(); i = (i + 1) % frames.size()) {
+                                    Frame frame = frames.get(i);
+                                    
                                     // Reset buffer to all transparent.                       
                                     Arrays.fill(pixels, 0);
                                     buffer.setRGB(0, 0, size.width, size.height, pixels, 0, size.width);
                                    
-                                    // Draw frame onto buffer. 
-                                    Graphics graphics = buffer.getGraphics();
-                                    graphics.setColor(new Color(0, 0, 0, 0));
-                                    graphics.drawImage(frameImages.get(i), frames.get(i).getOffset().x, frames.get(i).getOffset().y, null);
+                                    // Draw frame onto buffer.
+                                    AffineTransform transform = new AffineTransform();
+
+                                    if (frame.isMirrored) {
+                                        transform.translate(frame.patch.getSize().width, 0);
+                                        transform.scale    (-1, 1);
+                                    }
+
+                                    Graphics2D graphics = buffer.createGraphics();
+                                    graphics.drawImage(frame.patch.getImage(palette), transform, null);
                                     graphics.dispose();
 
                                     // Get pixels from buffer.
@@ -174,6 +191,9 @@ public class Sprite {
                             }
                             catch (InterruptedException exception) {
                                 // Stop thread.
+                            }
+                            catch (IOException exception) {
+                                exception.printStackTrace();
                             }
                         }
                     };
