@@ -1,5 +1,6 @@
 package name.kugelman.john.kdoom.model;
 
+import java.awt.image.*;
 import java.io.*;
 import java.util.*;
 
@@ -23,16 +24,16 @@ public class Thing {
 
     private static class Details {
         Kind   kind;
-        String sprite, sequence;
+        String spriteName, frameSequence;
         short  radius;
         String name;
         
-        public Details(Kind kind, String sprite, String sequence, short radius, String name) {
-            this.kind     = kind;
-            this.sprite   = sprite;
-            this.sequence = sequence;
-            this.radius   = radius;
-            this.name     = name;
+        public Details(Kind kind, String spriteName, String frameSequence, short radius, String name) {
+            this.kind          = kind;
+            this.spriteName    = spriteName;
+            this.frameSequence = frameSequence;
+            this.radius        = radius;
+            this.name          = name;
         }
     }
 
@@ -42,192 +43,148 @@ public class Thing {
     static {
         typeDetails = new HashMap<Short, Details>(); 
 
-        addPlayer    (1,    "PLAY", 1,         16, "Player 1 Start");
-        addPlayer    (2,    "PLAY", 2,         16, "Player 2 Start");
-        addPlayer    (3,    "PLAY", 3,         16, "Player 3 Start");
-        addPlayer    (4,    "PLAY", 4,         16, "Player 4 Start");
-        addPlayer    (11,   null,   null,      16, "Deathmatch Start");
+        addType(1,    Kind.PLAYER,     "PLAY", "A1A2A3A4A3A2", 16, "Player 1 Start");
+        addType(2,    Kind.PLAYER,     "PLAY", "A1",           16, "Player 2 Start");
+        addType(3,    Kind.PLAYER,     "PLAY", "A1",           16, "Player 3 Start");
+        addType(4,    Kind.PLAYER,     "PLAY", "A1",           16, "Player 4 Start");
+        addType(11,   Kind.PLAYER,     "PLAY", "A1",           16, "Deathmatch Start");
+                                                  
+        addType(3004, Kind.MONSTER,    "POSS", "A1",           20, "Former Human");
+        addType(9,    Kind.MONSTER,    "SPOS", "A1",           20, "Former Sargeant"); 
+        addType(65,   Kind.MONSTER,    "CPOS", "A1",           20, "Heavy Weapon Dude"); 
+        addType(3001, Kind.MONSTER,    "TROO", "A1",           20, "Imp"); 
+        addType(3002, Kind.MONSTER,    "SARG", "A1",           30, "Demon"); 
+        addType(58,   Kind.MONSTER,    "SARG", "A1",           30, "Spectre"); 
+        addType(3006, Kind.MONSTER,    "SKUL", "A1",           16, "Lost Soul"); 
+        addType(3005, Kind.MONSTER,    "HEAD", "A1",           31, "Cacodemon"); 
+        addType(69,   Kind.MONSTER,    "BOS2", "A1",           24, "Hell Knight"); 
+        addType(3003, Kind.MONSTER,    "BOSS", "A1",           24, "Baron of Hell"); 
+        addType(68,   Kind.MONSTER,    "BSPI", "A1",           64, "Arachnotron"); 
+        addType(71,   Kind.MONSTER,    "PAIN", "A1",           31, "Pain Elemental"); 
+        addType(66,   Kind.MONSTER,    "SKEL", "A1",           20, "Revenant"); 
+        addType(67,   Kind.MONSTER,    "FATT", "A1",           48, "Mancubus"); 
+        addType(64,   Kind.MONSTER,    "VILE", "A1",           20, "Arch-Vile"); 
+        addType(7,    Kind.MONSTER,    "SPID", "A1",           128,"Spider Mastermind"); 
+        addType(16,   Kind.MONSTER,    "CYBR", "A1",           40, "Cyberdemon"); 
+        addType(88,   Kind.MONSTER,    "BBRN", "A1",           16, "Boss Brain");
+        addType(84,   Kind.MONSTER,    "SSWV", "A1",           20, "Wolfenstein SS"); 
+                                                  
+        addType(2005, Kind.WEAPON,     "CSAW", "A0",           20, "Chainsaw");
+        addType(2001, Kind.WEAPON,     "SHOT", "A0",           20, "Shotgun");
+        addType(82,   Kind.WEAPON,     "SGN2", "A0",           20, "Double-Barreled Shotgun");
+        addType(2002, Kind.WEAPON,     "MGUN", "A0",           20, "Chaingun");
+        addType(2003, Kind.WEAPON,     "LAUN", "A0",           20, "Rocket Launcher");
+        addType(2004, Kind.WEAPON,     "PLAS", "A0",           20, "Plasma Gun");
+        addType(2006, Kind.WEAPON,     "BFUG", "A0",           20, "BFG 9000");
+                                                  
+        addType(2007, Kind.AMMO,       "CLIP", "A0",           8,  "Ammo Clip");
+        addType(2008, Kind.AMMO,       "SHEL", "A0",           8,  "Shotgun Shells");
+        addType(2010, Kind.AMMO,       "ROCK", "A0",           8,  "Rocket");
+        addType(2047, Kind.AMMO,       "CELL", "A0",           8,  "Cell Charge");
+        addType(2048, Kind.AMMO,       "AMMO", "A0",           16, "Box of Ammo");
+        addType(2049, Kind.AMMO,       "SBOX", "A0",           16, "Box of Shells");
+        addType(2046, Kind.AMMO,       "BROK", "A0",           16, "Box of Rockets");
+        addType(17,   Kind.AMMO,       "CELP", "A0",           16, "Cell Charge Pack");
+        addType(8,    Kind.AMMO,       "BPAK", "A0",           16, "Backpack");
+                                                  
+        addType(2011, Kind.HEALTH,     "STIM", "A0",           12, "Stimpak +10%");
+        addType(2012, Kind.HEALTH,     "MEDI", "A0",           16, "Medikit +25%");
+        addType(2014, Kind.HEALTH,     "BON1", "A0B0C0D0C0B0", 8,  "Health Potion +1%");
+        addType(2015, Kind.ARMOR,      "BON2", "A0B0C0D0C0B0", 8,  "Spirit Armor +1%");
+        addType(2018, Kind.ARMOR,      "ARM1", "A0B0",         16, "Green Armor +100%");
+        addType(2019, Kind.ARMOR,      "ARM2", "A0B0",         16, "Blue Armor +200%");
+        addType(83,   Kind.POWER_UP,   "MEGA", "A0B0C0D0",     16, "Megasphere");
+        addType(2013, Kind.POWER_UP,   "SOUL", "ABCDCB",       16, "Soulsphere");
+        addType(2022, Kind.POWER_UP,   "PINV", "A0B0C0D0",     16, "Invulnerability Sphere");
+        addType(2023, Kind.POWER_UP,   "PSTR", "A0",           16, "Berkserker Pack");
+        addType(2024, Kind.POWER_UP,   "PINS", "A0B0C0D0",     16, "Invisibility Sphere");
+        addType(2025, Kind.POWER_UP,   "SUIT", "A0",           16, "Radiation Suit");
+        addType(2026, Kind.POWER_UP,   "PMAP", "A0B0C0D0C0B0", 16, "Computer Map");
+        addType(2045, Kind.POWER_UP,   "PVIS", "A0B0",         16, "Light Amplification Goggles");
+                                                  
+        addType(5,    Kind.KEY,        "BKEY", "A0B0",         16, "Blue Key");
+        addType(40,   Kind.KEY,        "BSKU", "A0B0",         16, "Blue Skullkey");
+        addType(13,   Kind.KEY,        "RKEY", "A0B0",         16, "Red Key");
+        addType(38,   Kind.KEY,        "RSKU", "A0B0",         16, "Red Skullkey");
+        addType(6,    Kind.KEY,        "YKEY", "A0B0",         16, "Yellow Key");
+        addType(39,   Kind.KEY,        "YSKU", "A0B0",         16, "Yellow Skullkey");
+                                                  
+        addType(2035, Kind.OBSTACLE,   "BAR1", "A0B0",         10, "Barrel");
+        addType(72,   Kind.OBSTACLE,   "KEEN", "A0",           16, "Commander Keen"); 
+                                                  
+        addType(48,   Kind.OBSTACLE,   "ELEC", "A0",           16, "Tall Techno Pillar");
+        addType(30,   Kind.OBSTACLE,   "COL1", "A0",           16, "Tall Green Pillar");
+        addType(32,   Kind.OBSTACLE,   "COL3", "A0",           16, "Tall Red Pillar");
+        addType(31,   Kind.OBSTACLE,   "COL2", "A0",           16, "Short Green Pillar");
+        addType(36,   Kind.OBSTACLE,   "COL5", "A0B0",         16, "Short Green Pillar with Beating Heart");
+        addType(33,   Kind.OBSTACLE,   "COL4", "A0",           16, "Short Red Pillar");
+        addType(37,   Kind.OBSTACLE,   "COL6", "A0",           16, "Short Red Pillar with Skull");
+        addType(47,   Kind.OBSTACLE,   "SMIT", "A0",           16, "Stalagmite");
+        addType(43,   Kind.OBSTACLE,   "TRE1", "A0",           16, "Burnt Tree");
+        addType(54,   Kind.OBSTACLE,   "TRE2", "A0",           32, "Large Brown Tree");
+                                                  
+        addType(2028, Kind.OBSTACLE,   "COLU", "A0",           16, "Floor Lamp");
+        addType(85,   Kind.OBSTACLE,   "TLMP", "A0B0C0D0",     16, "Tall Techno Floor Lamp");
+        addType(86,   Kind.OBSTACLE,   "TLP2", "A0B0C0D0",     16, "Short Techno Floor Lamp");
+        addType(34,   Kind.OBSTACLE,   "CAND", "A0",           16, "Candle");
+        addType(35,   Kind.OBSTACLE,   "CBRA", "A0",           16, "Candelabra");
+        addType(44,   Kind.OBSTACLE,   "TBLU", "A0B0C0D0",     16, "Tall Blue Firestick");
+        addType(45,   Kind.OBSTACLE,   "TGRE", "A0B0C0D0",     16, "Tall Green Firestick");
+        addType(46,   Kind.OBSTACLE,   "TRED", "A0B0C0D0",     16, "Tall Red Firestick");
+        addType(55,   Kind.OBSTACLE,   "SMBT", "A0B0C0D0",     16, "Short Blue Firestick");
+        addType(56,   Kind.OBSTACLE,   "SMGT", "A0B0C0D0",     16, "Short Green Firestick");
+        addType(57,   Kind.OBSTACLE,   "SMRT", "A0B0C0D0",     16, "Short Red Firestick");
+        addType(70,   Kind.OBSTACLE,   "FCAN", "A0B0C0",       10, "Burning Barrel");
+                                                  
+        addType(41,   Kind.OBSTACLE,   "CEYE", "A0B0C0B0",     16, "Evil Eye");
+        addType(42,   Kind.OBSTACLE,   "FSKU", "A0B0C0",       16, "Floating Skull");
+                                                  
+        addType(49,   Kind.OBSTACLE,   "GOR1", "A0B0C0B0",     16, "Hanging Body, Twitching");
+        addType(63,   Kind.DECORATION, "GOR1", "A0B0C0B0",     16, "Hanging Body, Twitching");
+        addType(50,   Kind.OBSTACLE,   "GOR2", "A0",           16, "Hanging Body, Arms Out");
+        addType(59,   Kind.DECORATION, "GOR2", "A0",           16, "Hanging Body, Arms Out");
+        addType(51,   Kind.OBSTACLE,   "GOR3", "A0",           16, "Hanging Victim, One-Legged");
+        addType(61,   Kind.DECORATION, "GOR3", "A0",           16, "Hanging Victim, One-Legged");
+        addType(52,   Kind.OBSTACLE,   "GOR4", "A0",           16, "Hanging Pair of Legs");
+        addType(60,   Kind.DECORATION, "GOR4", "A0",           16, "Hanging Pair of Legs");
+        addType(53,   Kind.OBSTACLE,   "GOR5", "A0",           16, "Hanging Leg");
+        addType(62,   Kind.DECORATION, "GOR5", "A0",           16, "Hanging Leg");
+        addType(73,   Kind.OBSTACLE,   "HDB1", "A0",           16, "Hanging Body, Guts Removed");
+        addType(74,   Kind.OBSTACLE,   "HDB2", "A0",           16, "Hanging Body, Guts and Brain Removed");
+        addType(76,   Kind.OBSTACLE,   "HDB3", "A0",           16, "Hanging Torso, Looking Down");
+        addType(76,   Kind.OBSTACLE,   "HDB4", "A0",           16, "Hanging Torso, Open Skull");
+        addType(77,   Kind.OBSTACLE,   "HDB5", "A0",           16, "Hanging Torso, Looking Up");
+        addType(78,   Kind.OBSTACLE,   "HDB6", "A0",           16, "Hanging Torso, Brain Removed");
+                                                  
+        addType(25,   Kind.OBSTACLE,   "POL1", "A0",           16, "Impaled Human");
+        addType(26,   Kind.OBSTACLE,   "POL1", "A0B0",         16, "Twitching Impaled Human");
+        addType(27,   Kind.OBSTACLE,   "POL1", "A0",           16, "Skull on a Pole");
+        addType(28,   Kind.OBSTACLE,   "POL1", "A0",           16, "Skull Shish Kebob");
+        addType(29,   Kind.OBSTACLE,   "POL1", "A0B0",         16, "Pile of Skulls and Candles");
+                                                  
+        addType(10,   Kind.DECORATION, "PLAY", "W0",           16, "Bloody Mess");
+        addType(12,   Kind.DECORATION, "PLAY", "W0",           16, "Bloody Mess");
+        addType(24,   Kind.DECORATION, "POL5", "A0",           16, "Pool of Blood and Flesh");
+        addType(79,   Kind.DECORATION, "POB1", "A0",           16, "Pool of Blood");
+        addType(80,   Kind.DECORATION, "POB2", "A0",           16, "Pool of Blood");
+        addType(81,   Kind.DECORATION, "BRS1", "A0",           16, "Pool of Brains");
+        addType(15,   Kind.DECORATION, "PLAY", "N1",           16, "Dead Marine");
+        addType(18,   Kind.DECORATION, "POSS", "L1",           20, "Dead Former Human");
+        addType(19,   Kind.DECORATION, "SPOS", "L1",           20, "Dead Former Sargeant");
+        addType(20,   Kind.DECORATION, "TROO", "M1",           20, "Dead Imp");
+        addType(21,   Kind.DECORATION, "SARG", "N1",           30, "Dead Demon");
+        addType(22,   Kind.DECORATION, "HEAD", "L1",           31, "Dead Cacodemon");
+        addType(23,   Kind.DECORATION, "SKUL", "K1",           16, "Dead Lost Soul");
                                                    
-        addMonster   (3004, "POSS",            16, "Former Human");
-        addMonster   (84,   "SSWV",            20, "Wolfenstein SS"); 
-        addMonster   (9,    "SPOS",            20, "Former Sargeant"); 
-        addMonster   (65,   "CPOS",            20, "Heavy Weapon Dude"); 
-        addMonster   (3001, "TROO",            20, "Imp"); 
-        addMonster   (3002, "SARG",            30, "Demon"); 
-        addMonster   (58,   "SARG",            30, "Spectre"); 
-        addMonster   (3006, "SKUL",            16, "Lost Soul"); 
-        addMonster   (3005, "HEAD",            31, "Cacodemon"); 
-        addMonster   (69,   "BOS2",            24, "Hell Knight"); 
-        addMonster   (3003, "BOSS",            24, "Baron of Hell"); 
-        addMonster   (68,   "BSPI",            64, "Arachnotron"); 
-        addMonster   (71,   "PAIN",            31, "Pain Elemental"); 
-        addMonster   (66,   "SKEL",            20, "Revenant"); 
-        addMonster   (67,   "FATT",            48, "Mancubus"); 
-        addMonster   (64,   "VILE",            20, "Arch-Vile"); 
-        addMonster   (7,    "SPID",            128,"Spider Mastermind"); 
-        addMonster   (16,   "CYBR",            40, "Cyberdemon"); 
-        addMonster   (88,   "BBRN",            16, "Boss Brain");
-                                                   
-        addWeapon    (2005, "CSAW",  "A",      20, "Chainsaw");
-        addWeapon    (2001, "SHOT",  "A",      20, "Shotgun");
-        addWeapon    (82,   "SGN2",  "A",      20, "Double-Barreled Shotgun");
-        addWeapon    (2002, "MGUN",  "A",      20, "Chaingun");
-        addWeapon    (2003, "LAUN",  "A",      20, "Rocket Launcher");
-        addWeapon    (2004, "PLAS",  "A",      20, "Plasma Gun");
-        addWeapon    (2006, "BFUG",  "A",      20, "BFG 9000");
-                                                   
-        addAmmo      (2007, "CLIP",  "A",      8,  "Ammo Clip");
-        addAmmo      (2008, "SHEL",  "A",      8,  "Shotgun Shells");
-        addAmmo      (2010, "ROCK",  "A",      8,  "Rocket");
-        addAmmo      (2047, "CELL",  "A",      8,  "Cell Charge");
-        addAmmo      (2048, "AMMO",  "A",      16, "Box of Ammo");
-        addAmmo      (2049, "SBOX",  "A",      16, "Box of Shells");
-        addAmmo      (2046, "BROK",  "A",      16, "Box of Rockets");
-        addAmmo      (17,   "CELP",  "A",      16, "Cell Charge Pack");
-        addAmmo      (8,    "BPAK",  "A",      16, "Backpack");
-                                                   
-        addHealth    (2011, "STIM",  "A",      12, "Stimpak +10%");
-        addHealth    (2012, "MEDI",  "A",      16, "Medikit +25%");
-        addHealth    (2014, "BON1",  "ABCDCB", 8,  "Health Potion +1%");
-        addArmor     (2015, "BON2",  "ABCDCB", 8,  "Spirit Armor +1%");
-        addArmor     (2018, "ARM1",  "AB",     16, "Green Armor +100%");
-        addArmor     (2019, "ARM2",  "AB",     16, "Blue Armor +200%");
-        addPowerUp   (83,   "MEGA",  "ABCD",   16, "Megasphere");
-        addPowerUp   (2013, "SOUL",  "ABCDCB", 16, "Soulsphere");
-        addPowerUp   (2022, "PINV",  "ABCD",   16, "Invulnerability Sphere");
-        addPowerUp   (2023, "PSTR",  "A",      16, "Berkserker Pack");
-        addPowerUp   (2024, "PINS",  "ABCD",   16, "Invisibility Sphere");
-        addPowerUp   (2025, "SUIT",  "A",      16, "Radiation Suit");
-        addPowerUp   (2026, "PMAP",  "ABCDCB", 16, "Computer Map");
-        addPowerUp   (2045, "PVIS",  "AB",     16, "Light Amplification Goggles");
-                                                   
-        addKey       (5,    "BKEY",  "AB",     16, "Blue Key");
-        addKey       (40,   "BSKU",  "AB",     16, "Blue Skullkey");
-        addKey       (13,   "RKEY",  "AB",     16, "Red Key");
-        addKey       (38,   "RSKU",  "AB",     16, "Red Skullkey");
-        addKey       (6,    "YKEY",  "AB",     16, "Yellow Key");
-        addKey       (39,   "YSKU",  "AB",     16, "Yellow Skullkey");
-                                                   
-        addObstacle  (2035, "BAR1",  "AB",     10, "Barrel");
-        addObstacle  (72,   "KEEN",  "A",      16, "Commander Keen"); 
-                                                   
-        addObstacle  (48,   "ELEC",  "A",      16, "Tall Techno Pillar");
-        addObstacle  (30,   "COL1",  "A",      16, "Tall Green Pillar");
-        addObstacle  (32,   "COL3",  "A",      16, "Tall Red Pillar");
-        addObstacle  (31,   "COL2",  "A",      16, "Short Green Pillar");
-        addObstacle  (36,   "COL5",  "AB",     16, "Short Green Pillar with Beating Heart");
-        addObstacle  (33,   "COL4",  "A",      16, "Short Red Pillar");
-        addObstacle  (37,   "COL6",  "A",      16, "Short Red Pillar with Skull");
-        addObstacle  (47,   "SMIT",  "A",      16, "Stalagmite");
-        addObstacle  (43,   "TRE1",  "A",      16, "Burnt Tree");
-        addObstacle  (54,   "TRE2",  "A",      32, "Large Brown Tree");
-                                                   
-        addObstacle  (2028, "COLU",  "A",      16, "Floor Lamp");
-        addObstacle  (85,   "TLMP",  "ABCD",   16, "Tall Techno Floor Lamp");
-        addObstacle  (86,   "TLP2",  "ABCD",   16, "Short Techno Floor Lamp");
-        addObstacle  (34,   "CAND",  "A",      16, "Candle");
-        addObstacle  (35,   "CBRA",  "A",      16, "Candelabra");
-        addObstacle  (44,   "TBLU",  "ABCD",   16, "Tall Blue Firestick");
-        addObstacle  (45,   "TGRE",  "ABCD",   16, "Tall Green Firestick");
-        addObstacle  (46,   "TRED",  "ABCD",   16, "Tall Red Firestick");
-        addObstacle  (55,   "SMBT",  "ABCD",   16, "Short Blue Firestick");
-        addObstacle  (56,   "SMGT",  "ABCD",   16, "Short Green Firestick");
-        addObstacle  (57,   "SMRT",  "ABCD",   16, "Short Red Firestick");
-        addObstacle  (70,   "FCAN",  "ABC",    16, "Burning Barrel");
-                                                   
-        addObstacle  (41,   "CEYE",  "ABCB",   16, "Evil Eye");
-        addObstacle  (42,   "FSKU",  "ABC",    16, "Floating Skull");
-                                                   
-        addObstacle  (49,   "GOR1",  "ABCB",   16, "Hanging Body, Twitching");
-        addDecoration(63,   "GOR1",  "ABCB",   16, "Hanging Body, Twitching");
-        addObstacle  (50,   "GOR2",  "A",      16, "Hanging Body, Arms Out");
-        addDecoration(59,   "GOR2",  "A",      16, "Hanging Body, Arms Out");
-        addObstacle  (51,   "GOR3",  "A",      16, "Hanging Victim, One-Legged");
-        addDecoration(61,   "GOR3",  "A",      16, "Hanging Victim, One-Legged");
-        addObstacle  (52,   "GOR4",  "A",      16, "Hanging Pair of Legs");
-        addDecoration(60,   "GOR4",  "A",      16, "Hanging Pair of Legs");
-        addObstacle  (53,   "GOR5",  "A",      16, "Hanging Leg");
-        addDecoration(62,   "GOR5",  "A",      16, "Hanging Leg");
-        addObstacle  (73,   "HDB1",  "A",      16, "Hanging Body, Guts Removed");
-        addObstacle  (74,   "HDB2",  "A",      16, "Hanging Body, Guts and Brain Removed");
-        addObstacle  (76,   "HDB3",  "A",      16, "Hanging Torso, Looking Down");
-        addObstacle  (76,   "HDB4",  "A",      16, "Hanging Torso, Open Skull");
-        addObstacle  (77,   "HDB5",  "A",      16, "Hanging Torso, Looking Up");
-        addObstacle  (78,   "HDB6",  "A",      16, "Hanging Torso, Brain Removed");
-                                                   
-        addObstacle  (25,   "POL1",  "A",      16, "Impaled Human");
-        addObstacle  (26,   "POL1",  "AB",     16, "Twitching Impaled Human");
-        addObstacle  (27,   "POL1",  "A",      16, "Skull on a Pole");
-        addObstacle  (28,   "POL1",  "A",      16, "Skull Shish Kebob");
-        addObstacle  (29,   "POL1",  "AB",     16, "Pile of Skulls and Candles");
-                                                   
-        addDecoration(10,   "PLAY",  "W",      20, "Bloody Mess");
-        addDecoration(12,   "PLAY",  "W",      20, "Bloody Mess");
-        addDecoration(24,   "POL5",  "A",      20, "Pool of Blood and Flesh");
-        addDecoration(79,   "POB1",  "A",      20, "Pool of Blood");
-        addDecoration(80,   "POB2",  "A",      20, "Pool of Blood");
-        addDecoration(81,   "BRS1",  "A",      20, "Pool of Brains");
-        addDecoration(15,   "PLAY",  "A",      20, "Dead Marine");
-        addDecoration(18,   "POSS",  "A",      20, "Dead Former Human");
-        addDecoration(19,   "SPOS",  "A",      20, "Dead Former Sargeant");
-        addDecoration(20,   "TROO",  "A",      20, "Dead Imp");
-        addDecoration(21,   "SARG",  "A",      20, "Dead Demon");
-        addDecoration(22,   "HEAD",  "A",      20, "Dead Cacodemon");
-        addDecoration(23,   "SKUL",  "A",      20, "Dead Lost Soul");
-                                                   
-        addSpecial   (14,   null,    null,     20, "Teleport Landing");
-        addSpecial   (89,   null,    null,     20, "Boss Shooter");
-        addSpecial   (87,   null,    null,     20, "Spawn Spot");
+        addType(14,   Kind.SPECIAL,    "TFOG", null,           20, "Teleport Landing");
+        addType(89,   Kind.SPECIAL,    "BOSF", null,           20, "Spawn Shooter");
+        addType(87,   Kind.SPECIAL,    "FIRE", null,           20, "Spawn Spot");
 
         unknownDetails = new Details(Kind.UNKNOWN, null, null, (short) 20, "Unknown (???)");
     }
 
-    private static void addPlayer(int type, String sprite, Integer number, int radius, String name) {
-        addType(type, Kind.PLAYER, sprite, "*", radius, name);
-    }
-
-    private static void addMonster(int type, String sprite, int radius, String name) {
-        addType(type, Kind.MONSTER, sprite, "*", radius, name);
-    }
-
-    private static void addWeapon(int type, String sprite, String sequence, int radius, String name) {
-        addType(type, Kind.WEAPON, sprite, sequence, radius, name);
-    }
-
-    private static void addAmmo(int type, String sprite, String sequence, int radius, String name) {
-        addType(type, Kind.AMMO, sprite, sequence, radius, name);
-    }
-
-    private static void addHealth(int type, String sprite, String sequence, int radius, String name) {
-        addType(type, Kind.HEALTH, sprite, sequence, radius, name);
-    }
-
-    private static void addArmor(int type, String sprite, String sequence, int radius, String name) {
-        addType(type, Kind.ARMOR, sprite, sequence, radius, name);
-    }
-
-    private static void addPowerUp(int type, String sprite, String sequence, int radius, String name) {
-        addType(type, Kind.POWER_UP, sprite, sequence, radius, name);
-    }
-
-    private static void addKey(int type, String sprite, String sequence, int radius, String name) {
-        addType(type, Kind.KEY, sprite, sequence, radius, name);
-    }
-
-    private static void addObstacle(int type, String sprite, String sequence, int radius, String name) {
-        addType(type, Kind.OBSTACLE, sprite, sequence, radius, name);
-    }
-
-    private static void addDecoration(int type, String sprite, String sequence, int radius, String name) {
-        addType(type, Kind.DECORATION, sprite, sequence, radius, name);
-    }
-
-    private static void addSpecial(int type, String sprite, String sequence, int radius, String name) {
-        addType(type, Kind.SPECIAL, sprite, sequence, radius, name);
-    }
-
-    private static void addType(int type, Kind kind, String sprite, String sequence, int radius, String name) {
-        typeDetails.put((short) type, new Details(kind, sprite, sequence, (short) radius, name));
+    private static void addType(int type, Kind kind, String spriteName, String frameSequence, int radius, String name) {
+        typeDetails.put((short) type, new Details(kind, spriteName, frameSequence, (short) radius, name));
     }
 
 
@@ -251,8 +208,8 @@ public class Thing {
             details = unknownDetails;
         }
         
-        if (details.sprite != null) {
-            this.sprite = new Sprite(wad, details.sprite);
+        if (details.spriteName != null) {
+            this.sprite = new Sprite(wad, details.spriteName);
         }
     }
 
@@ -305,5 +262,13 @@ public class Thing {
 
     public Sprite getSprite() {
         return sprite;
+    }
+
+    public String getFrameSequence() {
+        return details.frameSequence;
+    }
+
+    public ImageProducer getImageProducer() throws IOException {
+        return sprite.getImageProducer(details.frameSequence);
     }
 }

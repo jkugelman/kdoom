@@ -59,7 +59,7 @@ public class ThingPanel extends JPanel {
             angleLabel    .setText ("N/A");
             typeLabel     .setText ("N/A");
             flagsLabel    .setText ("N/A");
-            spritePanel   .show    (null);
+            spritePanel   .show    (null, null);
         }
         else {
             titledBorder  .setTitle("Thing #" + thing.getNumber());
@@ -67,7 +67,7 @@ public class ThingPanel extends JPanel {
             angleLabel    .setText ("" + thing.getAngle() + "\u00B0");
             typeLabel     .setText ("" + thing.getTypeName());
             flagsLabel    .setText (String.format("0x%04X", thing.getFlags()));
-            spritePanel   .show    (thing.getSprite());
+            spritePanel   .show    (thing.getSprite(), thing.getFrameSequence());
         }
 
         repaint();

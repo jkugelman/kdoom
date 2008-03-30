@@ -48,7 +48,12 @@ public class TexturePanel extends JPanel {
         if (texture == null) {
             return;
         }
-    
-        graphics.drawImage(createImage(texture.getImageProducer(palette)), 0, 0, Color.CYAN, this);
+   
+        try { 
+            graphics.drawImage(texture.getImage(palette), 0, 0, Color.CYAN, this);
+        }
+        catch (IOException exception) {
+            exception.printStackTrace();
+        }
     }
 }
