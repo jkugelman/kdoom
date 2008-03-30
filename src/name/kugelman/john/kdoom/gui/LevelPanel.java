@@ -19,7 +19,12 @@ public class LevelPanel extends JPanel {
 
     private Level level;
     private int   scale;
+
     private List<SelectionListener> selectionListeners;
+    private Line                    selectedLine;
+    private Side                    selectedSide;
+    private Sector                  selectedSector;
+    private Thing                   selectedThing;
 
     public LevelPanel() {
         this(null);
@@ -32,7 +37,21 @@ public class LevelPanel extends JPanel {
         addMouseMotionListener(new MouseMotionAdapter() {
             @Override
             public void mouseMoved(MouseEvent event) {
-                repaint();
+                Level              level         = LevelPanel.this.level;
+                Location           mouseLocation = mouseLocation();
+
+                Collection<Line>   closestLines  = level.getLinesClosestTo   (mouseLocation, 32);
+                Collection<Sector> activeSectors = level.getSectorsContaining(mouseLocation);
+                Collection<Thing>  closestThings = level.getThingsClosestTo  (mouseLocation, 32);
+                
+                Line               closestLine   = closestLines .isEmpty() ? null : closestLines .iterator().next();
+                Side               closestSide   = closestLine == null     ? null : closestLine.sideFacing(mouseLocation);
+                Sector             activeSector  = activeSectors.isEmpty() ? null : activeSectors.iterator().next();
+                Thing              closestThing  = closestThings.isEmpty() ? null : closestThings.iterator().next();
+
+                selectLine  (closestLine, closestSide);
+                selectSector(activeSector);
+                selectThing (closestThing);
             }
         });
 
@@ -79,9 +98,58 @@ public class LevelPanel extends JPanel {
         selectionListeners.remove(selectionListener);
     }
 
+    public void selectSector(Sector sector) {
+        if (selectedSector == sector) {
+            return;
+        }
+
+        selectedSector = sector;
+
+        for (SelectionListener selectionListener: selectionListeners) {
+            selectionListener.sectorSelected(sector);
+        }
+
+        repaint();
+    }
+
+    public void selectLine(Line line, Side side) {
+        if (selectedLine == line && selectedSide == side) {
+            return;
+        }
+
+        selectedLine = line;
+        selectedSide = side;
+    
+        for (SelectionListener selectionListener: selectionListeners) {
+            selectionListener.lineSelected(line, side);
+        }
+        
+        repaint();
+    }
+
+    public void selectThing(Thing thing) {
+        if (selectedThing == thing) {
+            return;
+        }
+
+        selectedThing = thing;
+
+        for (SelectionListener selectionListener: selectionListeners) {
+            selectionListener.thingSelected(thing);
+        }
+
+        repaint();
+    }
+
+ 
+
 
     @Override
     protected void paintComponent(Graphics graphics) {
+        if (graphics instanceof Graphics2D) {
+            ((Graphics2D) graphics).setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        }
+
         graphics.setColor(Color.WHITE);
         graphics.fillRect(0, 0, getSize().width, getSize().height);
 
@@ -89,34 +157,11 @@ public class LevelPanel extends JPanel {
             return;
         }
 
-        Collection<Line>   closestLines  = level.getLinesClosestTo   (mouseLocation(), 32);
-        Collection<Sector> activeSectors = level.getSectorsContaining(mouseLocation());
-        Collection<Thing>  closestThings = level.getThingsClosestTo  (mouseLocation(), 32);
-        Line               closestLine   = closestLines .isEmpty() ? null : closestLines .iterator().next();
-        Side               closestSide   = closestLine == null     ? null : closestLine.sideFacing(mouseLocation());
-        Sector             activeSector  = activeSectors.isEmpty() ? null : activeSectors.iterator().next();
-        Thing              closestThing  = closestThings.isEmpty() ? null : closestThings.iterator().next();
-
-        for (SelectionListener selectionListener: selectionListeners) {
-            selectionListener.lineSelected  (closestLine, closestSide);
-            selectionListener.sectorSelected(activeSector);
-            selectionListener.thingSelected (closestThing);
-        }
-
         for (Line line: level.lines()) {
-            boolean isInActiveSector = false;
-
-            for (Sector sector: activeSectors) {
-                if (sector.containsLine(line)) {
-                    isInActiveSector = true;
-                    break;
-                }
-            }
-
-            if (closestLines.contains(line)) {
+            if (line == selectedLine) {
                 graphics.setColor(Color.YELLOW.darker());
             }
-            else if (isInActiveSector) {
+            else if (selectedSector != null && selectedSector.containsLine(line)) {
                 graphics.setColor(Color.MAGENTA);
             }
             else if (line.isSecret()) {
@@ -140,7 +185,7 @@ public class LevelPanel extends JPanel {
         }
 
         for (Thing thing: level.things()) {
-            if (closestThings.contains(thing)) {
+            if (thing == selectedThing) {
                 graphics.setColor(Color.RED);
             }
             else {
