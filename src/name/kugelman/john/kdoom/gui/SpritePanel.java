@@ -49,4 +49,15 @@ public class SpritePanel extends JPanel {
         graphics.clearRect(0, 0, Integer.MAX_VALUE, Integer.MAX_VALUE);
         graphics.drawImage(image, 0, 0, new Color(0, 0, 0, 0), this);
     }
+
+    @Override
+    public boolean imageUpdate(Image image, int flags, int x, int y, int width, int height) {
+        // If we're not showing this image any more, return false so
+        // the sprite's ImageProducer can be notified.
+        if (image != this.image) {
+            return false;
+        }
+
+        return super.imageUpdate(image, flags, x, y, width, height);
+    }
 }
