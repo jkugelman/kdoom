@@ -1,16 +1,12 @@
 package name.kugelman.john.kdoom.model;
 
+import java.io.*;
 import java.util.*;
 
-public class Thing {
-    private short    number;
-    private Location location;
-    private short    angle;
-    private short    type;
-    private short    flags;
-    private Details  details;
+import name.kugelman.john.kdoom.file.*;
 
-    public enum Kind {
+public class Thing {
+   public enum Kind {
         PLAYER,
         MONSTER,
         WEAPON,
@@ -234,16 +230,29 @@ public class Thing {
         typeDetails.put((short) type, new Details(kind, sprite, sequence, (short) radius, name));
     }
 
-    public Thing(short number, Location location, short angle, short type, short flags) {
+
+    private short    number;
+    private Location location;
+    private short    angle;
+    private short    type;
+    private short    flags;
+    private Details  details;
+    private Sprite   sprite;
+
+    public Thing(Wad wad, short number, Location location, short angle, short type, short flags) throws IOException {
         this.number   = number;
         this.location = location;
         this.angle    = angle;
         this.type     = type;
         this.flags    = flags;
         this.details  = typeDetails.get(type);
-        
+
         if (details == null) {
             details = unknownDetails;
+        }
+        
+        if (details.sprite != null) {
+            this.sprite = new Sprite(wad, details.sprite);
         }
     }
 
@@ -292,5 +301,9 @@ public class Thing {
 
     public String getTypeName() {
         return details.name;
+    }
+
+    public Sprite getSprite() {
+        return sprite;
     }
 }

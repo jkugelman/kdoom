@@ -65,7 +65,7 @@ public class Level {
             short type  = buffer.get();
             short flags = buffer.get();
 
-            things.add(new Thing((short) things.size(), new Location(x, y), angle, type, flags));
+            things.add(new Thing(wad, (short) things.size(), new Location(x, y), angle, type, flags));
 
             if (x < minX) minX = x;
             if (y < minY) minY = y;

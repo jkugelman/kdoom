@@ -4,7 +4,6 @@ import java.awt.*;
 import java.io.*;
 import javax.swing.*;
 
-import name.kugelman.john.kdoom.file.*;
 import name.kugelman.john.kdoom.model.*;
 
 public class PatchPanel extends JPanel {
