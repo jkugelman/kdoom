@@ -42,13 +42,13 @@ public class Lump {
 
 
     public ByteBuffer getData() throws IOException {
-        // Jump to lump.
-        wad.file.seek(offset);
-
         byte[]     data   = new byte[size];
         ByteBuffer buffer = ByteBuffer.wrap(data).order(ByteOrder.LITTLE_ENDIAN); 
 
-        wad.file.readFully(data);
+        synchronized (wad.file) {
+            wad.file.seek     (offset);
+            wad.file.readFully(data);
+        }
 
         return buffer;
     }

@@ -21,13 +21,13 @@ public class Wad {
     }
 
     private void readHeader() throws IOException {
-        // Jump to header.
-        file.seek(0);
-
         byte[]     headerBytes = new byte[12];
         ByteBuffer buffer      = ByteBuffer.wrap(headerBytes).order(ByteOrder.LITTLE_ENDIAN);
 
-        file.readFully(headerBytes);
+        synchronized (file) {
+            file.seek     (0);
+            file.readFully(headerBytes);
+        }
 
         // Read identification.
         switch (buffer.getInt()) {
@@ -51,25 +51,26 @@ public class Wad {
     }
 
     private void readDirectory() throws IOException {
-        // Jump to directory.
-        file.seek(directoryOffset);
+        synchronized (file) {
+            file.seek(directoryOffset);
         
-        byte[] lumpBytes = new byte[16];
-        byte[] nameBytes = new byte[8];
+            byte[] lumpBytes = new byte[16];
+            byte[] nameBytes = new byte[8];
 
-        for (int i = 0; i < lumps.size(); ++i) {
-            ByteBuffer buffer = ByteBuffer.wrap(lumpBytes).order(ByteOrder.LITTLE_ENDIAN);
+            for (int i = 0; i < lumps.size(); ++i) {
+                ByteBuffer buffer = ByteBuffer.wrap(lumpBytes).order(ByteOrder.LITTLE_ENDIAN);
 
-            file.readFully(lumpBytes);
+                file.readFully(lumpBytes);
 
-            int    lumpOffset = buffer.getInt();
-            int    lumpSize   = buffer.getInt();
-                                buffer.get(nameBytes);
-            String lumpName   = new String(nameBytes, "ISO-8859-1").trim();
+                int    lumpOffset = buffer.getInt();
+                int    lumpSize   = buffer.getInt();
+                                    buffer.get(nameBytes);
+                String lumpName   = new String(nameBytes, "ISO-8859-1").trim();
 
-//            System.out.printf("Lump %-4d - %-8s (%d bytes)%n", i, lumpName, lumpSize);
+//                System.out.printf("Lump %-4d - %-8s (%d bytes)%n", i, lumpName, lumpSize);
 
-            lumps.set(i, new Lump(this, i, lumpOffset, lumpSize, lumpName));
+                lumps.set(i, new Lump(this, i, lumpOffset, lumpSize, lumpName));
+            }
         }
     }
 
