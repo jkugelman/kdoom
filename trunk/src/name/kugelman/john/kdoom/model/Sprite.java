@@ -10,6 +10,8 @@ import java.util.List;
 import name.kugelman.john.kdoom.file.*;
 
 public class Sprite {
+    private static final int FRAME_DELAY = 300;
+    
     String                   name;
     Palette                  palette;
     Dimension                size;
@@ -95,7 +97,7 @@ public class Sprite {
         }
 
         return new ImageProducer() {
-            List<ImageConsumer> consumers   = new ArrayList<ImageConsumer>();
+            List<ImageConsumer> consumers   = Collections.synchronizedList(new ArrayList<ImageConsumer>());
             Thread              thread      = null;
             ColorModel          colorModel  = ColorModel.getRGBdefault();
             List<Patch>         frames      = new ArrayList<Patch>        (frameSequence.length() / 2);
@@ -129,13 +131,17 @@ public class Sprite {
                         @Override
                         public void run() {            
                             try {
-                                for (ImageConsumer consumer: consumers) {
-                                    consumer.setDimensions(size.width, size.height);
-                                    consumer.setColorModel(colorModel);
+                                synchronized (consumers) {
+                                    for (int c = consumers.size() - 1; c >= 0; --c) {
+                                        ImageConsumer consumer = consumers.get(c);
+                                        
+                                        consumer.setDimensions(size.width, size.height);
+                                        consumer.setColorModel(colorModel);
+                                    }
                                 }
 
                                 for (int i = 0; !isInterrupted(); i = (i + 1) % frameImages.size()) {
-//                                    System.out.printf("Showing frame %d of %s (%s)%n", i, name, frameSequence);
+//                                    System.out.printf("[%08x] Showing %s frame %s to %d consumers%n", hashCode(), name, frameSequence.substring(i * 2, i * 2 + 2), consumers.size());
 
                                     // Reset buffer to all transparent.                       
                                     Arrays.fill(pixels, 0);
@@ -151,19 +157,24 @@ public class Sprite {
                                     buffer.getRGB(0, 0, size.width, size.height, pixels, 0, size.width);
                                     
                                     // Send pixels to consumers.
-                                    for (ImageConsumer consumer: consumers) {
-                                        consumer.setPixels(0, 0, size.width, size.height, colorModel, pixels, 0, size.width);
-                                        consumer.imageComplete(ImageConsumer.SINGLEFRAMEDONE);
+                                    synchronized (consumers) {
+                                        // Iterate manually over list in reverse order to prevent
+                                        // ConcurrentModificationException if consumer is removed
+                                        // during iteration.
+                                        for (int c = consumers.size() - 1; c >= 0; --c) {
+                                            ImageConsumer consumer = consumers.get(c);
+                                        
+                                            consumer.setPixels(0, 0, size.width, size.height, colorModel, pixels, 0, size.width);
+                                            consumer.imageComplete(ImageConsumer.SINGLEFRAMEDONE);
+                                        }
                                     }
 
-                                    Thread.sleep(250); 
+                                    Thread.sleep(FRAME_DELAY); 
                                 }
                             }
                             catch (InterruptedException exception) {
                                 // Stop thread.
                             }
-
-                            System.out.printf("No longer showing %s%n", name);
                         }
                     };
 
@@ -172,11 +183,13 @@ public class Sprite {
             }
 
             public void removeConsumer(ImageConsumer consumer) {
-                consumers.remove(consumer);
+                synchronized (consumers) {
+                    consumers.remove(consumer);
                 
-                if (consumers.isEmpty()) {
-                    thread.interrupt();
-                    thread = null;
+                    if (consumers.isEmpty()) {
+                        thread.interrupt();
+                        thread = null;
+                    }
                 }
             }
 
