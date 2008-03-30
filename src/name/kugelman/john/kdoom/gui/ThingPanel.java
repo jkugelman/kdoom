@@ -42,7 +42,7 @@ public class ThingPanel extends JPanel {
         add(typeLabel,                new Constraints(1, 2).anchorNorthwest());
         add(new JLabel("Flags: "),    new Constraints(0, 3).anchorNortheast());
         add(flagsLabel,               new Constraints(1, 3).anchorNorthwest());
-        add(spritePanel,              new Constraints(0, 4).width(2).anchorNorth().insets(8, 0, 0, 0));
+        add(spritePanel,              new Constraints(1, 4).anchorNorthwest().insets(8, 0, 0, 0));
         add(Box.createGlue(),         new Constraints(2, 5).weight(1, 1));
 
         show(thing);
