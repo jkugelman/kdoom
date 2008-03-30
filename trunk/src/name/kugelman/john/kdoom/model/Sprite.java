@@ -157,7 +157,7 @@ public class Sprite {
                 }
             }
             else {
-                throw new IllegalArgumentException(frameSequence.substring(i - 2, i + 3) + ": Cannot change both frame letter and angle.");
+                throw new IllegalArgumentException(frameRange + ": Cannot change both letter and angle.");
             }
 
             frameSequence = frameSequence.replaceAll(frameRange, replacement.toString());
