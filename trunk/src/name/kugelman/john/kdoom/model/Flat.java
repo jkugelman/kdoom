@@ -33,68 +33,19 @@ public class Flat {
     }
 
 
-    public ImageProducer getImageProducer(final Palette palette) {
-        return new ImageProducer() {
-            Set<ImageConsumer> consumers = new HashSet<ImageConsumer>();
+    public BufferedImage getImage(Palette palette) throws IOException {
+        IndexColorModel colorModel = palette.getColorModel();
+        BufferedImage   image      = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_BYTE_INDEXED, colorModel); 
+        
+        // Read flat pixels.
+        ByteBuffer buffer     = lump.getData();
+        byte[]     pixels     = new byte[SIZE];
 
-            public void addConsumer(ImageConsumer consumer) {
-                consumers.add(consumer);
-            }
+        buffer.get(pixels);
 
-            public boolean isConsumer(ImageConsumer consumer) {
-                return consumers.contains(consumer);
-            }
+        // Copy to image.
+        image.getRaster().setDataElements(0, 0, WIDTH, HEIGHT, pixels);                        
 
-            public void removeConsumer(ImageConsumer consumer) {
-                consumers.remove(consumer);
-            }
-
-            public void startProduction(ImageConsumer consumer) {
-                addConsumer(consumer);
-                produceImage();
-            }
-
-            public void requestTopDownLeftRightResend(ImageConsumer consumer) {
-                startProduction(consumer);
-            }
-
-
-            private void produceImage() {
-                for (ImageConsumer consumer: consumers) {
-                    consumer.setHints(ImageConsumer.SINGLEFRAME
-                                    | ImageConsumer.SINGLEPASS
-                                    | ImageConsumer.TOPDOWNLEFTRIGHT);
-                }
-
-                try {
-                    // Read flat pixels.
-                    ColorModel colorModel = palette.getColorModel();
-                    ByteBuffer buffer     = lump.getData();
-                    byte[]     pixels     = new byte[SIZE];
-
-                    buffer.get(pixels);
-
-                    for (ImageConsumer consumer: consumers) {
-                        consumer.setColorModel(colorModel);
-                        consumer.setDimensions(WIDTH, HEIGHT);
-
-                        consumer.setPixels(0, 0, WIDTH, HEIGHT, colorModel, pixels, 0, WIDTH);
-                    }
-
-                    // Finished.
-                    for (ImageConsumer consumer: consumers) {
-                        consumer.imageComplete(ImageConsumer.STATICIMAGEDONE);
-                    }
-                }
-                catch (IOException exception) {
-                    exception.printStackTrace();
-
-                    // Error.
-                    for (ImageConsumer consumer: consumers) {
-                        consumer.imageComplete(ImageConsumer.IMAGEERROR);
-                    }
-                }
-            }
-        };
+        return image;
     }
 }

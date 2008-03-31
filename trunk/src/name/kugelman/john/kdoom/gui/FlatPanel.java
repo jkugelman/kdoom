@@ -34,6 +34,11 @@ public class FlatPanel extends JPanel {
             return;
         }
 
-        graphics.drawImage(createImage(flat.getImageProducer(palette)), 0, 0, Color.CYAN, this);
+        try {
+            graphics.drawImage(flat.getImage(palette), 0, 0, this);
+        }
+        catch (IOException exception) {
+            exception.printStackTrace();
+        }
     }
 }

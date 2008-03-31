@@ -20,7 +20,8 @@ public class PatchPanel extends JPanel {
     @Override
     public void paint(Graphics graphics) {
         try {
-            graphics.drawImage(patch.getImage(palette), 0, 0, Color.CYAN, this);
+            graphics.clearRect(0, 0, Integer.MAX_VALUE, Integer.MAX_VALUE);
+            graphics.drawImage(patch.getImage(palette), 0, 0, this);
         }
         catch (IOException exception) {
             exception.printStackTrace();

@@ -50,7 +50,7 @@ public class TexturePanel extends JPanel {
         }
    
         try { 
-            graphics.drawImage(texture.getImage(palette), 0, 0, Color.CYAN, this);
+            graphics.drawImage(texture.getImage(palette), 0, 0, this);
         }
         catch (IOException exception) {
             exception.printStackTrace();
