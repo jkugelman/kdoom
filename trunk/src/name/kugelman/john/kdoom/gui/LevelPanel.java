@@ -318,6 +318,12 @@ public class LevelPanel extends JPanel {
 
             int screenRadius = thing.getRadius() / scale;
 
+            graphics.fillOval(screenX(thing.getLocation().getX()) - screenRadius,
+                              screenY(thing.getLocation().getY()) - screenRadius,
+                              screenRadius * 2, screenRadius * 2);
+            
+            graphics.setColor(Color.BLACK);
+
             graphics.drawOval(screenX(thing.getLocation().getX()) - screenRadius,
                               screenY(thing.getLocation().getY()) - screenRadius,
                               screenRadius * 2, screenRadius * 2);
