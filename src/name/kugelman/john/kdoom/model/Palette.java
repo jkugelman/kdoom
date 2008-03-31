@@ -55,7 +55,7 @@ public class Palette {
     }
 
 
-    public ColorModel getColorModel() {
+    public IndexColorModel getColorModel() {
         return colorModels[activePalette];
     }
 }

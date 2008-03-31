@@ -18,8 +18,9 @@ public class LevelPanel extends JPanel {
         void thingSelected (Thing thing);
     }
 
-    private Level level;
-    private int   scale;
+    private Level   level;
+    private int     scale;
+    private Palette palette;
 
     private List<SelectionListener> selectionListeners;
     private Line                    selectedLine;
@@ -27,12 +28,13 @@ public class LevelPanel extends JPanel {
     private Sector                  selectedSector;
     private Thing                   selectedThing;
 
-    public LevelPanel() {
-        this(null);
+    public LevelPanel(Palette palette) {
+        this(null, palette);
     }
 
-    public LevelPanel(Level level) {
+    public LevelPanel(Level level, Palette palette) {
         this.scale              = 4;
+        this.palette            = palette;
         this.selectionListeners = new ArrayList<SelectionListener>();
         
         addMouseMotionListener(new MouseMotionAdapter() {
@@ -253,7 +255,14 @@ public class LevelPanel extends JPanel {
             for (Polygon polygon: additivePolygons)    area.add     (new Area(polygon));
             for (Polygon polygon: subtractivePolygons) area.subtract(new Area(polygon));
             
-            graphics.fill(area);
+            try {
+                graphics.setPaint(new TexturePaint(sector.getFloorFlat().getImage(palette),
+                                               new Rectangle2D.Double(screenX((short) 0), screenY((short) 0), (double) Flat.WIDTH / scale, (double) Flat.HEIGHT / scale)));
+                graphics.fill    (area);
+            }
+            catch (IOException exception) {
+                exception.printStackTrace();
+            }
         }
 
         // Draw lines.
