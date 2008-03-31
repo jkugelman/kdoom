@@ -385,8 +385,7 @@ public class LevelPanel extends JPanel {
                                                       screenY(thing.getLocation().getY()) - screenRadius,
                                                       screenRadius * 2, screenRadius * 2);
             
-            graphics.fill    (circle);
-            
+            graphics.fill(circle);
             
             if (thing == selectedThing) {
                 graphics.setColor (Color.YELLOW);
