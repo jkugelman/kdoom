@@ -192,11 +192,16 @@ public class LevelPanel extends JPanel {
             return;
         }
 
-        enableAntialiasing(graphics);
-        drawSectors       (graphics);
-        drawLines         (graphics);
-        drawVertices      (graphics);
-        drawThings        (graphics);
+        try {
+            enableAntialiasing(graphics);
+            drawSectors       (graphics);
+            drawLines         (graphics);
+            drawVertices      (graphics);
+            drawThings        (graphics);
+        }
+        catch (IOException exception) {
+            exception.printStackTrace();
+        }
     }
 
     private void clearCanvas(Graphics2D graphics) {
@@ -208,7 +213,7 @@ public class LevelPanel extends JPanel {
         graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
     }
 
-    private void drawSectors(Graphics2D graphics) {
+    private void drawSectors(Graphics2D graphics) throws IOException {
         graphics.setColor(Color.LIGHT_GRAY);
         
         nextSector: for (Sector sector: level.sectors()) {
@@ -301,27 +306,22 @@ public class LevelPanel extends JPanel {
             for (Polygon polygon: additivePolygons)    area.add     (new Area(polygon));
             for (Polygon polygon: subtractivePolygons) area.subtract(new Area(polygon));
             
-            try {
-                if (isCeilingVisible) {
-                    graphics.setPaint(new TexturePaint(
-                        sector.getCeilingFlat().getImage(palette),
-                        new Rectangle2D.Double(screenX((short) 0), screenY((short) 0),
-                                               (double) Flat.WIDTH / scale, (double) Flat.HEIGHT / scale)
-                    ));
-                }
-                else if (isFloorVisible) {
-                    graphics.setPaint(new TexturePaint(
-                        sector.getFloorFlat().getImage(palette),
-                        new Rectangle2D.Double(screenX((short) 0), screenY((short) 0),
-                                               (double) Flat.WIDTH / scale, (double) Flat.HEIGHT / scale)
-                    ));
-                }
-                else {
-                    graphics.setColor(Color.LIGHT_GRAY);
-                }
+            if (isCeilingVisible) {
+                graphics.setPaint(new TexturePaint(
+                    sector.getCeilingFlat().getImage(palette),
+                    new Rectangle2D.Double(screenX((short) 0), screenY((short) 0),
+                                           (double) Flat.WIDTH / scale, (double) Flat.HEIGHT / scale)
+                ));
             }
-            catch (IOException exception) {
-                exception.printStackTrace();
+            else if (isFloorVisible) {
+                graphics.setPaint(new TexturePaint(
+                    sector.getFloorFlat().getImage(palette),
+                    new Rectangle2D.Double(screenX((short) 0), screenY((short) 0),
+                                           (double) Flat.WIDTH / scale, (double) Flat.HEIGHT / scale)
+                ));
+            }
+            else {
+                graphics.setColor(Color.LIGHT_GRAY);
             }
 
             graphics.fill(area);
