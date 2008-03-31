@@ -259,31 +259,17 @@ public class Level {
         return sectors; 
     }
 
-    public Collection<Thing> getThingsClosestTo(Location location) {
-        return getThingsClosestTo(location, Double.POSITIVE_INFINITY);
-    }
-
-    public Collection<Thing> getThingsClosestTo(Location location, double maximumDistance) {
-        List<Thing> closestThings   = new ArrayList<Thing>();
-        double      closestDistance = maximumDistance;
+    public Collection<Thing> getThingsAt(Location location) {
+        List<Thing> things = new ArrayList<Thing>();
 
         if (location != null) {
-            for (Thing thing: things) {
-                double distance = location.distanceTo(thing.getLocation());
-
-                if (distance > closestDistance) {
-                    continue;
+            for (Thing thing: this.things) {
+                if (location.distanceTo(thing.getLocation()) <= thing.getRadius()) {
+                    things.add(thing);
                 }
-
-                if (distance < closestDistance) {
-                    closestThings.clear();
-                    closestDistance = distance;
-                }
-
-                closestThings.add(thing);
             }
         }
 
-        return closestThings;
+        return things;
     }
 }
