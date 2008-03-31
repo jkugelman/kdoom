@@ -45,16 +45,16 @@ public class LevelPanel extends JPanel {
 
                 Collection<Line>   closestLines  = level.getLinesClosestTo   (mouseLocation, 32);
                 Collection<Sector> activeSectors = level.getSectorsContaining(mouseLocation);
-                Collection<Thing>  closestThings = level.getThingsClosestTo  (mouseLocation, 32);
+                Collection<Thing>  activeThings  = level.getThingsAt         (mouseLocation);
                 
                 Line               closestLine   = closestLines .isEmpty() ? null : closestLines .iterator().next();
                 Side               closestSide   = closestLine == null     ? null : closestLine.sideFacing(mouseLocation);
                 Sector             activeSector  = activeSectors.isEmpty() ? null : activeSectors.iterator().next();
-                Thing              closestThing  = closestThings.isEmpty() ? null : closestThings.iterator().next();
+                Thing              activeThing   = activeThings .isEmpty() ? null : activeThings .iterator().next();
 
                 selectLine  (closestLine, closestSide);
                 selectSector(activeSector);
-                selectThing (closestThing);
+                selectThing (activeThing);
             }
         });
 
@@ -268,10 +268,12 @@ public class LevelPanel extends JPanel {
         // Draw lines.
         for (Line line: level.lines()) {
             if (line == selectedLine) {
-                graphics.setColor(Color.YELLOW.darker());
+                graphics.setColor (Color.YELLOW);
+                graphics.setStroke(new BasicStroke(1.5f));
             }
             else if (selectedSector != null && selectedSector.containsLine(line)) {
-                graphics.setColor(Color.MAGENTA);
+                graphics.setColor (Color.MAGENTA);
+                graphics.setStroke(new BasicStroke(1.5f));
             }
             else if (line.isSecret()) {
                 graphics.setColor(Color.GREEN);
@@ -285,6 +287,8 @@ public class LevelPanel extends JPanel {
 
             graphics.drawLine(screenX(line.getStart().getX()), screenY(line.getStart().getY()),
                               screenX(line.getEnd  ().getX()), screenY(line.getEnd  ().getY()));
+        
+            graphics.setStroke(new BasicStroke());
         }
 
         // Draw vertices.
@@ -296,24 +300,19 @@ public class LevelPanel extends JPanel {
 
         // Draw things.
         for (Thing thing: level.things()) {
-            if (thing == selectedThing) {
-                graphics.setColor(Color.RED);
-            }
-            else {
-                switch (thing.getKind()) {
-                    case PLAYER:     graphics.setColor(Color.GREEN);         break;
-                    case MONSTER:    graphics.setColor(new Color(0x8b4513)); break;
-                    case WEAPON:     graphics.setColor(Color.RED);           break;
-                    case AMMO:       graphics.setColor(Color.RED);           break;
-                    case HEALTH:     graphics.setColor(Color.GREEN);         break;
-                    case ARMOR:      graphics.setColor(Color.BLUE);          break;
-                    case POWER_UP:   graphics.setColor(Color.MAGENTA);       break;
-                    case KEY:        graphics.setColor(Color.MAGENTA);       break;
-                    case OBSTACLE:   graphics.setColor(Color.GRAY);          break;
-                    case DECORATION: graphics.setColor(Color.LIGHT_GRAY);    break;
-                    case SPECIAL:    graphics.setColor(Color.MAGENTA);       break;
-                    case UNKNOWN:    graphics.setColor(Color.MAGENTA);       break;
-                }
+            switch (thing.getKind()) {
+                case PLAYER:     graphics.setColor(Color.GREEN);         break;
+                case MONSTER:    graphics.setColor(new Color(0x8b4513)); break;
+                case WEAPON:     graphics.setColor(Color.RED);           break;
+                case AMMO:       graphics.setColor(Color.RED);           break;
+                case HEALTH:     graphics.setColor(Color.GREEN);         break;
+                case ARMOR:      graphics.setColor(Color.BLUE);          break;
+                case POWER_UP:   graphics.setColor(Color.MAGENTA);       break;
+                case KEY:        graphics.setColor(Color.MAGENTA);       break;
+                case OBSTACLE:   graphics.setColor(Color.GRAY);          break;
+                case DECORATION: graphics.setColor(Color.LIGHT_GRAY);    break;
+                case SPECIAL:    graphics.setColor(Color.MAGENTA);       break;
+                case UNKNOWN:    graphics.setColor(Color.MAGENTA);       break;
             }
 
             int   screenRadius = thing.getRadius() / scale;
@@ -322,8 +321,17 @@ public class LevelPanel extends JPanel {
                                                       screenRadius * 2, screenRadius * 2);
             
             graphics.fill    (circle);
-            graphics.setColor(Color.BLACK);
-            graphics.draw    (circle);
+            
+            
+            if (thing == selectedThing) {
+                graphics.setColor (Color.YELLOW);
+                graphics.setStroke(new BasicStroke(1.5f));
+            }
+            else {
+                graphics.setColor(Color.BLACK);
+            }
+
+            graphics.draw(circle);
 
             if (thing.isDirectional()) {
                 double startX = thing.getLocation().getX();
@@ -333,6 +341,10 @@ public class LevelPanel extends JPanel {
                 
                 graphics.drawLine(screenX((short) startX), screenY((short) startY),
                                   screenX((short) endX),   screenY((short) endY));
+            }
+
+            if (thing == selectedThing) {
+                graphics.setStroke(new BasicStroke());
             }
         }
     }
