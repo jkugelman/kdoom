@@ -316,17 +316,14 @@ public class LevelPanel extends JPanel {
                 }
             }
 
-            int screenRadius = thing.getRadius() / scale;
-
-            graphics.fillOval(screenX(thing.getLocation().getX()) - screenRadius,
-                              screenY(thing.getLocation().getY()) - screenRadius,
-                              screenRadius * 2, screenRadius * 2);
+            int   screenRadius = thing.getRadius() / scale;
+            Shape circle       = new Ellipse2D.Double(screenX(thing.getLocation().getX()) - screenRadius,
+                                                      screenY(thing.getLocation().getY()) - screenRadius,
+                                                      screenRadius * 2, screenRadius * 2);
             
+            graphics.fill    (circle);
             graphics.setColor(Color.BLACK);
-
-            graphics.drawOval(screenX(thing.getLocation().getX()) - screenRadius,
-                              screenY(thing.getLocation().getY()) - screenRadius,
-                              screenRadius * 2, screenRadius * 2);
+            graphics.draw    (circle);
 
             if (thing.isDirectional()) {
                 double startX = thing.getLocation().getX();
