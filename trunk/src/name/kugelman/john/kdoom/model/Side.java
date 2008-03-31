@@ -1,10 +1,13 @@
 package name.kugelman.john.kdoom.model;
 
+import java.util.*;
+
 public class Side {
-    private short   number;
-    private short   xOffset, yOffset;
-    private Texture upperTexture, lowerTexture, middleTexture;
-    private Sector  sector;
+    private short     number;
+    private short     xOffset, yOffset;
+    private Texture   upperTexture, lowerTexture, middleTexture;
+    private Sector    sector;
+            Set<Line> lines;
 
     Side(short number, short xOffset, short yOffset,
          Texture upperTexture, Texture lowerTexture, Texture middleTexture,
@@ -17,6 +20,7 @@ public class Side {
         this.lowerTexture  = lowerTexture;
         this.middleTexture = middleTexture;
         this.sector        = sector;
+        this.lines         = new LinkedHashSet<Line>();
 
         sector.sides.add(this);
     }
@@ -48,5 +52,9 @@ public class Side {
 
     public Sector getSector() {
         return sector;
+    }
+
+    public Set<Line> lines() {
+        return Collections.unmodifiableSet(lines);
     }
 }

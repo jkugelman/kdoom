@@ -77,4 +77,12 @@ public class Sector {
     public boolean containsLine(Line line) {
         return containsSide(line.getLeftSide()) || containsSide(line.getRightSide());
     }
+
+    public boolean isOnLeftSideOf(Line line) {
+        return line.getLeftSide() != null && line.getLeftSide().getSector() == this;
+    }
+
+    public boolean isOnRightSideOf(Line line) {
+        return line.getRightSide() != null && line.getRightSide().getSector() == this;
+    }
 }
