@@ -186,18 +186,29 @@ public class LevelPanel extends JPanel {
     protected void paintComponent(Graphics g) {
         Graphics2D graphics = (Graphics2D) g;
 
-        // Enable anti-aliasing.
-        graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-
-        // Clear canvas.
-        graphics.setColor(Color.WHITE);
-        graphics.fillRect(0, 0, getSize().width, getSize().height);
+        clearCanvas(graphics);
 
         if (level == null) {
             return;
         }
 
-        // Draw sectors.
+        enableAntialiasing(graphics);
+        drawSectors       (graphics);
+        drawLines         (graphics);
+        drawVertices      (graphics);
+        drawThings        (graphics);
+    }
+
+    private void clearCanvas(Graphics2D graphics) {
+        graphics.setColor(Color.WHITE);
+        graphics.fillRect(0, 0, getSize().width, getSize().height);
+    }
+
+    private void enableAntialiasing(Graphics2D graphics) {
+        graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+    }
+
+    private void drawSectors(Graphics2D graphics) {
         graphics.setColor(Color.LIGHT_GRAY);
         
         nextSector: for (Sector sector: level.sectors()) {
@@ -315,8 +326,9 @@ public class LevelPanel extends JPanel {
 
             graphics.fill(area);
         }
+    }
 
-        // Draw lines.
+    private void drawLines(Graphics2D graphics) {
         for (Line line: level.lines()) {
             if (line == selectedLine) {
                 graphics.setColor (Color.YELLOW);
@@ -341,15 +353,17 @@ public class LevelPanel extends JPanel {
         
             graphics.setStroke(new BasicStroke());
         }
+    }
 
-        // Draw vertices.
+    private void drawVertices(Graphics2D graphics) {
         graphics.setColor(Color.BLUE);
 
         for (Vertex vertex: level.vertices()) {
             graphics.fillRect(screenX(vertex.getX()) - 1, screenY(vertex.getY()) - 1, 3, 3);
         }
+    }
 
-        // Draw things.
+    private void drawThings(Graphics2D graphics) {
         for (Thing thing: level.things()) {
             switch (thing.getKind()) {
                 case PLAYER:     graphics.setColor(Color.WHITE);         break;
