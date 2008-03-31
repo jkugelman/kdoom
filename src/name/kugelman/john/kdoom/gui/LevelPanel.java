@@ -18,6 +18,7 @@ public class LevelPanel extends JPanel {
         void thingSelected (Thing thing);
     }
 
+
     private Level   level;
     private int     scale;
     private Palette palette;
@@ -27,6 +28,8 @@ public class LevelPanel extends JPanel {
     private Side                    selectedSide;
     private Sector                  selectedSector;
     private Thing                   selectedThing;
+
+    private boolean isFloorVisible, isCeilingVisible;
 
     public LevelPanel(Palette palette) {
         this(null, palette);
@@ -61,11 +64,28 @@ public class LevelPanel extends JPanel {
         addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent event) {
-                if (event.getKeyCode() == KeyEvent.VK_ADD && event.getKeyLocation() == KeyEvent.KEY_LOCATION_NUMPAD) {
-                    setScale(scale - 1);
-                }
-                else if (event.getKeyCode() == KeyEvent.VK_SUBTRACT && event.getKeyLocation() == KeyEvent.KEY_LOCATION_NUMPAD) {
-                    setScale(scale + 1);
+                switch (event.getKeyCode()) {
+                    case KeyEvent.VK_ADD:
+                        if (event.getKeyLocation() == KeyEvent.KEY_LOCATION_NUMPAD) {
+                            setScale(scale - 1);
+                        }
+
+                        break;
+
+                    case KeyEvent.VK_SUBTRACT:
+                        if (event.getKeyLocation() == KeyEvent.KEY_LOCATION_NUMPAD) {
+                            setScale(scale + 1);
+                        }
+
+                        break;
+
+                    case KeyEvent.VK_F:
+                        toggleFloor();
+                        break;
+
+                    case KeyEvent.VK_C:
+                        toggleCeiling();
+                        break;
                 }
             }
         });
@@ -74,6 +94,7 @@ public class LevelPanel extends JPanel {
 
         show(level);
     }
+
 
     public void show(Level level) {
         this.level = level;
@@ -92,6 +113,7 @@ public class LevelPanel extends JPanel {
         revalidate();
         repaint   ();
     }
+
 
     public void addSelectionListener(SelectionListener selectionListener) {
         selectionListeners.add(selectionListener);
@@ -144,7 +166,20 @@ public class LevelPanel extends JPanel {
         repaint();
     }
 
- 
+
+    public void toggleFloor() {
+        isFloorVisible   = !isFloorVisible;
+        isCeilingVisible = false;
+    
+        repaint();
+    }
+
+    public void toggleCeiling() {
+        isCeilingVisible = !isCeilingVisible;
+        isFloorVisible   = false;
+    
+        repaint();
+    }
 
 
     @Override
@@ -256,13 +291,29 @@ public class LevelPanel extends JPanel {
             for (Polygon polygon: subtractivePolygons) area.subtract(new Area(polygon));
             
             try {
-                graphics.setPaint(new TexturePaint(sector.getFloorFlat().getImage(palette),
-                                               new Rectangle2D.Double(screenX((short) 0), screenY((short) 0), (double) Flat.WIDTH / scale, (double) Flat.HEIGHT / scale)));
-                graphics.fill    (area);
+                if (isCeilingVisible) {
+                    graphics.setPaint(new TexturePaint(
+                        sector.getCeilingFlat().getImage(palette),
+                        new Rectangle2D.Double(screenX((short) 0), screenY((short) 0),
+                                               (double) Flat.WIDTH / scale, (double) Flat.HEIGHT / scale)
+                    ));
+                }
+                else if (isFloorVisible) {
+                    graphics.setPaint(new TexturePaint(
+                        sector.getFloorFlat().getImage(palette),
+                        new Rectangle2D.Double(screenX((short) 0), screenY((short) 0),
+                                               (double) Flat.WIDTH / scale, (double) Flat.HEIGHT / scale)
+                    ));
+                }
+                else {
+                    graphics.setColor(Color.LIGHT_GRAY);
+                }
             }
             catch (IOException exception) {
                 exception.printStackTrace();
             }
+
+            graphics.fill(area);
         }
 
         // Draw lines.
@@ -301,7 +352,7 @@ public class LevelPanel extends JPanel {
         // Draw things.
         for (Thing thing: level.things()) {
             switch (thing.getKind()) {
-                case PLAYER:     graphics.setColor(Color.GREEN);         break;
+                case PLAYER:     graphics.setColor(Color.WHITE);         break;
                 case MONSTER:    graphics.setColor(new Color(0x8b4513)); break;
                 case WEAPON:     graphics.setColor(Color.RED);           break;
                 case AMMO:       graphics.setColor(Color.RED);           break;
