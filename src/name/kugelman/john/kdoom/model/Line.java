@@ -22,6 +22,9 @@ public class Line {
         this.yDiff      = end.getY() - start.getY();
         this.slope      = yDiff / xDiff;
         this.leftSign   = end.getX() < start.getX() ? -1 : +1;
+
+        if (leftSide  != null) leftSide .lines.add(this);
+        if (rightSide != null) rightSide.lines.add(this);
     }
 
 
