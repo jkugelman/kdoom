@@ -145,11 +145,13 @@ public class LevelPanel extends JPanel {
 
 
     @Override
-    protected void paintComponent(Graphics graphics) {
-        if (graphics instanceof Graphics2D) {
-            ((Graphics2D) graphics).setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        }
+    protected void paintComponent(Graphics g) {
+        Graphics2D graphics = (Graphics2D) g;
 
+        // Enable anti-aliasing.
+        graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+        // Clear canvas.
         graphics.setColor(Color.WHITE);
         graphics.fillRect(0, 0, getSize().width, getSize().height);
 
@@ -157,6 +159,7 @@ public class LevelPanel extends JPanel {
             return;
         }
 
+        // Draw lines.
         for (Line line: level.lines()) {
             if (line == selectedLine) {
                 graphics.setColor(Color.YELLOW.darker());
@@ -178,12 +181,14 @@ public class LevelPanel extends JPanel {
                               screenX(line.getEnd  ().getX()), screenY(line.getEnd  ().getY()));
         }
 
+        // Draw vertices.
         graphics.setColor(Color.BLUE);
 
         for (Vertex vertex: level.vertices()) {
             graphics.fillRect(screenX(vertex.getX()) - 1, screenY(vertex.getY()) - 1, 3, 3);
         }
 
+        // Draw things.
         for (Thing thing: level.things()) {
             if (thing == selectedThing) {
                 graphics.setColor(Color.RED);
