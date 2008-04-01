@@ -8,6 +8,7 @@ import java.util.*;
 import java.util.List;
 import javax.swing.*;
 
+import name.kugelman.john.util.*;
 import name.kugelman.john.kdoom.file.*;
 import name.kugelman.john.kdoom.model.*;
 
@@ -217,41 +218,51 @@ public class LevelPanel extends JPanel {
         graphics.setColor(Color.LIGHT_GRAY);
         
         nextSector: for (Sector sector: level.sectors()) {
-            Set<Line>     lines               = new LinkedHashSet<Line>();
-            List<Polygon> additivePolygons    = new ArrayList<Polygon>();
-            List<Polygon> subtractivePolygons = new ArrayList<Polygon>();
+            Set<Pair<Line, Boolean>> lineSidePairs       = new LinkedHashSet<Pair<Line, Boolean>>();
+            List<Polygon>            additivePolygons    = new ArrayList<Polygon>();
+            List<Polygon>            subtractivePolygons = new ArrayList<Polygon>();
 
             for (Side side: sector.sides()) {
-                lines.addAll(side.lines());
+                for (Line line: side.lines()) {
+                    if (side == line.getLeftSide ()) lineSidePairs.add(new Pair(line, false));
+                    if (side == line.getRightSide()) lineSidePairs.add(new Pair(line, true));
+                }
             }
 
-            nextPolygon: while (!lines.isEmpty()) {
+            nextPolygon: while (!lineSidePairs.isEmpty()) {
 //                System.out.printf("Sector #%d, polygon #%d%n", sector.getNumber(), additivePolygons.size() + subtractivePolygons.size() + 1);
 
-                List<Vertex> vertices        = new ArrayList<Vertex>();
-                Line         firstLine       = lines.iterator().next();
-                double       angleSum        = 0;
-                boolean      isSectorOnRight = sector.isOnRightSideOf(firstLine);
+                List<Vertex>        vertices        = new ArrayList<Vertex>();
+                Pair<Line, Boolean> firstPair       = lineSidePairs.iterator().next();
+                Line                firstLine       = firstPair.a;
+                boolean             isSectorOnRight = firstPair.b;
+                double              angleSum        = 0;
 
                 vertices.add(firstLine.getStart());
                 vertices.add(firstLine.getEnd  ());
 
-                lines.remove(firstLine);
+                lineSidePairs.remove(firstPair);
 
                 nextLine: for (;;) {
-                    Line   nextLine   = null;
-                    Vertex nextVertex = null;
-                    Vertex lastVertex = vertices.get(vertices.size() - 1);
+                    Pair<Line, Boolean> nextPair   = null;
+                    Line                nextLine   = null;
+                    Vertex              nextVertex = null;
+                    Vertex              lastVertex = vertices.get(vertices.size() - 1);
 
                     // Find the next line which starts where this line ends.
-                    for (Line line: lines) {
-                        if (line.getStart() == lastVertex) {
+                    for (Pair<Line, Boolean> pair: lineSidePairs) {
+                        Line    line      = pair.a;
+                        boolean isOnRight = pair.b;
+                        
+                        if (line.getStart() == lastVertex && isOnRight == isSectorOnRight) {
+                            nextPair   = pair;
                             nextLine   = line;
                             nextVertex = line.getEnd();
                             
                             break;
                         }
-                        else if (line.getEnd() == lastVertex) {
+                        else if (line.getEnd() == lastVertex && isOnRight != isSectorOnRight) {
+                            nextPair   = pair;
                             nextLine   = line;
                             nextVertex = line.getStart();
                             
@@ -265,7 +276,7 @@ public class LevelPanel extends JPanel {
                         continue nextSector;
                     }
 
-                    lines.remove(nextLine);
+                    lineSidePairs.remove(nextPair);
 
                     // Add vertex to list and compute angle change.
                     if (lastVertex.getX() != nextVertex.getX() ||
