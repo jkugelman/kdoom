@@ -3,58 +3,88 @@ package name.kugelman.john.kdoom.model;
 import java.util.*;
 
 public class Side {
-    private short     number;
-    private short     xOffset, yOffset;
-    private Texture   upperTexture, lowerTexture, middleTexture;
-    private Sector    sector;
-            Set<Line> lines;
+    private Line    line;
+    private Sidedef sidedef;
+    private boolean isRightSidedef;
 
-    Side(short number, short xOffset, short yOffset,
-         Texture upperTexture, Texture lowerTexture, Texture middleTexture,
-         Sector sector)
-    {
-        this.number        = number;
-        this.xOffset       = xOffset;
-        this.yOffset       = yOffset;
-        this.upperTexture  = upperTexture;
-        this.lowerTexture  = lowerTexture;
-        this.middleTexture = middleTexture;
-        this.sector        = sector;
-        this.lines         = new LinkedHashSet<Line>();
+    Side(Line line, Sidedef sidedef, boolean isRightSidedef) {
+        this.line           = line;
+        this.sidedef        = sidedef;
+        this.isRightSidedef = isRightSidedef;
 
-        sector.sides.add(this);
+        sidedef.getSector().sides.add(this);
+    }
+
+
+    public Sidedef getSidedef() {
+        return sidedef;
+    }
+
+    public Line getLine() {
+        return line;
+    }
+
+    public boolean isRightSidedef() {
+        return isRightSidedef;
     }
 
 
     public short getNumber() {
-        return number;
+        return sidedef.getNumber();
     }
 
     public short getXOffset() {
-        return xOffset;
+        return sidedef.getXOffset();
     }
 
     public short getYOffset() {
-        return yOffset;
+        return sidedef.getYOffset();
     }
 
     public Texture getUpperTexture() {
-        return upperTexture;
+        return sidedef.getUpperTexture();
     }
 
     public Texture getLowerTexture() {
-        return lowerTexture;
+        return sidedef.getLowerTexture();
     }
 
     public Texture getMiddleTexture() {
-        return middleTexture;
+        return sidedef.getMiddleTexture();
     }
 
     public Sector getSector() {
-        return sector;
+        return sidedef.getSector();
     }
 
-    public Set<Line> lines() {
-        return Collections.unmodifiableSet(lines);
+
+    public Vertex getStart() {
+        return isRightSidedef ? line.getStart() : line.getEnd();
+    }
+
+    public Vertex getEnd() {
+        return isRightSidedef ? line.getEnd() : line.getStart();
+    }
+
+
+    public static double angleBetween(Side side1, Side side2) {
+        double angle1 = Math.atan2(side1.getEnd().getY() - side1.getStart().getY(),
+                                   side1.getEnd().getX() - side1.getStart().getX());
+        double angle2 = Math.atan2(side2.getEnd().getY() - side2.getStart().getY(),
+                                   side2.getEnd().getX() - side2.getStart().getX());
+
+        double angle  = angle1 - angle2;
+
+        // Force angle to be between -pi and +pi.
+        angle += Math.PI * 2;
+        angle %= Math.PI * 2;
+
+        if (angle >  Math.PI) {
+            angle -= Math.PI * 2;
+        }
+
+//        System.out.printf("%s-%s to %s-%s, angle = %s%n", side1.getStart(), side1.getEnd(), side2.getStart(), side2.getEnd(), (int) (angle * 180 / Math.PI));
+
+        return angle;
     }
 }
