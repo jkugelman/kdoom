@@ -264,108 +264,11 @@ public class LevelPanel extends JPanel {
     }
 
     private void drawSectors(Graphics2D graphics) throws IOException {
-        nextSector: for (Sector sector: level.sectors()) {
-            Set<Pair<Line, Boolean>> lineSidePairs       = new LinkedHashSet<Pair<Line, Boolean>>();
-            List<Polygon>            additivePolygons    = new ArrayList<Polygon>();
-            List<Polygon>            subtractivePolygons = new ArrayList<Polygon>();
-
-            for (Side side: sector.sides()) {
-                for (Line line: side.lines()) {
-                    if (side == line.getLeftSide ()) lineSidePairs.add(new Pair<Line, Boolean>(line, false));
-                    if (side == line.getRightSide()) lineSidePairs.add(new Pair<Line, Boolean>(line, true));
-                }
-            }
-
-            nextPolygon: while (!lineSidePairs.isEmpty()) {
-//                System.out.printf("Sector #%d, polygon #%d%n", sector.getNumber(), additivePolygons.size() + subtractivePolygons.size() + 1);
-
-                List<Vertex>        vertices        = new ArrayList<Vertex>();
-                Pair<Line, Boolean> firstPair       = lineSidePairs.iterator().next();
-                Line                firstLine       = firstPair.a;
-                boolean             isSectorOnRight = firstPair.b;
-                double              angleSum        = 0;
-
-                vertices.add(firstLine.getStart());
-                vertices.add(firstLine.getEnd  ());
-
-                lineSidePairs.remove(firstPair);
-
-                nextLine: for (;;) {
-                    Pair<Line, Boolean> nextPair   = null;
-                    Line                nextLine   = null;
-                    Vertex              nextVertex = null;
-                    Vertex              lastVertex = vertices.get(vertices.size() - 1);
-
-                    // Find the next line which starts where this line ends.
-                    for (Pair<Line, Boolean> pair: lineSidePairs) {
-                        Line    line      = pair.a;
-                        boolean isOnRight = pair.b;
-                        
-                        if (line.getStart() == lastVertex && isOnRight == isSectorOnRight) {
-                            nextPair   = pair;
-                            nextLine   = line;
-                            nextVertex = line.getEnd();
-                            
-                            break;
-                        }
-                        else if (line.getEnd() == lastVertex && isOnRight != isSectorOnRight) {
-                            nextPair   = pair;
-                            nextLine   = line;
-                            nextVertex = line.getStart();
-                            
-                            break;
-                        }
-                    }
-
-                    // Didn't find a connecting line.
-                    if (nextLine == null) {
-                        System.err.println("Sector #" + sector.getNumber() + " is unclosed.");
-
-                        // Throw away the lines we've found so far and try to find more polygons.
-                        // We'll draw whatever closed polygons we can find.
-                        continue nextPolygon;
-                    }
-
-                    lineSidePairs.remove(nextPair);
-
-                    // Add vertex to list and compute angle change.
-                    if (lastVertex.getX() != nextVertex.getX() ||
-                        lastVertex.getY() != nextVertex.getY())
-                    {
-                        angleSum += angleChange(vertices.get(vertices.size() - 2), lastVertex, nextVertex, isSectorOnRight);
-                        
-                        if (nextVertex != vertices.get(0)) {
-                            vertices.add(nextVertex);
-                        }
-                    }
- 
-                    // Polygon closed. 
-                    if (nextVertex == vertices.get(0)) {
-                        angleSum += angleChange(lastVertex, nextVertex, vertices.get(1), isSectorOnRight);
-                        
-                        // Create Polygon object.
-                        Polygon polygon = new Polygon();
-
-                        for (Vertex vertex: vertices) {
-                            polygon.addPoint(screenX(vertex.getX()), screenY(vertex.getY()));
-                        }
-                        
-//                        System.out.printf("[%s] %-10s %d vertices sum to %s%n", isSectorOnRight ? "R" : "L", angleSum > 0 ? "ADDITIVE" : "SUBTRACTIVE", vertices.size(), angleSum);
-
-                        // Determine if polygon is additive or subtractive.
-                        if (angleSum > 0) additivePolygons   .add(polygon);
-                        else              subtractivePolygons.add(polygon);
-
-                        continue nextPolygon;
-                    } 
-                } 
-            }
-
-            // Generate an area composed of the polygons we found.
+        for (Sector sector: level.sectors()) {
             Area area = new Area();
 
-            for (Polygon polygon: additivePolygons)    area.add     (new Area(polygon));
-            for (Polygon polygon: subtractivePolygons) area.subtract(new Area(polygon));
+            for (List<Side> region: sector.getEnclosingRegions()) area.add     (createArea(region));
+            for (List<Side> region: sector.getExcludingRegions()) area.subtract(createArea(region));
             
             if (isCeilingVisible) {
                 graphics.setPaint(new TexturePaint(
@@ -390,6 +293,16 @@ public class LevelPanel extends JPanel {
 
             graphics.fill(area);
         }
+    }
+
+    private Area createArea(List<Side> region) {
+        Polygon polygon = new Polygon();
+
+        for (Side side: region) {
+            polygon.addPoint(screenX(side.getStart().getX()), screenY(side.getStart().getY()));
+        }
+
+        return new Area(polygon);
     }
     
     private void drawGrid(Graphics2D graphics) {

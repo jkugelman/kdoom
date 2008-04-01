@@ -10,12 +10,12 @@ public class Line {
     private double  slope;
     private int     leftSign;
     
-    Line(short number, Vertex start, Vertex end, Side leftSide, Side rightSide, short flags) {
+    Line(short number, Vertex start, Vertex end, Sidedef leftSidedef, Sidedef rightSidedef, short flags) {
         this.number     = number;
         this.start      = start;
         this.end        = end;
-        this.leftSide   = leftSide;
-        this.rightSide  = rightSide;
+        this.leftSide   = null;
+        this.rightSide  = null;
         this.flags      = flags;
 
         this.xDiff      = end.getX() - start.getX();
@@ -23,8 +23,8 @@ public class Line {
         this.slope      = yDiff / xDiff;
         this.leftSign   = end.getX() < start.getX() ? -1 : +1;
 
-        if (leftSide  != null) leftSide .lines.add(this);
-        if (rightSide != null) rightSide.lines.add(this);
+        if (leftSidedef  != null) leftSide  = new Side(this, leftSidedef,  false);
+        if (rightSidedef != null) rightSide = new Side(this, rightSidedef, true);
     }
 
 
@@ -66,6 +66,10 @@ public class Line {
 
     public double getLength() {
         return start.distanceTo(end);
+    }
+
+    public boolean isPoint() {
+        return start.getX() == end.getX() && start.getY() == end.getY();
     }
 
     public double distanceTo(Location location) {

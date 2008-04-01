@@ -7,19 +7,19 @@ import java.util.*;
 import name.kugelman.john.kdoom.file.*;
 
 public class Level {
-    private String       name;
+    private String        name;
 
-    private Wad          wad;
-    private FlatList     flats;
-    private TextureList  textures;
+    private Wad           wad;
+    private FlatList      flats;
+    private TextureList   textures;
 
-    private List<Thing>  things;
-    private List<Vertex> vertices;
-    private List<Side>   sides;
-    private List<Line>   lines;
-    private List<Sector> sectors;
+    private List<Thing>   things;
+    private List<Vertex>  vertices;
+    private List<Sidedef> sidedefs;
+    private List<Line>    lines;
+    private List<Sector>  sectors;
 
-    private short        minX, minY, maxX, maxY;
+    private short         minX, minY, maxX, maxY;
 
     public Level(Wad wad, String name, FlatList flats, TextureList textures)
         throws IllegalArgumentException, IOException
@@ -43,6 +43,10 @@ public class Level {
         readSectors (wad.lumps().get(nameLump.getIndex() + 8));
         readSides   (wad.lumps().get(nameLump.getIndex() + 3));
         readLines   (wad.lumps().get(nameLump.getIndex() + 2));
+
+        for (Sector sector: sectors) {
+            sector.updateGeometry();
+        }
     }
 
     private void readName(Lump lump) throws IOException {
@@ -132,18 +136,18 @@ public class Level {
         lines = new ArrayList<Line>();
 
         while (buffer.hasRemaining()) {
-            Vertex start       = vertices.get(buffer.get());
-            Vertex end         = vertices.get(buffer.get());
-            short  flags       = buffer.get();
-            short  specialType = buffer.get();
-            short  sectorTag   = buffer.get();
-            short  right       = buffer.get();
-            short  left        = buffer.get();
+            Vertex  start        = vertices.get(buffer.get());
+            Vertex  end          = vertices.get(buffer.get());
+            short   flags        = buffer.get();
+            short   specialType  = buffer.get();
+            short   sectorTag    = buffer.get();
+            short   right        = buffer.get();
+            short   left         = buffer.get();
 
-            Side   leftSide    = left  < 0 ? null : sides.get(left);
-            Side   rightSide   = right < 0 ? null : sides.get(right);
+            Sidedef leftSidedef  = left  < 0 ? null : sidedefs.get(left);
+            Sidedef rightSidedef = right < 0 ? null : sidedefs.get(right);
 
-            lines.add(new Line((short) lines.size(), start, end, leftSide, rightSide, flags));
+            lines.add(new Line((short) lines.size(), start, end, leftSidedef, rightSidedef, flags));
         }
     }
 
@@ -157,7 +161,7 @@ public class Level {
         byte[]     lowerBytes  = new byte[8];
         byte[]     middleBytes = new byte[8];
 
-        sides = new ArrayList<Side>();
+        sidedefs = new ArrayList<Sidedef>();
 
         while (buffer.hasRemaining()) {
             short xOffset      = buffer.getShort();
@@ -168,7 +172,7 @@ public class Level {
             int sectorNumber   = buffer.getShort() & 0xFFFF;
 
             if (sectorNumber >= sectors.size()) {
-                System.err.println("SIDEDEF " + sides.size() + " has reference to non-existent SECTOR " + sectorNumber);
+                System.err.println("SIDEDEF " + sidedefs.size() + " has reference to non-existent SECTOR " + sectorNumber);
                 sectorNumber = 0;
             }
 
@@ -177,7 +181,7 @@ public class Level {
             Texture middleTexture = textures.get(new String(middleBytes, "ISO-8859-1").trim());
             Sector sector         = sectors.get(sectorNumber);
 
-            sides.add(new Side((short) sides.size(), xOffset, yOffset, upperTexture, lowerTexture, middleTexture, sector));
+            sidedefs.add(new Sidedef((short) sidedefs.size(), xOffset, yOffset, upperTexture, lowerTexture, middleTexture, sector));
         }
     }
 
@@ -202,8 +206,8 @@ public class Level {
         return Collections.unmodifiableList(lines);
     }
 
-    public List<Side> sides() {
-        return Collections.unmodifiableList(sides);
+    public List<Sidedef> sidedefs() {
+        return Collections.unmodifiableList(sidedefs);
     }
 
     public List<Sector> sectors() {
