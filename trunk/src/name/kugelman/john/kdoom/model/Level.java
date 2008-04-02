@@ -30,8 +30,8 @@ public class Level {
 
         this.wad      = wad;
         this.flats    = flats;
-        this.textures = textures;    
-        
+        this.textures = textures;
+
         this.minX = this.minY = Short.MAX_VALUE;
         this.maxX = this.maxY = Short.MIN_VALUE;
 
@@ -75,7 +75,7 @@ public class Level {
             if (y < minY) minY = y;
             if (x > maxX) maxX = x;
             if (y > maxY) maxY = y;
-        }       
+        }
     }
 
     private void readVertices(Lump lump) throws IOException {
@@ -113,7 +113,7 @@ public class Level {
 
         while (buffer.hasRemaining()) {
             short  floorHeight    = buffer.getShort();
-            short  ceilingHeight  = buffer.getShort(); 
+            short  ceilingHeight  = buffer.getShort();
                                     buffer.get(floorBytes);
                                     buffer.get(ceilingBytes);
             Flat   floorFlat      = flats.get(new String(floorBytes,   "ISO-8859-1").trim());
@@ -251,7 +251,7 @@ public class Level {
 
     public Collection<Sector> getSectorsContaining(Location location) {
         Collection<Sector> sectors = new ArrayList<Sector>();
-        
+
         for (Line line: getLinesClosestTo(location)) {
             Side facingSide = line.sideFacing(location);
 
@@ -260,7 +260,7 @@ public class Level {
             }
         }
 
-        return sectors; 
+        return sectors;
     }
 
     public Collection<Thing> getThingsAt(Location location) {

@@ -35,8 +35,8 @@ public class Flat {
 
     public BufferedImage getImage(Palette palette) throws IOException {
         IndexColorModel colorModel = palette.getColorModel();
-        BufferedImage   image      = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_BYTE_INDEXED, colorModel); 
-        
+        BufferedImage   image      = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_BYTE_INDEXED, colorModel);
+
         // Read flat pixels.
         ByteBuffer buffer     = lump.getData();
         byte[]     pixels     = new byte[SIZE];
@@ -44,7 +44,7 @@ public class Flat {
         buffer.get(pixels);
 
         // Copy to image.
-        image.getRaster().setDataElements(0, 0, WIDTH, HEIGHT, pixels);                        
+        image.getRaster().setDataElements(0, 0, WIDTH, HEIGHT, pixels);
 
         return image;
     }

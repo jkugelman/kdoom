@@ -12,7 +12,7 @@ public class SpritePanel extends JPanel {
     private Palette palette;
 
     private Image   image;
-    
+
     public SpritePanel(Palette palette) {
         this(null, null, palette);
     }
@@ -28,7 +28,7 @@ public class SpritePanel extends JPanel {
     public void show(Sprite sprite, String frameSequence) {
         this.sprite        = sprite;
         this.frameSequence = frameSequence;
-    
+
         try {
             this.image     = sprite == null ? null : createImage(sprite.getImageProducer(frameSequence));
         }
@@ -45,7 +45,7 @@ public class SpritePanel extends JPanel {
         if (image == null) {
             return;
         }
-        
+
         graphics.clearRect(0, 0, Integer.MAX_VALUE, Integer.MAX_VALUE);
         graphics.drawImage(image, 0, 0, new Color(0, 0, 0, 0), this);
     }

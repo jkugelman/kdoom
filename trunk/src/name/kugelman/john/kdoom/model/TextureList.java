@@ -16,7 +16,7 @@ public class TextureList extends AbstractMap<String, Texture> implements SortedM
         PatchList patchList = new PatchList(wad);
 
         this.textures = new TreeMap<String, Texture>();
-        
+
         readTextures(wad.getLump   ("TEXTURE1"), patchList);
         readTextures(wad.lookupLump("TEXTURE2"), patchList);
     }
@@ -25,7 +25,7 @@ public class TextureList extends AbstractMap<String, Texture> implements SortedM
         if (lump == null) {
             return;
         }
-        
+
         ByteBuffer buffer  = lump.getData();
         int[]      offsets = new int[buffer.getInt()];
 
@@ -48,7 +48,7 @@ public class TextureList extends AbstractMap<String, Texture> implements SortedM
             short   patchCount = buffer.getShort();
 
             Texture texture    = new Texture(name, new Dimension(width, height));
-       
+
             for (int i = 0; i < patchCount; ++i) {
                 short x     = buffer.getShort();
                 short y     = buffer.getShort();
@@ -73,7 +73,7 @@ public class TextureList extends AbstractMap<String, Texture> implements SortedM
 
 
     // Implementation of SortedMap
-    
+
     public Comparator<? super String> comparator() {
         return textures.comparator();
     }
@@ -89,11 +89,11 @@ public class TextureList extends AbstractMap<String, Texture> implements SortedM
     public SortedMap<String, Texture> headMap(String toKey) {
         return textures.headMap(toKey);
     }
-                   
+
     public SortedMap<String, Texture> subMap(String fromKey, String toKey) {
         return textures.subMap(fromKey, toKey);
     }
-                           
+
     public SortedMap<String, Texture> tailMap(String fromKey) {
         return textures.tailMap(fromKey);
     }

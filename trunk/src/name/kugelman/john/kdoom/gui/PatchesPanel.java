@@ -23,7 +23,7 @@ public class PatchesPanel extends JPanel {
         for (Patch patch: patchList) {
             add(new JLabel(patch.getName()),                                                new Constraints(x, y)    .insets(4, 4, 4,  4));
             add(!patch.exists() ? new JLabel("NOT FOUND") : new PatchPanel(patch, palette), new Constraints(x, y + 1).insets(4, 4, 20, 4).anchorNorth());
-            
+
             if (++x >= 4) {
                 x  = 0;
                 y += 2;

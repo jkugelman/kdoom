@@ -33,7 +33,7 @@ public class SoundsPanel extends JPanel {
                         public void run() {
                             try {
                                 Clip clip = AudioSystem.getClip();
-             
+
                                 clip.open (sound.getAudioInputStream());
                                 clip.start();
                                 clip.drain();

@@ -65,7 +65,7 @@ public class SectorPanel extends JPanel {
 
             floorHeightLabel  .setText("" + sector.getFloorHeight  ());
             ceilingHeightLabel.setText("" + sector.getCeilingHeight());
-        
+
             floorFlatLabel    .setText(sector.getFloorFlat  () == null ? "-" : sector.getFloorFlat  ().getName());
             floorFlatPanel    .show   (sector.getFloorFlat  ());
             ceilingFlatLabel  .setText(sector.getCeilingFlat() == null ? "-" : sector.getCeilingFlat().getName());

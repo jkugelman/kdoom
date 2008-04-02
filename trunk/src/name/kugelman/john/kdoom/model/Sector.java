@@ -74,7 +74,7 @@ public class Sector {
         if (side == null) {
             return false;
         }
-        
+
         return sides.contains(side);
     }
 
@@ -143,17 +143,17 @@ public class Sector {
 
                 // Add side to region and compute angle change.
                 if (!nextSide.getLine().isPoint()) {
-                    region.add(nextSide);                        
+                    region.add(nextSide);
                     angleSum += Side.angleBetween(lastSide, nextSide);
                 }
- 
-                // Polygon closed. 
+
+                // Polygon closed.
                 if (nextSide.getEnd() == firstSide.getStart()) {
                     angleSum += Side.angleBetween(nextSide, firstSide);
 
                     // Angles should add up to either 360 or -360.
                     assert Math.abs((int) Math.round(angleSum * 180 / Math.PI)) == 360;
-                        
+
 //                    System.out.printf("%-11s %d angles sum to %s%n", angleSum > 0 ? "ADDITIVE" : "SUBTRACTIVE", region.size() - 1, (int) Math.round(angleSum * 180 / Math.PI));
 
                     // Determine if polygon is additive or subtractive.
@@ -161,8 +161,8 @@ public class Sector {
                     else              excludingRegions.add(region);
 
                     continue nextRegion;
-                } 
-            } 
+                }
+            }
         }
     }
 }

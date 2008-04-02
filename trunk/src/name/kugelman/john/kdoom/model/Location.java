@@ -21,7 +21,7 @@ public class Location {
     public double distanceTo(Location that) {
         int xDiff = that.x - this.x;
         int yDiff = that.y - this.y;
-        
+
         return Math.sqrt(xDiff * xDiff + yDiff * yDiff);
     }
 

@@ -53,7 +53,7 @@ public class Wad {
     private void readDirectory() throws IOException {
         synchronized (file) {
             file.seek(directoryOffset);
-        
+
             byte[] lumpBytes = new byte[16];
             byte[] nameBytes = new byte[8];
 
@@ -95,7 +95,7 @@ public class Wad {
         return Collections.unmodifiableList(lumps);
     }
 
-    
+
     public Lump lookupLump(String name) throws IOException {
         for (Lump lump: lumps) {
             if (lump.getName().equals(name)) {
@@ -105,7 +105,7 @@ public class Wad {
 
         return null;
     }
-    
+
     public Lump getLump(String name) throws IOException {
         Lump lump = lookupLump(name);
 

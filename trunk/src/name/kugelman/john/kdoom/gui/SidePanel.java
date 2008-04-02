@@ -60,7 +60,7 @@ public class SidePanel extends JPanel {
 
             xOffsetLabel      .setText ("N/A");
             yOffsetLabel      .setText ("N/A");
-                    
+
             upperTextureLabel .setText ("N/A");
             upperTexturePanel .show    (null);
             middleTextureLabel.setText ("N/A");
@@ -73,7 +73,7 @@ public class SidePanel extends JPanel {
 
             xOffsetLabel      .setText ("" + side.getXOffset());
             yOffsetLabel      .setText ("" + side.getYOffset());
-            
+
             upperTextureLabel .setText (side.getUpperTexture () == null ? "-" : side.getUpperTexture ().getName());
             upperTexturePanel .show    (side.getUpperTexture ());
             middleTextureLabel.setText (side.getMiddleTexture() == null ? "-" : side.getMiddleTexture().getName());

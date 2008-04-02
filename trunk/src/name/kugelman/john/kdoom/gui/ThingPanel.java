@@ -46,7 +46,7 @@ public class ThingPanel extends JPanel {
         add(Box.createGlue(),         new Constraints(2, 5).weight(1, 1));
 
         show(thing);
-        
+
         setPreferredSize(new Dimension(300, getPreferredSize().height));
     }
 

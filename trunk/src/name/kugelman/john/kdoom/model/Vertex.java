@@ -5,7 +5,7 @@ public class Vertex extends Location {
 
     Vertex(short number, short x, short y) {
         super(x, y);
-        
+
         this.number = number;
     }
 
