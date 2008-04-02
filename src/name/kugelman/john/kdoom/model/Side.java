@@ -68,6 +68,10 @@ public class Side {
 
 
     public static double angleBetween(Side side1, Side side2) {
+        if (side1.getLine() == side2.getLine()) {
+            return -Math.PI;
+        }
+
         double angle1 = Math.atan2(side1.getEnd().getY() - side1.getStart().getY(),
                                    side1.getEnd().getX() - side1.getStart().getX());
         double angle2 = Math.atan2(side2.getEnd().getY() - side2.getStart().getY(),
@@ -83,7 +87,7 @@ public class Side {
             angle -= Math.PI * 2;
         }
 
-//        System.out.printf("%s-%s to %s-%s, angle = %s%n", side1.getStart(), side1.getEnd(), side2.getStart(), side2.getEnd(), (int) (angle * 180 / Math.PI));
+        // System.out.printf("%s-%s to %s-%s, angle = %s%n", side1.getStart(), side1.getEnd(), side2.getStart(), side2.getEnd(), (int) (angle * 180 / Math.PI));
 
         return angle;
     }
