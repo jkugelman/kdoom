@@ -25,31 +25,31 @@ public class LevelPanel extends JPanel {
 
     private static final Color SECTOR_COLOR               = Color.DARK_GRAY;
     private static final Color SELECTED_SECTOR_COLOR      = Color.DARK_GRAY.brighter();
-    
+
     private static final Color GRID_COLOR                 = Color.DARK_GRAY.darker();
-    
+
     private static final Color LINE_COLOR                 = Color.WHITE;
     private static final Color SELECTED_LINE_COLOR        = Color.YELLOW;
     private static final Color SECRET_LINE_COLOR          = Color.GREEN;
     private static final Color SELECTED_SECTOR_LINE_COLOR = Color.MAGENTA;
     private static final Color TWO_SIDED_LINE_COLOR       = Color.LIGHT_GRAY;
-    
+
     private static final Color VERTEX_COLOR               = Color.BLUE;
 
     private static final Color THING_COLOR                = Color.BLACK;
     private static final Color SELECTED_THING_COLOR       = Color.YELLOW;
-    private static final Color PLAYER_THING_COLOR         = Color.WHITE;         
-    private static final Color MONSTER_THING_COLOR        = new Color(0x8b4513); 
-    private static final Color WEAPON_THING_COLOR         = Color.RED;           
-    private static final Color AMMO_THING_COLOR           = Color.RED;           
-    private static final Color HEALTH_THING_COLOR         = Color.GREEN;         
-    private static final Color ARMOR_THING_COLOR          = Color.BLUE;          
-    private static final Color POWER_UP_THING_COLOR       = Color.MAGENTA;       
-    private static final Color KEY_THING_COLOR            = Color.MAGENTA;       
-    private static final Color OBSTACLE_THING_COLOR       = Color.GRAY;          
-    private static final Color DECORATION_THING_COLOR     = Color.LIGHT_GRAY;    
-    private static final Color SPECIAL_THING_COLOR        = Color.MAGENTA;       
-    private static final Color UNKNOWN_THING_COLOR        = Color.MAGENTA;       
+    private static final Color PLAYER_THING_COLOR         = Color.WHITE;
+    private static final Color MONSTER_THING_COLOR        = new Color(0x8b4513);
+    private static final Color WEAPON_THING_COLOR         = Color.RED;
+    private static final Color AMMO_THING_COLOR           = Color.RED;
+    private static final Color HEALTH_THING_COLOR         = Color.GREEN;
+    private static final Color ARMOR_THING_COLOR          = Color.BLUE;
+    private static final Color POWER_UP_THING_COLOR       = Color.MAGENTA;
+    private static final Color KEY_THING_COLOR            = Color.MAGENTA;
+    private static final Color OBSTACLE_THING_COLOR       = Color.GRAY;
+    private static final Color DECORATION_THING_COLOR     = Color.LIGHT_GRAY;
+    private static final Color SPECIAL_THING_COLOR        = Color.MAGENTA;
+    private static final Color UNKNOWN_THING_COLOR        = Color.MAGENTA;
 
 
     private Level   level;
@@ -77,7 +77,7 @@ public class LevelPanel extends JPanel {
         this.gridSpacingIndex   = 0;
         this.isFloorVisible     = false;
         this.isCeilingVisible   = false;
-        
+
         addMouseMotionListener(new MouseMotionAdapter() {
             @Override
             public void mouseMoved(MouseEvent event) {
@@ -87,7 +87,7 @@ public class LevelPanel extends JPanel {
                 Collection<Line>   closestLines  = level.getLinesClosestTo   (mouseLocation, 32);
                 Collection<Sector> activeSectors = level.getSectorsContaining(mouseLocation);
                 Collection<Thing>  activeThings  = level.getThingsAt         (mouseLocation);
-                
+
                 Line               closestLine   = closestLines .isEmpty() ? null : closestLines .iterator().next();
                 Side               closestSide   = closestLine == null     ? null : closestLine.sideFacing(mouseLocation);
                 Sector             activeSector  = activeSectors.isEmpty() ? null : activeSectors.iterator().next();
@@ -140,15 +140,15 @@ public class LevelPanel extends JPanel {
 
     public void show(Level level) {
         this.level = level;
-        updateSize();   
+        updateSize();
     }
 
     public void setScale(int scale) {
         this.scale = Math.max(1, Math.min(32, scale));
         updateSize();
     }
-    
-    private void updateSize() {    
+
+    private void updateSize() {
         setPreferredSize(new Dimension((level.getMaxX() - level.getMinX() + 1) / scale + 8,
                                        (level.getMaxY() - level.getMinY() + 1) / scale + 8));
 
@@ -186,11 +186,11 @@ public class LevelPanel extends JPanel {
 
         selectedLine = line;
         selectedSide = side;
-    
+
         for (SelectionListener selectionListener: selectionListeners) {
             selectionListener.lineSelected(line, side);
         }
-        
+
         repaint();
     }
 
@@ -219,14 +219,14 @@ public class LevelPanel extends JPanel {
     public void toggleFloor() {
         isFloorVisible   = !isFloorVisible;
         isCeilingVisible = false;
-    
+
         repaint();
     }
 
     public void toggleCeiling() {
         isCeilingVisible = !isCeilingVisible;
         isFloorVisible   = false;
-    
+
         repaint();
     }
 
@@ -269,20 +269,12 @@ public class LevelPanel extends JPanel {
 
             for (List<Side> region: sector.getEnclosingRegions()) area.add     (createArea(region));
             for (List<Side> region: sector.getExcludingRegions()) area.subtract(createArea(region));
-            
+
             if (isCeilingVisible) {
-                graphics.setPaint(new TexturePaint(
-                    sector.getCeilingFlat().getImage(palette),
-                    new Rectangle2D.Double(screenX((short) 0), screenY((short) 0),
-                                           (double) Flat.WIDTH / scale, (double) Flat.HEIGHT / scale)
-                ));
+                graphics.setPaint(createFlatPaint(sector.getCeilingFlat()));
             }
             else if (isFloorVisible) {
-                graphics.setPaint(new TexturePaint(
-                    sector.getFloorFlat().getImage(palette),
-                    new Rectangle2D.Double(screenX((short) 0), screenY((short) 0),
-                                           (double) Flat.WIDTH / scale, (double) Flat.HEIGHT / scale)
-                ));
+                graphics.setPaint(createFlatPaint(sector.getFloorFlat()));
             }
             else if (sector == selectedSector) {
                 graphics.setColor(SELECTED_SECTOR_COLOR);
@@ -304,14 +296,22 @@ public class LevelPanel extends JPanel {
 
         return new Area(polygon);
     }
-    
+
+    private Paint createFlatPaint(Flat flat) {
+        return new TexturePaint(
+            flat.getImage(palette),
+            new Rectangle2D.Double(screenX((short) 0), screenY((short) 0),
+                                   (double) Flat.WIDTH / scale, (double) Flat.HEIGHT / scale)
+        );
+    }
+
     private void drawGrid(Graphics2D graphics) {
         int spacing = GRID_SPACINGS[gridSpacingIndex];
-       
+
         if (spacing == 0) {
             return;
         }
-        
+
         Rectangle clip   = graphics.getClipBounds();
         short     left   = mapX(clip.x);
         short     right  = mapX(clip.x + clip.width);
@@ -337,7 +337,7 @@ public class LevelPanel extends JPanel {
     private void drawLines(Graphics2D graphics) {
         for (Line line: level.lines()) {
             graphics.setStroke(new BasicStroke());
-            
+
             if (line == selectedLine) {
                 graphics.setColor (SELECTED_LINE_COLOR);
                 graphics.setStroke(new BasicStroke(1.5f));
@@ -359,7 +359,7 @@ public class LevelPanel extends JPanel {
             graphics.drawLine(screenX(line.getStart().getX()), screenY(line.getStart().getY()),
                               screenX(line.getEnd  ().getX()), screenY(line.getEnd  ().getY()));
         }
-        
+
         graphics.setStroke(new BasicStroke());
     }
 
@@ -392,9 +392,9 @@ public class LevelPanel extends JPanel {
             Shape circle       = new Ellipse2D.Double(screenX(thing.getLocation().getX()) - screenRadius,
                                                       screenY(thing.getLocation().getY()) - screenRadius,
                                                       screenRadius * 2, screenRadius * 2);
-            
+
             graphics.fill(circle);
-            
+
             if (thing == selectedThing) {
                 graphics.setColor (SELECTED_THING_COLOR);
                 graphics.setStroke(new BasicStroke(1.5f));
@@ -410,7 +410,7 @@ public class LevelPanel extends JPanel {
                 double startY = thing.getLocation().getY();
                 double endX   = startX + thing.getRadius() * Math.cos(thing.getAngle() * Math.PI / 180);
                 double endY   = startY + thing.getRadius() * Math.sin(thing.getAngle() * Math.PI / 180);
-                
+
                 graphics.drawLine(screenX((short) startX), screenY((short) startY),
                                   screenX((short) endX),   screenY((short) endY));
             }
