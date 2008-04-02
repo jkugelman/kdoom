@@ -19,6 +19,13 @@ public class LevelPanel extends JPanel {
         void thingSelected (Thing thing);
     }
 
+    private static int LEVEL_LEFT   = Short.MIN_VALUE;
+    private static int LEVEL_RIGHT  = Short.MAX_VALUE;
+    private static int LEVEL_BOTTOM = Short.MIN_VALUE;
+    private static int LEVEL_TOP    = Short.MAX_VALUE;
+    private static int LEVEL_WIDTH  = LEVEL_RIGHT - LEVEL_LEFT   + 1;
+    private static int LEVEL_HEIGHT = LEVEL_TOP   - LEVEL_BOTTOM + 1;
+
     private static final int[] GRID_SPACINGS = new int[] { 0, 128, 64, 32 };
 
     private static final Color BACKGROUND_COLOR           = Color.WHITE;
@@ -70,7 +77,6 @@ public class LevelPanel extends JPanel {
     }
 
     public LevelPanel(Level level, Palette palette) {
-        this.scale              = 4;
         this.palette            = palette;
         this.selectionListeners = new ArrayList<SelectionListener>();
 
@@ -133,27 +139,45 @@ public class LevelPanel extends JPanel {
         });
 
         setFocusable(true);
-
-        show(level);
     }
 
-
-    public void show(Level level) {
+    public void show(final Level level) {
         this.level = level;
-        updateSize();
+
+        setScale((int) Math.ceil(Math.max((level.getMaxX() - level.getMinX()) / (double) getWidth (),
+                                          (level.getMaxY() - level.getMinY()) / (double) getHeight())));
+
+        zoomToMax();
     }
 
-    public void setScale(int scale) {
-        this.scale = Math.max(1, Math.min(32, scale));
-        updateSize();
+    public void setScale(int requestedScale) {
+        this.scale = Math.max(1, Math.min(32, requestedScale));
+
+        EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                setPreferredSize(new Dimension((int) Math.ceil((double) LEVEL_WIDTH  / scale),
+                                               (int) Math.ceil((double) LEVEL_HEIGHT / scale)));
+
+                revalidate();
+                repaint   ();
+            }
+        });
     }
 
-    private void updateSize() {
-        setPreferredSize(new Dimension((level.getMaxX() - level.getMinX() + 1) / scale + 8,
-                                       (level.getMaxY() - level.getMinY() + 1) / scale + 8));
+    public void zoomToMax() {
+        EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                int       centerX     = screenX((level.getMinX() + level.getMaxX()) / 2);
+                int       centerY     = screenY((level.getMinY() + level.getMaxY()) / 2);
+                Rectangle visibleArea = getVisibleRect();
 
-        revalidate();
-        repaint   ();
+                scrollRectToVisible(new Rectangle(
+                    centerX - visibleArea.width  / 2,
+                    centerY - visibleArea.height / 2,
+                    visibleArea.width, visibleArea.height
+                ));
+            }
+        });
     }
 
 
@@ -421,21 +445,10 @@ public class LevelPanel extends JPanel {
         }
     }
 
-    private int screenX(int x) {
-        return (x - level.getMinX()) / scale + 1;
-    }
-
-    private int screenY(int y) {
-        return (level.getMaxY() - y) / scale + 1;
-    }
-
-    private short mapX(int x) {
-        return (short) ((x - 1) * scale + level.getMinX());
-    }
-
-    private short mapY(int y) {
-        return (short) (level.getMaxY() - (y - 1) * scale);
-    }
+    private int   screenX(int x) { return (x - LEVEL_LEFT) / scale + 1; }
+    private int   screenY(int y) { return (LEVEL_TOP - y)  / scale + 1; }
+    private short mapX   (int x) { return (short) ((x - 1) * scale + LEVEL_LEFT); }
+    private short mapY   (int y) { return (short) (LEVEL_TOP - (y - 1) * scale);  }
 
 
     private Location mouseLocation() {
@@ -445,28 +458,7 @@ public class LevelPanel extends JPanel {
             return null;
         }
 
-        return new Location((short) ((mousePosition.x - 1) * scale + level.getMinX()),
-                            (short) (level.getMaxY() - (mousePosition.y - 1) * scale));
-    }
-
-    private double angleChange(Vertex vertex1, Vertex vertex2, Vertex vertex3, boolean isSectorOnRight) {
-        double angle1  = Math.atan2(vertex2.getY() - vertex1.getY(),
-                                    vertex2.getX() - vertex1.getX());
-        double angle2  = Math.atan2(vertex3.getY() - vertex2.getY(),
-                                    vertex3.getX() - vertex2.getX());
-
-        double angle   = (angle2 - angle1 + Math.PI * 2) % (Math.PI * 2);
-
-        if (angle >  Math.PI) {
-            angle -= Math.PI * 2;
-        }
-
-        if (isSectorOnRight) {
-            angle *= -1;
-        }
-
-//        System.out.printf("[%s] %s-%s to %s-%s, angle = %s%n", isSectorOnRight ? "R" : "L", vertex1, vertex2, vertex2, vertex3, (int) (angle * 180 / Math.PI));
-
-        return angle;
+        return new Location((short) ((mousePosition.x - 1) * scale + LEVEL_LEFT),
+                            (short) (LEVEL_TOP - (mousePosition.y - 1) * scale));
     }
 }
