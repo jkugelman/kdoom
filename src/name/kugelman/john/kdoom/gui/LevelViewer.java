@@ -24,7 +24,7 @@ public class LevelViewer extends JFrame {
 
         this.level = level;
 
-        this.levelPanel  = new LevelPanel (level, palette);
+        this.levelPanel  = new LevelPanel (palette);
         this.sectorPanel = new SectorPanel(palette);
         this.linePanel   = new LinePanel  ();
         this.sidePanel   = new SidePanel  (palette);
@@ -59,6 +59,8 @@ public class LevelViewer extends JFrame {
 
         pack();
         setVisible(true);
+
+        levelPanel.show(level);
     }
 
 
