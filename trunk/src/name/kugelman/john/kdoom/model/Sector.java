@@ -111,7 +111,7 @@ public class Sector {
         Set<Side> sides  = new LinkedHashSet<Side>(this.sides);
 
         nextRegion: while (!sides.isEmpty()) {
-//            System.out.printf("Sector #%d, region #%d%n", number, enclosingRegions.size() + excludingRegions.size() + unclosedRegions.size() + 1);
+            // System.out.printf("Sector #%d, region #%d%n", number, enclosingRegions.size() + excludingRegions.size() + unclosedRegions.size() + 1);
 
             List<Side> region    = new ArrayList<Side>();
             Side       firstSide = sides.iterator().next();
@@ -154,7 +154,7 @@ public class Sector {
                     // Angles should add up to either 360 or -360.
                     assert Math.abs((int) Math.round(angleSum * 180 / Math.PI)) == 360;
 
-//                    System.out.printf("%-11s %d angles sum to %s%n", angleSum > 0 ? "ADDITIVE" : "SUBTRACTIVE", region.size() - 1, (int) Math.round(angleSum * 180 / Math.PI));
+                    // System.out.printf("%-11s %d angles sum to %s%n", angleSum > 0 ? "ADDITIVE" : "SUBTRACTIVE", region.size() - 1, (int) Math.round(angleSum * 180 / Math.PI));
 
                     // Determine if polygon is additive or subtractive.
                     if (angleSum > 0) enclosingRegions.add(region);
