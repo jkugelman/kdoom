@@ -9,7 +9,7 @@ public class Line {
     private double  xDiff, yDiff;
     private double  slope;
     private int     leftSign;
-    
+
     Line(short number, Vertex start, Vertex end, Sidedef leftSidedef, Sidedef rightSidedef, short flags) {
         this.number     = number;
         this.start      = start;
@@ -81,7 +81,7 @@ public class Line {
 
         if (r >= 0 && r <= 1) {
             return Math.abs(xDiff * (start.getY() - location.getY())
-                          - yDiff * (start.getX() - location.getX())) 
+                          - yDiff * (start.getX() - location.getX()))
                  / Math.sqrt(rDenominator);
         }
         else {
@@ -109,7 +109,7 @@ public class Line {
         return sign == leftSign ? leftSide : rightSide;
     }
 
-    
+
     @Override
     public String toString() {
         return String.format("%s-%s", start, end);

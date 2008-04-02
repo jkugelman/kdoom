@@ -47,10 +47,10 @@ public class Patch {
         return offset;
     }
 
-    
+
     public BufferedImage getImage(Palette palette) throws IOException {
         ByteBuffer buffer = lump.getData();
-    
+
         // Read image dimensions.
         int   width  = buffer.getShort() & 0xffff;
         int   height = buffer.getShort() & 0xffff;
@@ -59,10 +59,10 @@ public class Patch {
 
         BufferedImage  image      = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
         ColorModel     colorModel = palette.getColorModel();
-    
+
         // Read column offsets.
         int[] columnOffsets = new int[width];
-       
+
         for (int i = 0; i < width; ++i) {
             columnOffsets[i] = buffer.getInt();
         }
@@ -82,7 +82,7 @@ public class Patch {
                 }
 
                 int pixelCount = buffer.get() & 0xff;
-               
+
                 buffer.get();
 
                 // Draw transparent pixels between posts.

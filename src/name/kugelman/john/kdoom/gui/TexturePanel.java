@@ -39,7 +39,7 @@ public class TexturePanel extends JPanel {
 
     public void show(Texture texture) {
         this.texture = texture;
-        
+
         repaint();
     }
 
@@ -48,8 +48,8 @@ public class TexturePanel extends JPanel {
         if (texture == null) {
             return;
         }
-   
-        try { 
+
+        try {
             graphics.drawImage(texture.getImage(palette), 0, 0, this);
         }
         catch (IOException exception) {

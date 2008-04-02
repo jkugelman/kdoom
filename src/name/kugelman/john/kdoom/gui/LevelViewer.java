@@ -21,7 +21,7 @@ public class LevelViewer extends JFrame {
 
     public LevelViewer(Level level, Palette palette) {
         super("KDOOM - " + level.getWad().getName() + " - " + level.getName());
-        
+
         this.level = level;
 
         this.levelPanel  = new LevelPanel (level, palette);
@@ -56,7 +56,7 @@ public class LevelViewer extends JFrame {
         add(thingPanel,       new Constraints(2, 0).height(3).anchorNorthwest());
 
         setDefaultCloseOperation(EXIT_ON_CLOSE);
-        
+
         pack();
         setVisible(true);
     }

@@ -54,7 +54,7 @@ public class Sound {
             Wad   wad   = new Wad  (new File   (arguments[0]));
             Sound sound = new Sound(wad.getLump(arguments[1].toUpperCase()));
             Clip  clip  = AudioSystem.getClip();
-            
+
             clip.open (sound.getAudioInputStream());
             clip.start();
             clip.drain();

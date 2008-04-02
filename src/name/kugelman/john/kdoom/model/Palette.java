@@ -27,7 +27,7 @@ public class Palette {
         if (lump.getSize() % SIZE != 0) {
             throw new IOException("PLAYPAL not multiple of " + SIZE + " bytes.");
         }
-         
+
         this.paletteData   = new byte[lump.getSize() / SIZE][];
         this.colorModels   = new IndexColorModel[paletteData.length];
         this.activePalette = 0;
@@ -37,7 +37,7 @@ public class Palette {
         for (int i = 0; i < paletteData.length; ++i) {
             paletteData[i] = new byte[SIZE];
             buffer.get(paletteData[i]);
-            
+
             colorModels[i] = new IndexColorModel(8, COLORS, paletteData[i], 0, false);
         }
     }

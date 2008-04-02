@@ -12,7 +12,7 @@ public class SoundList extends AbstractList<Sound> {
 
     public SoundList(Wad wad) throws IOException {
         this.sounds = new ArrayList<Sound>();
-        
+
         for (Lump lump: wad.lumps()) {
             if (lump.getName().matches("DS.*")) {
                 sounds.add(new Sound(lump));

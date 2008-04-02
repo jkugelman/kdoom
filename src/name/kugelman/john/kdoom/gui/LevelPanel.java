@@ -21,18 +21,18 @@ public class LevelPanel extends JPanel {
 
     private static final int[] GRID_SPACINGS = new int[] { 0, 128, 64, 32 };
 
-    private static final Color BACKGROUND_COLOR           = Color.BLACK;
+    private static final Color BACKGROUND_COLOR           = Color.WHITE;
 
-    private static final Color SECTOR_COLOR               = Color.DARK_GRAY;
-    private static final Color SELECTED_SECTOR_COLOR      = Color.DARK_GRAY.brighter();
+    private static final Color SECTOR_COLOR               = Color.LIGHT_GRAY;
+    private static final Color SELECTED_SECTOR_COLOR      = Color.LIGHT_GRAY;
 
-    private static final Color GRID_COLOR                 = Color.DARK_GRAY.darker();
+    private static final Color GRID_COLOR                 = Color.GRAY;
 
-    private static final Color LINE_COLOR                 = Color.WHITE;
+    private static final Color LINE_COLOR                 = Color.BLACK;
+    private static final Color TWO_SIDED_LINE_COLOR       = Color.DARK_GRAY;
     private static final Color SELECTED_LINE_COLOR        = Color.YELLOW;
-    private static final Color SECRET_LINE_COLOR          = Color.GREEN;
+    private static final Color SECRET_LINE_COLOR          = Color.GREEN.darker();
     private static final Color SELECTED_SECTOR_LINE_COLOR = Color.MAGENTA;
-    private static final Color TWO_SIDED_LINE_COLOR       = Color.LIGHT_GRAY;
 
     private static final Color VERTEX_COLOR               = Color.BLUE;
 
@@ -297,7 +297,7 @@ public class LevelPanel extends JPanel {
         return new Area(polygon);
     }
 
-    private Paint createFlatPaint(Flat flat) {
+    private Paint createFlatPaint(Flat flat) throws IOException {
         return new TexturePaint(
             flat.getImage(palette),
             new Rectangle2D.Double(screenX((short) 0), screenY((short) 0),

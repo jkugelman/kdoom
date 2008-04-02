@@ -28,7 +28,7 @@ public class Thing {
         short   radius;
         boolean isHanging;
         String  name;
-        
+
         public Details(Kind kind, String spriteName, String frameSequence, short radius, boolean isHanging, String name) {
             this.kind          = kind;
             this.spriteName    = spriteName;
@@ -43,34 +43,34 @@ public class Thing {
     private static Details             unknownDetails;
 
     static {
-        typeDetails = new HashMap<Short, Details>(); 
+        typeDetails = new HashMap<Short, Details>();
 
         addType(1,    Kind.PLAYER,     "PLAY", "A1-D1", 16,  false, "Player 1 Start");
         addType(2,    Kind.PLAYER,     "PLAY", "A1-D1", 16,  false, "Player 2 Start");
         addType(3,    Kind.PLAYER,     "PLAY", "A1-D1", 16,  false, "Player 3 Start");
         addType(4,    Kind.PLAYER,     "PLAY", "A1-D1", 16,  false, "Player 4 Start");
         addType(11,   Kind.PLAYER,     "PLAY", "A1-D1", 16,  false, "Deathmatch Start");
-                                                  
+
         addType(3004, Kind.MONSTER,    "POSS", "A1-D1", 20,  false, "Former Human");
-        addType(9,    Kind.MONSTER,    "SPOS", "A1-D1", 20,  false, "Former Sargeant"); 
-        addType(65,   Kind.MONSTER,    "CPOS", "A1-D1", 20,  false, "Heavy Weapon Dude"); 
-        addType(3001, Kind.MONSTER,    "TROO", "A1-D1", 20,  false, "Imp"); 
-        addType(3002, Kind.MONSTER,    "SARG", "A1-D1", 30,  false, "Demon"); 
-        addType(58,   Kind.MONSTER,    "SARG", "A1-D1", 30,  false, "Spectre"); 
-        addType(3006, Kind.MONSTER,    "SKUL", "A1-D1", 16,  true,  "Lost Soul"); 
-        addType(3005, Kind.MONSTER,    "HEAD", "A1-D1", 31,  true,  "Cacodemon"); 
-        addType(69,   Kind.MONSTER,    "BOS2", "A1-D1", 24,  false, "Hell Knight"); 
-        addType(3003, Kind.MONSTER,    "BOSS", "A1-D1", 24,  false, "Baron of Hell"); 
-        addType(68,   Kind.MONSTER,    "BSPI", "A1-D1", 64,  false, "Arachnotron"); 
-        addType(71,   Kind.MONSTER,    "PAIN", "A1-D1", 31,  true,  "Pain Elemental"); 
-        addType(66,   Kind.MONSTER,    "SKEL", "A1-D1", 20,  false, "Revenant"); 
-        addType(67,   Kind.MONSTER,    "FATT", "A1-D1", 48,  false, "Mancubus"); 
-        addType(64,   Kind.MONSTER,    "VILE", "A1-D1", 20,  false, "Arch-Vile"); 
-        addType(7,    Kind.MONSTER,    "SPID", "A1-D1", 128, false, "Spider Mastermind"); 
-        addType(16,   Kind.MONSTER,    "CYBR", "A1-D1", 40,  false, "Cyberdemon"); 
+        addType(9,    Kind.MONSTER,    "SPOS", "A1-D1", 20,  false, "Former Sargeant");
+        addType(65,   Kind.MONSTER,    "CPOS", "A1-D1", 20,  false, "Heavy Weapon Dude");
+        addType(3001, Kind.MONSTER,    "TROO", "A1-D1", 20,  false, "Imp");
+        addType(3002, Kind.MONSTER,    "SARG", "A1-D1", 30,  false, "Demon");
+        addType(58,   Kind.MONSTER,    "SARG", "A1-D1", 30,  false, "Spectre");
+        addType(3006, Kind.MONSTER,    "SKUL", "A1-D1", 16,  true,  "Lost Soul");
+        addType(3005, Kind.MONSTER,    "HEAD", "A1-D1", 31,  true,  "Cacodemon");
+        addType(69,   Kind.MONSTER,    "BOS2", "A1-D1", 24,  false, "Hell Knight");
+        addType(3003, Kind.MONSTER,    "BOSS", "A1-D1", 24,  false, "Baron of Hell");
+        addType(68,   Kind.MONSTER,    "BSPI", "A1-D1", 64,  false, "Arachnotron");
+        addType(71,   Kind.MONSTER,    "PAIN", "A1-D1", 31,  true,  "Pain Elemental");
+        addType(66,   Kind.MONSTER,    "SKEL", "A1-D1", 20,  false, "Revenant");
+        addType(67,   Kind.MONSTER,    "FATT", "A1-D1", 48,  false, "Mancubus");
+        addType(64,   Kind.MONSTER,    "VILE", "A1-D1", 20,  false, "Arch-Vile");
+        addType(7,    Kind.MONSTER,    "SPID", "A1-D1", 128, false, "Spider Mastermind");
+        addType(16,   Kind.MONSTER,    "CYBR", "A1-D1", 40,  false, "Cyberdemon");
         addType(88,   Kind.MONSTER,    "BBRN", "A1-D1", 16,  false, "Boss Brain");
-        addType(84,   Kind.MONSTER,    "SSWV", "A1-D1", 20,  false, "Wolfenstein SS"); 
-                                                  
+        addType(84,   Kind.MONSTER,    "SSWV", "A1-D1", 20,  false, "Wolfenstein SS");
+
         addType(2005, Kind.WEAPON,     "CSAW", "A",     20,  false, "Chainsaw");
         addType(2001, Kind.WEAPON,     "SHOT", "A",     20,  false, "Shotgun");
         addType(82,   Kind.WEAPON,     "SGN2", "A",     20,  false, "Double-Barreled Shotgun");
@@ -78,7 +78,7 @@ public class Thing {
         addType(2003, Kind.WEAPON,     "LAUN", "A",     20,  false, "Rocket Launcher");
         addType(2004, Kind.WEAPON,     "PLAS", "A",     20,  false, "Plasma Gun");
         addType(2006, Kind.WEAPON,     "BFUG", "A",     20,  false, "BFG 9000");
-                                                  
+
         addType(2007, Kind.AMMO,       "CLIP", "A",     8,   false, "Ammo Clip");
         addType(2008, Kind.AMMO,       "SHEL", "A",     8,   false, "Shotgun Shells");
         addType(2010, Kind.AMMO,       "ROCK", "A",     8,   false, "Rocket");
@@ -88,7 +88,7 @@ public class Thing {
         addType(2046, Kind.AMMO,       "BROK", "A",     16,  false, "Box of Rockets");
         addType(17,   Kind.AMMO,       "CELP", "A",     16,  false, "Cell Charge Pack");
         addType(8,    Kind.AMMO,       "BPAK", "A",     16,  false, "Backpack");
-                                                  
+
         addType(2011, Kind.HEALTH,     "STIM", "A",     12,  false, "Stimpak +10%");
         addType(2012, Kind.HEALTH,     "MEDI", "A",     16,  false, "Medikit +25%");
         addType(2014, Kind.HEALTH,     "BON1", "A-D-B", 8,   false, "Health Potion +1%");
@@ -103,17 +103,17 @@ public class Thing {
         addType(2025, Kind.POWER_UP,   "SUIT", "A",     16,  false, "Radiation Suit");
         addType(2026, Kind.POWER_UP,   "PMAP", "A-D-B", 16,  false, "Computer Map");
         addType(2045, Kind.POWER_UP,   "PVIS", "AB",    16,  false, "Light Amplification Goggles");
-                                                  
+
         addType(5,    Kind.KEY,        "BKEY", "AB",    16,  false, "Blue Key");
         addType(40,   Kind.KEY,        "BSKU", "AB",    16,  false, "Blue Skullkey");
         addType(13,   Kind.KEY,        "RKEY", "AB",    16,  false, "Red Key");
         addType(38,   Kind.KEY,        "RSKU", "AB",    16,  false, "Red Skullkey");
         addType(6,    Kind.KEY,        "YKEY", "AB",    16,  false, "Yellow Key");
         addType(39,   Kind.KEY,        "YSKU", "AB",    16,  false, "Yellow Skullkey");
-                                                  
+
         addType(2035, Kind.OBSTACLE,   "BAR1", "AB",    10,  false, "Barrel");
-        addType(72,   Kind.OBSTACLE,   "KEEN", "A",     16,  true,  "Commander Keen"); 
-                                                  
+        addType(72,   Kind.OBSTACLE,   "KEEN", "A",     16,  true,  "Commander Keen");
+
         addType(48,   Kind.OBSTACLE,   "ELEC", "A",     16,  false, "Tall Techno Pillar");
         addType(30,   Kind.OBSTACLE,   "COL1", "A",     16,  false, "Tall Green Pillar");
         addType(32,   Kind.OBSTACLE,   "COL3", "A",     16,  false, "Tall Red Pillar");
@@ -124,7 +124,7 @@ public class Thing {
         addType(47,   Kind.OBSTACLE,   "SMIT", "A",     16,  false, "Stalagmite");
         addType(43,   Kind.OBSTACLE,   "TRE1", "A",     16,  false, "Burnt Tree");
         addType(54,   Kind.OBSTACLE,   "TRE2", "A",     32,  false, "Large Brown Tree");
- 
+
         addType(2028, Kind.OBSTACLE,   "COLU", "A",     16,  false, "Floor Lamp");
         addType(85,   Kind.OBSTACLE,   "TLMP", "A-D",   16,  false, "Tall Techno Floor Lamp");
         addType(86,   Kind.OBSTACLE,   "TLP2", "A-D",   16,  false, "Short Techno Floor Lamp");
@@ -137,10 +137,10 @@ public class Thing {
         addType(56,   Kind.OBSTACLE,   "SMGT", "A-D",   16,  false, "Short Green Firestick");
         addType(57,   Kind.OBSTACLE,   "SMRT", "A-D",   16,  false, "Short Red Firestick");
         addType(70,   Kind.OBSTACLE,   "FCAN", "ABC",   10,  false, "Burning Barrel");
-                                                  
+
         addType(41,   Kind.OBSTACLE,   "CEYE", "ABCB",  16,  false, "Evil Eye");
         addType(42,   Kind.OBSTACLE,   "FSKU", "ABC",   16,  false, "Floating Skull");
-                                                  
+
         addType(49,   Kind.OBSTACLE,   "GOR1", "ABCB",  16,  true,  "Hanging Body, Twitching");
         addType(63,   Kind.DECORATION, "GOR1", "ABCB",  16,  true,  "Hanging Body, Twitching");
         addType(50,   Kind.OBSTACLE,   "GOR2", "A",     16,  true,  "Hanging Body, Arms Out");
@@ -157,13 +157,13 @@ public class Thing {
         addType(76,   Kind.OBSTACLE,   "HDB4", "A",     16,  true,  "Hanging Torso, Open Skull");
         addType(77,   Kind.OBSTACLE,   "HDB5", "A",     16,  true,  "Hanging Torso, Looking Up");
         addType(78,   Kind.OBSTACLE,   "HDB6", "A",     16,  true,  "Hanging Torso, Brain Removed");
-                                                  
+
         addType(25,   Kind.OBSTACLE,   "POL1", "A",     16,  false, "Impaled Human");
         addType(26,   Kind.OBSTACLE,   "POL1", "AB",    16,  false, "Twitching Impaled Human");
         addType(27,   Kind.OBSTACLE,   "POL1", "A",     16,  false, "Skull on a Pole");
         addType(28,   Kind.OBSTACLE,   "POL1", "A",     16,  false, "Skull Shish Kebob");
         addType(29,   Kind.OBSTACLE,   "POL1", "AB",    16,  false, "Pile of Skulls and Candles");
-                                                  
+
         addType(10,   Kind.DECORATION, "PLAY", "W",     16,  false, "Bloody Mess");
         addType(12,   Kind.DECORATION, "PLAY", "W",     16,  false, "Bloody Mess");
         addType(24,   Kind.DECORATION, "POL5", "A",     16,  false, "Pool of Blood and Flesh");
@@ -177,7 +177,7 @@ public class Thing {
         addType(21,   Kind.DECORATION, "SARG", "N",     30,  false, "Dead Demon");
         addType(22,   Kind.DECORATION, "HEAD", "L",     31,  false, "Dead Cacodemon");
         addType(23,   Kind.DECORATION, "SKUL", "K",     16,  true,  "Dead Lost Soul");
-                                                   
+
         addType(14,   Kind.SPECIAL,    "TFOG", "A-J",   20,  false, "Teleport Landing");
         addType(89,   Kind.SPECIAL,    "BOSF", "A",     20,  false, "Spawn Shooter");
         addType(87,   Kind.SPECIAL,    "FIRE", "A",     20,  false, "Spawn Spot");
@@ -209,7 +209,7 @@ public class Thing {
         if (details == null) {
             details = unknownDetails;
         }
-        
+
         if (details.spriteName != null) {
             this.sprite = new Sprite(wad, details.spriteName, details.isHanging);
         }

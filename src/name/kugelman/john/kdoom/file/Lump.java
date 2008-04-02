@@ -43,7 +43,7 @@ public class Lump {
 
     public ByteBuffer getData() throws IOException {
         byte[]     data   = new byte[size];
-        ByteBuffer buffer = ByteBuffer.wrap(data).order(ByteOrder.LITTLE_ENDIAN); 
+        ByteBuffer buffer = ByteBuffer.wrap(data).order(ByteOrder.LITTLE_ENDIAN);
 
         synchronized (wad.file) {
             wad.file.seek     (offset);

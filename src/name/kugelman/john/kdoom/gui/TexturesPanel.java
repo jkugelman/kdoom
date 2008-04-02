@@ -51,9 +51,9 @@ public class TexturesPanel extends JPanel {
             JLabel       nameLabel    = new JLabel(name);
             TexturePanel texturePanel = new TexturePanel(texture, palette);
             JLabel       patchesLabel = new JLabel("<html>" + patches + "</html>");
-            
+
             patchesLabel.setFont(patchesLabel.getFont().deriveFont(Font.ITALIC, 8));
-            
+
             add(nameLabel,    new Constraints(x, y)    .insets(4, 0, 4,  4));
             add(texturePanel, new Constraints(x, y + 1).insets(4, 0, 4,  4).anchorNorth());
             add(patchesLabel, new Constraints(x, y + 2).insets(4, 0, 20, 4).anchorNorth());

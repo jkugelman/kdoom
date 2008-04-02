@@ -12,7 +12,7 @@ import name.kugelman.john.kdoom.file.*;
 
 public class Sprite {
     private static final int FRAME_DELAY = 200;
-    
+
     public class Frame {
         private String  number;
         private Patch   patch;
@@ -49,7 +49,7 @@ public class Sprite {
         this.size      = new Dimension(0, 0);
         this.isHanging = isHanging;
         this.frames    = new TreeMap<String, Frame>();
-        
+
         for (Lump lump: wad.getLumpsWithPrefix(name)) {
             if (!lump.getName().matches("....([A-Z][0-8])+")) {
                 continue;
@@ -63,9 +63,9 @@ public class Sprite {
             if (lump.getName().length() > 6) {
                 addFrame(lump.getName().substring(6, 8), patch, true);
             }
-            
+
             size.width  = Math.max(size.width,  patch.getSize().width);
-            size.height = Math.max(size.height, patch.getSize().height);   
+            size.height = Math.max(size.height, patch.getSize().height);
         }
 
         if (frames.isEmpty()) {
@@ -103,7 +103,7 @@ public class Sprite {
         if (!frames.containsKey(frameNumber)) {
             throw new RuntimeException(name + " frame " + frameNumber + " not found.");
         }
-        
+
         return frames.get(frameNumber);
     }
 
@@ -114,7 +114,7 @@ public class Sprite {
 
         // Add angle to single-letter frames: "A" becomes "A0".
         frameSequence = frameSequence.replaceAll("([A-Z])(?![0-9])", "$10");
-        
+
         // Replace frame ranges with the individual frames: "A0-A3" becomes "A0A1A2A3".
         for (int i = frameSequence.indexOf('-'); i != -1; i = frameSequence.indexOf('-')) {
             String        frameRange  = frameSequence.substring(i - 2, i + 3);
@@ -164,10 +164,10 @@ public class Sprite {
         }
 
         assert frameSequence.length() % 2 == 0;
-        
+
         // Get frame for each frame number/angle.
         List<Frame> frames = new ArrayList<Frame>();
-    
+
         for (int i = 0; i < frameSequence.length(); i += 2) {
             frames.add(getFrame(frameSequence.substring(i, i + 2)));
         }
@@ -199,12 +199,12 @@ public class Sprite {
                 if (thread == null) {
                     thread = new Thread("Animating " + name + " sprite") {
                         @Override
-                        public void run() {            
+                        public void run() {
                             try {
                                 synchronized (consumers) {
                                     for (int c = consumers.size() - 1; c >= 0; --c) {
                                         ImageConsumer consumer = consumers.get(c);
-                                        
+
                                         consumer.setDimensions(size.width, size.height);
                                         consumer.setColorModel(colorModel);
                                     }
@@ -212,11 +212,11 @@ public class Sprite {
 
                                 for (int i = 0; !isInterrupted(); i = (i + 1) % frames.size()) {
                                     Frame frame = frames.get(i);
-                                    
-                                    // Reset buffer to all transparent.                       
+
+                                    // Reset buffer to all transparent.
                                     Arrays.fill(pixels, 0);
                                     buffer.setRGB(0, 0, size.width, size.height, pixels, 0, size.width);
-                                   
+
                                     // Draw frame onto buffer.
                                     AffineTransform transform = new AffineTransform();
 
@@ -235,7 +235,7 @@ public class Sprite {
 
                                     // Get pixels from buffer.
                                     buffer.getRGB(0, 0, size.width, size.height, pixels, 0, size.width);
-                                    
+
                                     // Send pixels to consumers.
                                     synchronized (consumers) {
                                         // Iterate manually over list in reverse order to prevent
@@ -243,13 +243,13 @@ public class Sprite {
                                         // during iteration.
                                         for (int c = consumers.size() - 1; c >= 0; --c) {
                                             ImageConsumer consumer = consumers.get(c);
-                                        
+
                                             consumer.setPixels(0, 0, size.width, size.height, colorModel, pixels, 0, size.width);
                                             consumer.imageComplete(ImageConsumer.SINGLEFRAMEDONE);
                                         }
                                     }
 
-                                    Thread.sleep(FRAME_DELAY); 
+                                    Thread.sleep(FRAME_DELAY);
                                 }
                             }
                             catch (InterruptedException exception) {
@@ -268,7 +268,7 @@ public class Sprite {
             public void removeConsumer(ImageConsumer consumer) {
                 synchronized (consumers) {
                     consumers.remove(consumer);
-                
+
                     if (consumers.isEmpty()) {
                         thread.interrupt();
                         thread = null;
