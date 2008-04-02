@@ -144,19 +144,22 @@ public class LevelPanel extends JPanel {
     public void show(final Level level) {
         this.level = level;
 
-        setScale((int) Math.ceil(Math.max((level.getMaxX() - level.getMinX()) / (double) getWidth (),
-                                          (level.getMaxY() - level.getMinY()) / (double) getHeight())));
-
         zoomToMax();
     }
 
-    public void setScale(int requestedScale) {
-        this.scale = Math.max(1, Math.min(32, requestedScale));
-
+    public void setScale(final int requestedScale) {
         EventQueue.invokeLater(new Runnable() {
             public void run() {
+                Rectangle visibleArea = getVisibleRect();
+                short     centerX     = mapX(visibleArea.x + visibleArea.width  / 2);
+                short     centerY     = mapY(visibleArea.y + visibleArea.height / 2);
+
+                scale = Math.max(1, Math.min(32, requestedScale));
+
                 setPreferredSize(new Dimension((int) Math.ceil((double) LEVEL_WIDTH  / scale),
                                                (int) Math.ceil((double) LEVEL_HEIGHT / scale)));
+
+                scrollTo(new Location(centerX, centerY));
 
                 revalidate();
                 repaint   ();
@@ -165,19 +168,29 @@ public class LevelPanel extends JPanel {
     }
 
     public void zoomToMax() {
+        setScale((int) Math.ceil(Math.max((level.getMaxX() - level.getMinX()) / (double) getWidth (),
+                                          (level.getMaxY() - level.getMinY()) / (double) getHeight())));
+
+        centerViewAt(new Location((short) ((level.getMinX() + level.getMaxX()) / 2),
+                                  (short) ((level.getMinY() + level.getMaxY()) / 2)));
+    }
+
+    public void centerViewAt(final Location location) {
         EventQueue.invokeLater(new Runnable() {
             public void run() {
-                int       centerX     = screenX((level.getMinX() + level.getMaxX()) / 2);
-                int       centerY     = screenY((level.getMinY() + level.getMaxY()) / 2);
-                Rectangle visibleArea = getVisibleRect();
-
-                scrollRectToVisible(new Rectangle(
-                    centerX - visibleArea.width  / 2,
-                    centerY - visibleArea.height / 2,
-                    visibleArea.width, visibleArea.height
-                ));
+                scrollTo(location);
             }
         });
+    }
+
+    private void scrollTo(Location location) {
+        Rectangle visibleArea = getVisibleRect();
+
+        scrollRectToVisible(new Rectangle(
+            screenX(location.getX()) - visibleArea.width  / 2,
+            screenY(location.getY()) - visibleArea.height / 2,
+            visibleArea.width, visibleArea.height
+        ));
     }
 
 
