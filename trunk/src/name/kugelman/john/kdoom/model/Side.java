@@ -71,7 +71,7 @@ public class Side {
 
     
     public Collection<Side> getConnectingSides() {
-        Collection<Side> connectingSides = new ArrayList<Side>();
+        Collection<Side> connectingSides = new ArrayList<Side>(1);
 
         addConnectingSides(connectingSides);
 
