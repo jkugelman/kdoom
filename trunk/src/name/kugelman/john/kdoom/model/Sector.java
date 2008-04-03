@@ -53,8 +53,8 @@ public class Sector {
         return ceilingFlat;
     }
 
-    public short getLightLevel() {
-        return lightLevel;
+    public int getLightLevel() {
+        return lightLevel & 0xFFFF;
     }
 
     public short getType() {

@@ -3,6 +3,7 @@ package name.kugelman.john.kdoom.gui;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.*;
+import java.awt.image.*;
 import java.io.*;
 import java.util.*;
 import java.util.List;
@@ -28,35 +29,41 @@ public class LevelPanel extends JPanel {
 
     private static final int[] GRID_SPACINGS = new int[] { 0, 128, 64, 32 };
 
-    private static final Color BACKGROUND_COLOR           = Color.WHITE;
+    private static final Color BACKGROUND_COLOR               = Color.WHITE;
 
-    private static final Color SECTOR_COLOR               = Color.LIGHT_GRAY;
-    private static final Color SELECTED_SECTOR_COLOR      = Color.LIGHT_GRAY;
+    private static final float SECTOR_HUE                     = 0.0f;   // Gray.
+    private static final float SECTOR_SATURATION              = 0.0f;
+    private static final float SECTOR_BRIGHTNESS_MIN          = 0.25f;  // Dark but not black.
+    private static final float SECTOR_BRIGHTNESS_MAX          = 0.9f;   // Bright but not white.
+    private static final float SELECTED_SECTOR_HUE            = 0.833f; // Slight magenta tint.
+    private static final float SELECTED_SECTOR_SATURATION     = 0.05f;
+    private static final float SELECTED_SECTOR_BRIGHTNESS_MIN = 0.25f;
+    private static final float SELECTED_SECTOR_BRIGHTNESS_MAX = 0.9f;
 
-    private static final Color GRID_COLOR                 = Color.GRAY;
+    private static final Color GRID_COLOR                     = Color.GRAY;
 
-    private static final Color LINE_COLOR                 = Color.BLACK;
-    private static final Color TWO_SIDED_LINE_COLOR       = Color.DARK_GRAY;
-    private static final Color SELECTED_LINE_COLOR        = Color.YELLOW;
-    private static final Color SECRET_LINE_COLOR          = Color.GREEN.darker();
-    private static final Color SELECTED_SECTOR_LINE_COLOR = Color.MAGENTA;
+    private static final Color LINE_COLOR                     = Color.BLACK;
+    private static final Color TWO_SIDED_LINE_COLOR           = Color.DARK_GRAY;
+    private static final Color SELECTED_LINE_COLOR            = Color.YELLOW;
+    private static final Color SECRET_LINE_COLOR              = Color.GREEN.darker();
+    private static final Color SELECTED_SECTOR_LINE_COLOR     = Color.MAGENTA;
 
-    private static final Color VERTEX_COLOR               = Color.BLUE;
+    private static final Color VERTEX_COLOR                   = Color.BLUE;
 
-    private static final Color THING_COLOR                = Color.BLACK;
-    private static final Color SELECTED_THING_COLOR       = Color.YELLOW;
-    private static final Color PLAYER_THING_COLOR         = Color.WHITE;
-    private static final Color MONSTER_THING_COLOR        = new Color(0x8b4513);
-    private static final Color WEAPON_THING_COLOR         = Color.RED;
-    private static final Color AMMO_THING_COLOR           = Color.RED;
-    private static final Color HEALTH_THING_COLOR         = Color.GREEN;
-    private static final Color ARMOR_THING_COLOR          = Color.BLUE;
-    private static final Color POWER_UP_THING_COLOR       = Color.MAGENTA;
-    private static final Color KEY_THING_COLOR            = Color.MAGENTA;
-    private static final Color OBSTACLE_THING_COLOR       = Color.GRAY;
-    private static final Color DECORATION_THING_COLOR     = Color.LIGHT_GRAY;
-    private static final Color SPECIAL_THING_COLOR        = Color.MAGENTA;
-    private static final Color UNKNOWN_THING_COLOR        = Color.MAGENTA;
+    private static final Color THING_COLOR                    = Color.BLACK;
+    private static final Color SELECTED_THING_COLOR           = Color.YELLOW;
+    private static final Color PLAYER_THING_COLOR             = Color.WHITE;
+    private static final Color MONSTER_THING_COLOR            = new Color(0x8b4513);
+    private static final Color WEAPON_THING_COLOR             = Color.RED;
+    private static final Color AMMO_THING_COLOR               = Color.RED;
+    private static final Color HEALTH_THING_COLOR             = Color.GREEN;
+    private static final Color ARMOR_THING_COLOR              = Color.BLUE;
+    private static final Color POWER_UP_THING_COLOR           = Color.MAGENTA;
+    private static final Color KEY_THING_COLOR                = Color.MAGENTA;
+    private static final Color OBSTACLE_THING_COLOR           = Color.GRAY;
+    private static final Color DECORATION_THING_COLOR         = Color.LIGHT_GRAY;
+    private static final Color SPECIAL_THING_COLOR            = Color.MAGENTA;
+    private static final Color UNKNOWN_THING_COLOR            = Color.MAGENTA;
 
 
     private Level   level;
@@ -302,26 +309,37 @@ public class LevelPanel extends JPanel {
 
     private void drawSectors(Graphics2D graphics) throws IOException {
         for (Sector sector: level.sectors()) {
-            Area area = new Area();
-
-            for (List<Side> region: sector.getEnclosingRegions()) area.add     (createArea(region));
-            for (List<Side> region: sector.getExcludingRegions()) area.subtract(createArea(region));
+            Area    area          = createArea(sector);
+            boolean isSelected    = sector == selectedSector;
+            float   brightnessMin = isSelected ? SELECTED_SECTOR_BRIGHTNESS_MIN : SECTOR_BRIGHTNESS_MIN;
+            float   brightnessMax = isSelected ? SELECTED_SECTOR_BRIGHTNESS_MAX : SECTOR_BRIGHTNESS_MAX;
+            float   brightness    = (float) (sector.getLightLevel() / 255.0 * (brightnessMax - brightnessMin) + brightnessMin);
 
             if (isCeilingVisible) {
-                graphics.setPaint(createFlatPaint(sector.getCeilingFlat()));
+                graphics.setPaint(createFlatPaint(sector.getCeilingFlat(), brightness));
             }
             else if (isFloorVisible) {
-                graphics.setPaint(createFlatPaint(sector.getFloorFlat()));
-            }
-            else if (sector == selectedSector) {
-                graphics.setColor(SELECTED_SECTOR_COLOR);
+                graphics.setPaint(createFlatPaint(sector.getFloorFlat  (), brightness));
             }
             else {
-                graphics.setColor(SECTOR_COLOR);
+                // Color sector based on light level.
+                float hue        = isSelected ? SELECTED_SECTOR_HUE            : SECTOR_HUE;
+                float saturation = isSelected ? SELECTED_SECTOR_SATURATION     : SECTOR_SATURATION;
+
+                graphics.setColor(Color.getHSBColor(hue, saturation, brightness));
             }
 
             graphics.fill(area);
         }
+    }
+
+    private Area createArea(Sector sector) {
+        Area area = new Area();
+        
+        for (List<Side> region: sector.getEnclosingRegions()) area.add     (createArea(region));
+        for (List<Side> region: sector.getExcludingRegions()) area.subtract(createArea(region));
+        
+        return area;
     }
 
     private Area createArea(List<Side> region) {
@@ -334,9 +352,15 @@ public class LevelPanel extends JPanel {
         return new Area(polygon);
     }
 
-    private Paint createFlatPaint(Flat flat) throws IOException {
+    private Paint createFlatPaint(Flat flat, float brightness) throws IOException {
+        RescaleOp     rescaleOp     = new RescaleOp(brightness, 0.0f, null);
+        BufferedImage flatImage     = flat.getImage(palette);
+        BufferedImage scalableImage = new BufferedImage(Flat.WIDTH, Flat.HEIGHT, BufferedImage.TYPE_INT_RGB);
+
+        scalableImage.getGraphics().drawImage(flatImage, 0, 0, null);
+
         return new TexturePaint(
-            flat.getImage(palette),
+            rescaleOp.filter(scalableImage, null),
             new Rectangle2D.Double(screenX((short) 0), screenY((short) 0),
                                    (double) Flat.WIDTH / scale, (double) Flat.HEIGHT / scale)
         );
