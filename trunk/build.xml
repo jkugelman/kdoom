@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 
-<project name="kdoom">
+<project name="kdoom" default="all">
   <target name="all" depends="dist"/>
 
   <target name="rebuild" depends="clean,all"/>
