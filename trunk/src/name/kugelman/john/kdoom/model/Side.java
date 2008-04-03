@@ -71,21 +71,22 @@ public class Side {
 
     
     public Collection<Side> getConnectingSides() {
-        Collection<Side> sides = new ArrayList <Side>();
-        Queue     <Side> queue = new LinkedList<Side>(getEnd().getStartingSides());
+        Collection<Side> connectingSides = new ArrayList<Side>();
 
-        while (!queue.isEmpty()) {
-            Side side = queue.remove();
+        addConnectingSides(connectingSides);
 
-            if (side.getLine().isPoint()) {
-                queue.addAll(side.getEnd().getStartingSides());
+        return connectingSides;
+    }
+
+    private void addConnectingSides(Collection<Side> connectingSides) {
+        for (Side connectingSide: getEnd().getStartingSides()) {
+            if (connectingSide.getLine().isPoint()) {
+                connectingSide.addConnectingSides(connectingSides);
             }
             else {
-                sides.add(side);
+                connectingSides.add(connectingSide);
             }
         }
-
-        return sides;
     }
 
 
