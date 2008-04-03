@@ -126,12 +126,8 @@ public class Sector {
                 Side   nextSide  = null;
                 double nextAngle = Double.NEGATIVE_INFINITY;
 
-                // Find the side which connects to the last side.
-                for (Side side: sides) {
-                    if (side.getStart() != lastSide.getEnd()) {
-                        continue;
-                    }
-
+                // Find the best connecting side, the one with the most acute angle.
+                for (Side side: lastSide.getConnectingSides()) {
                     double angle = Side.angleBetween(lastSide, side);
 
                     if (angle > nextAngle) {
