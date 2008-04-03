@@ -122,14 +122,21 @@ public class Sector {
 
             // Each iteration finds the next side in the region.
             for (;;) {
-                Side lastSide = region.get(region.size() - 1);
-                Side nextSide = null;
+                Side   lastSide  = region.get(region.size() - 1);
+                Side   nextSide  = null;
+                double nextAngle = Double.NEGATIVE_INFINITY;
 
                 // Find the side which connects to the last side.
                 for (Side side: sides) {
-                    if (side.getStart() == lastSide.getEnd()) {
-                        nextSide = side;
-                        break;
+                    if (side.getStart() != lastSide.getEnd()) {
+                        continue;
+                    }
+
+                    double angle = Side.angleBetween(lastSide, side);
+
+                    if (angle > nextAngle) {
+                        nextSide  = side;
+                        nextAngle = angle;
                     }
                 }
 
