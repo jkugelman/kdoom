@@ -13,6 +13,9 @@ public class Side {
         this.isRightSidedef = isRightSidedef;
 
         sidedef.getSector().sides.add(this);
+
+        getStart().startingSides.add(this);
+        getEnd  ().endingSides  .add(this);
     }
 
 
@@ -64,6 +67,25 @@ public class Side {
 
     public Vertex getEnd() {
         return isRightSidedef ? line.getEnd() : line.getStart();
+    }
+
+    
+    public Collection<Side> getConnectingSides() {
+        Collection<Side> sides = new ArrayList <Side>();
+        Queue     <Side> queue = new LinkedList<Side>(getEnd().getStartingSides());
+
+        while (!queue.isEmpty()) {
+            Side side = queue.remove();
+
+            if (side.getLine().isPoint()) {
+                queue.addAll(side.getEnd().getStartingSides());
+            }
+            else {
+                sides.add(side);
+            }
+        }
+
+        return sides;
     }
 
 
