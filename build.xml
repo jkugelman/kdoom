@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+
+<project name="kdoom">
+  <target name="all" depends="dist"/>
+
+  <target name="rebuild" depends="clean,all"/>
+
+  <target name="init">
+    <mkdir dir="classes"/>
+  </target>
+
+  <target name="compile" depends="init">
+    <depend srcdir="src" destdir="classes" closure="true"/>
+    
+    <javac srcdir="src" destdir="classes" debug="on">
+      <compilerarg value="-Xlint"/>
+      <compilerarg value="-Xlint:-serial"/>
+    </javac>
+  </target>
+
+  <target name="dist" depends="compile">
+    <jar jarfile="lib/kdoom.jar" basedir="classes"/>
+  </target>
+
+  <target name="clean">
+    <delete dir="classes"/>
+    <delete file="lib/kdoom.jar"/>
+  </target>
+</project>
