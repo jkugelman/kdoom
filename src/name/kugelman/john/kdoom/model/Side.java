@@ -71,6 +71,7 @@ public class Side {
 
     
     public Collection<Side> getConnectingSides() {
+        // Usually only one connecting side.
         Collection<Side> connectingSides = new ArrayList<Side>(1);
 
         addConnectingSides(connectingSides);
@@ -80,6 +81,7 @@ public class Side {
 
     private void addConnectingSides(Collection<Side> connectingSides) {
         for (Side connectingSide: getEnd().getStartingSides()) {
+            // Ignore zero-length lines.
             if (connectingSide.getLine().isPoint()) {
                 connectingSide.addConnectingSides(connectingSides);
             }
