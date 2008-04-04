@@ -7,7 +7,6 @@ import javax.swing.border.*;
 
 import info.clearthought.layout.*;
 
-import name.kugelman.john.gui.*;
 import name.kugelman.john.kdoom.model.*;
 
 import static info.clearthought.layout.TableLayoutConstants.*;

@@ -8,7 +8,6 @@ import javax.swing.*;
 
 import info.clearthought.layout.*;
 
-import name.kugelman.john.gui.*;
 import name.kugelman.john.kdoom.file.*;
 import name.kugelman.john.kdoom.model.*;
 
