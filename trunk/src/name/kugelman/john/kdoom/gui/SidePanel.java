@@ -5,8 +5,12 @@ import java.io.*;
 import javax.swing.*;
 import javax.swing.border.*;
 
+import info.clearthought.layout.*;
+
 import name.kugelman.john.gui.*;
 import name.kugelman.john.kdoom.model.*;
+
+import static info.clearthought.layout.TableLayoutConstants.*;
 
 public class SidePanel extends JPanel {
     private Side side;
@@ -33,21 +37,29 @@ public class SidePanel extends JPanel {
 
         setBorder(titledBorder);
 
-        setLayout(new GridBagLayout());
-        add(new JLabel("X offset: "),       new Constraints(0, 0).anchorNortheast());
-        add(xOffsetLabel,                   new Constraints(1, 0).anchorNorthwest());
-        add(new JLabel("Y offset: "),       new Constraints(0, 1).anchorNortheast());
-        add(yOffsetLabel,                   new Constraints(1, 1).anchorNorthwest());
-        add(new JLabel("Upper texture: "),  new Constraints(0, 2).anchorNortheast().height(2));
-        add(upperTextureLabel,              new Constraints(1, 2).anchorNorthwest());
-        add(upperTexturePanel,              new Constraints(1, 3).anchorNorthwest());
-        add(new JLabel("Middle texture: "), new Constraints(0, 4).anchorNortheast().height(2));
-        add(middleTextureLabel,             new Constraints(1, 4).anchorNorthwest());
-        add(middleTexturePanel,             new Constraints(1, 5).anchorNorthwest());
-        add(new JLabel("Lower texture: "),  new Constraints(0, 6).anchorNortheast().height(2));
-        add(lowerTextureLabel,              new Constraints(1, 6).anchorNorthwest());
-        add(lowerTexturePanel,              new Constraints(1, 7).anchorNorthwest());
-        add(Box.createGlue(),               new Constraints(2, 8).weight(1, 1));
+        double[][] size = {
+            { PREFERRED, PREFERRED },
+            { PREFERRED, PREFERRED,
+              PREFERRED, PREFERRED,
+              PREFERRED, PREFERRED, PREFERRED,
+              PREFERRED, PREFERRED, PREFERRED,
+              PREFERRED, PREFERRED, PREFERRED }
+        };
+
+        setLayout(new TableLayout(size));
+        add(new JLabel("X offset: "),       "0, 0,       TRAILING, TOP");
+        add(xOffsetLabel,                   "1, 0,       LEADING,  TOP");
+        add(new JLabel("Y offset: "),       "0, 1,       TRAILING, TOP");
+        add(yOffsetLabel,                   "1, 1,       LEADING,  TOP");
+        add(new JLabel("Upper texture: "),  "0, 2, 0, 3, TRAILING, TOP");
+        add(upperTextureLabel,              "1, 2,       LEADING,  TOP");
+        add(upperTexturePanel,              "1, 3,       LEADING,  TOP");
+        add(new JLabel("Middle texture: "), "0, 4, 0, 5, TRAILING, TOP");
+        add(middleTextureLabel,             "1, 4,       LEADING,  TOP");
+        add(middleTexturePanel,             "1, 5,       LEADING,  TOP");
+        add(new JLabel("Lower texture: "),  "0, 6, 0, 7, TRAILING, TOP");
+        add(lowerTextureLabel,              "1, 6,       LEADING,  TOP");
+        add(lowerTexturePanel,              "1, 7,       LEADING,  TOP");
 
         show(side);
     }
