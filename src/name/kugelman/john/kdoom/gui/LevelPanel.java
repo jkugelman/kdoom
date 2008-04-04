@@ -363,22 +363,21 @@ public class LevelPanel extends JPanel {
 
     private void drawSectors(Graphics2D graphics) throws IOException {
         for (Sector sector: level.sectors()) {
-            Area  area  = sectorAreas .get(sector);
-            Paint paint = sectorPaints.get(sector);
-            
-            if (area == null) {
-                area = createArea(sector);
-                sectorAreas.put(sector, area);
-            }
-
-            if (paint == null) {
-                paint = createPaint(sector);
-                sectorPaints.put(sector, paint);
-            }
-
-            graphics.setPaint(paint);
-            graphics.fill    (area);
+            graphics.setPaint(getPaint(sector));
+            graphics.fill    (getArea (sector));
         }
+    }
+
+
+    private Area getArea(Sector sector) {
+        Area area = sectorAreas.get(sector);
+
+        if (area == null) {
+            area = createArea(sector);
+            sectorAreas.put(sector, area);
+        }
+
+        return area;
     }
 
     private Area createArea(Sector sector) {
@@ -398,6 +397,18 @@ public class LevelPanel extends JPanel {
         }
 
         return new Area(polygon);
+    }
+
+
+    private Paint getPaint(Sector sector) throws IOException {
+        Paint paint = sectorPaints.get(sector);
+
+        if (paint == null) {
+            paint = createPaint(sector);
+            sectorPaints.put(sector, paint);
+        }
+
+        return paint;
     }
 
     private Paint createPaint(Sector sector) throws IOException {
