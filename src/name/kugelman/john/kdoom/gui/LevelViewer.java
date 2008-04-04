@@ -22,16 +22,16 @@ public class LevelViewer extends JFrame {
     private SidePanel   sidePanel;
     private ThingPanel  thingPanel;
 
-    public LevelViewer(Level level, Palette palette) {
+    public LevelViewer(Level level) {
         super("KDOOM - " + level.getWad().getName() + " - " + level.getName());
 
         this.level = level;
 
-        this.levelPanel  = new LevelPanel (palette);
-        this.sectorPanel = new SectorPanel(palette);
+        this.levelPanel  = new LevelPanel ();
+        this.sectorPanel = new SectorPanel();
         this.linePanel   = new LinePanel  ();
-        this.sidePanel   = new SidePanel  (palette);
-        this.thingPanel  = new ThingPanel (palette);
+        this.sidePanel   = new SidePanel  ();
+        this.thingPanel  = new ThingPanel ();
 
         levelPanel.addSelectionListener(new LevelPanel.SelectionListener() {
             public void lineSelected  (Line   line)   { linePanel  .show(line);   }
@@ -58,8 +58,6 @@ public class LevelViewer extends JFrame {
         setDefaultCloseOperation(EXIT_ON_CLOSE);
 
         pack();
-        setVisible(true);
-
         levelPanel.show(level);
     }
 
@@ -71,13 +69,9 @@ public class LevelViewer extends JFrame {
         }
 
         try {
-            Wad         wad         = new Wad        (new File(arguments[0]));
-            FlatList    flats       = new FlatList   (wad);
-            TextureList textures    = new TextureList(wad);
-            Palette     palette     = new Palette    (wad);
-            Level       level       = new Level      (wad, arguments[1], flats, textures);
+            Resources.load(new Wad(new File(arguments[0])));
 
-            LevelViewer levelViewer = new LevelViewer(level, palette);
+            new LevelViewer(Resources.levels().get(arguments[1])).setVisible(true);
         }
         catch (IllegalArgumentException exception) {
             System.err.println(exception.getLocalizedMessage());

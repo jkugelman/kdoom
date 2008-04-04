@@ -38,19 +38,17 @@ public class Sprite {
     }
 
     String                   name;
-    Palette                  palette;
     Dimension                size;
     boolean                  isHanging;
     SortedMap<String, Frame> frames;
 
-    public Sprite(Wad wad, String name, boolean isHanging) throws IOException {
+    Sprite(Wad wad, String name, boolean isHanging) throws IOException {
         this.name      = name;
-        this.palette   = new Palette(wad);
         this.size      = new Dimension(0, 0);
         this.isHanging = isHanging;
         this.frames    = new TreeMap<String, Frame>();
 
-        for (Lump lump: wad.getLumpsWithPrefix(name)) {
+        for (Lump lump: wad.lumpsStartingWith(name)) {
             if (!lump.getName().matches("....([A-Z][0-8])+")) {
                 continue;
             }
@@ -230,7 +228,7 @@ public class Sprite {
                                     }
 
                                     Graphics2D graphics = buffer.createGraphics();
-                                    graphics.drawImage(frame.patch.getImage(palette), transform, null);
+                                    graphics.drawImage(frame.patch.getImage(), transform, null);
                                     graphics.dispose();
 
                                     // Get pixels from buffer.

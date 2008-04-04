@@ -9,14 +9,14 @@ import java.util.*;
 import name.kugelman.john.kdoom.file.*;
 
 public class Patch {
-    String    name;
-    Lump      lump;
-    Dimension size;
-    Point     offset;
+    private String    name;
+    private Lump      lump;
+    private Dimension size;
+    private Point     offset;
 
-    public Patch(Wad wad, String name) throws IOException {
+    Patch(Wad wad, String name) throws IOException {
         this.name = name;
-        this.lump = wad.lookupLump(name);
+        this.lump = wad.lookup(name);
 
         if (lump != null) {
             ShortBuffer buffer = lump.getData().asShortBuffer();
@@ -26,7 +26,7 @@ public class Patch {
         }
     }
 
-    public Patch(Lump lump) throws IOException {
+    Patch(Lump lump) throws IOException {
         this(lump.getWad(), lump.getName());
     }
 
@@ -48,7 +48,7 @@ public class Patch {
     }
 
 
-    public BufferedImage getImage(Palette palette) throws IOException {
+    public BufferedImage getImage() throws IOException {
         ByteBuffer buffer = lump.getData();
 
         // Read image dimensions.
@@ -58,7 +58,7 @@ public class Patch {
         short left   = buffer.getShort();
 
         BufferedImage  image      = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-        ColorModel     colorModel = palette.getColorModel();
+        ColorModel     colorModel = Resources.getPalette().getColorModel();
 
         // Read column offsets.
         int[] columnOffsets = new int[width];

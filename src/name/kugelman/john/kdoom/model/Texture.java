@@ -15,7 +15,7 @@ public class Texture {
     List<Patch> patches;
     List<Point> origins;
 
-    public Texture(String name, Dimension size) {
+    Texture(String name, Dimension size) {
         this.name    = name;
         this.size    = size;
         this.patches = new ArrayList<Patch>();
@@ -45,7 +45,7 @@ public class Texture {
     }
 
 
-    public BufferedImage getImage(Palette palette) throws IOException {
+    public BufferedImage getImage() throws IOException {
         BufferedImage image    = new BufferedImage(size.width, size.height, BufferedImage.TYPE_INT_ARGB);
         Graphics      graphics = image.createGraphics();
 
@@ -57,7 +57,7 @@ public class Texture {
                 continue;
             }
 
-            graphics.drawImage(patch.getImage(palette), origin.x, origin.y, null);
+            graphics.drawImage(patch.getImage(), origin.x, origin.y, null);
         }
 
         return image;

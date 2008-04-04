@@ -7,11 +7,8 @@ import java.util.*;
 import name.kugelman.john.kdoom.file.*;
 
 public class Level {
-    private String        name;
-
     private Wad           wad;
-    private FlatList      flats;
-    private TextureList   textures;
+    private String        name;
 
     private List<Thing>   things;
     private List<Vertex>  vertices;
@@ -21,21 +18,19 @@ public class Level {
 
     private short         minX, minY, maxX, maxY;
 
-    public Level(Wad wad, String name, FlatList flats, TextureList textures)
+    Level(Wad wad, String name)
         throws IllegalArgumentException, IOException
     {
         if (!name.matches("E\\dM\\d|MAP\\d\\d")) {
             throw new IllegalArgumentException("Invalid map name " + name + ".");
         }
 
-        this.wad      = wad;
-        this.flats    = flats;
-        this.textures = textures;
+        this.wad  = wad;
 
         this.minX = this.minY = Short.MAX_VALUE;
         this.maxX = this.maxY = Short.MIN_VALUE;
 
-        Lump nameLump = wad.getLump(name);
+        Lump nameLump = wad.lump(name);
 
         readName    (wad.lumps().get(nameLump.getIndex() + 0));
         readThings  (wad.lumps().get(nameLump.getIndex() + 1));
@@ -116,8 +111,8 @@ public class Level {
             short  ceilingHeight  = buffer.getShort();
                                     buffer.get(floorBytes);
                                     buffer.get(ceilingBytes);
-            Flat   floorFlat      = flats.get(new String(floorBytes,   "ISO-8859-1").trim());
-            Flat   ceilingFlat    = flats.get(new String(ceilingBytes, "ISO-8859-1").trim());
+            Flat   floorFlat      = Resources.flats().get(new String(floorBytes,   "ISO-8859-1").trim());
+            Flat   ceilingFlat    = Resources.flats().get(new String(ceilingBytes, "ISO-8859-1").trim());
             short  lightLevel     = buffer.getShort();
             short  type           = buffer.getShort();
             short  tagNumber      = buffer.getShort();
@@ -176,9 +171,9 @@ public class Level {
                 sectorNumber = 0;
             }
 
-            Texture upperTexture  = textures.get(new String(upperBytes,  "ISO-8859-1").trim());
-            Texture lowerTexture  = textures.get(new String(lowerBytes,  "ISO-8859-1").trim());
-            Texture middleTexture = textures.get(new String(middleBytes, "ISO-8859-1").trim());
+            Texture upperTexture  = Resources.textures().get(new String(upperBytes,  "ISO-8859-1").trim());
+            Texture lowerTexture  = Resources.textures().get(new String(lowerBytes,  "ISO-8859-1").trim());
+            Texture middleTexture = Resources.textures().get(new String(middleBytes, "ISO-8859-1").trim());
             Sector sector         = sectors.get(sectorNumber);
 
             sidedefs.add(new Sidedef((short) sidedefs.size(), xOffset, yOffset, upperTexture, lowerTexture, middleTexture, sector));

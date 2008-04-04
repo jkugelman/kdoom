@@ -12,8 +12,7 @@ import name.kugelman.john.kdoom.model.*;
 import static info.clearthought.layout.TableLayoutConstraints.*;
 
 public class ThingPanel extends JPanel {
-    private Thing   thing;
-    private Palette palette;
+    private Thing thing;
 
     private TitledBorder titledBorder;
     private JLabel       locationLabel;
@@ -22,17 +21,17 @@ public class ThingPanel extends JPanel {
     private JLabel       flagsLabel;
     private SpritePanel  spritePanel;
 
-    public ThingPanel(Palette palette) {
-        this(null, palette);
+    public ThingPanel() {
+        this(null);
     }
 
-    public ThingPanel(Thing thing, Palette palette) {
+    public ThingPanel(Thing thing) {
         titledBorder  = new TitledBorder("");
         locationLabel = new JLabel();
         angleLabel    = new JLabel();
         typeLabel     = new JLabel();
         flagsLabel    = new JLabel();
-        spritePanel   = new SpritePanel(palette);
+        spritePanel   = new SpritePanel();
 
         setBorder(titledBorder);
 

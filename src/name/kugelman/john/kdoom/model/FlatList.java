@@ -12,22 +12,15 @@ import name.kugelman.john.kdoom.file.*;
 public class FlatList extends AbstractMap<String, Flat> implements SortedMap<String, Flat> {
     private SortedMap<String, Flat> flats;
 
-    public FlatList(Wad wad) throws IOException {
-        Lump startLump = wad.getLump("F_START");
-        Lump endLump   = wad.getLump("F_END");
-
+    FlatList(Wad wad) throws IOException {
         this.flats = new TreeMap<String, Flat>();
 
-        for (int i = startLump.getIndex() + 1; i < endLump.getIndex(); ++i) {
-            Lump lump = wad.lumps().get(i);
-
+        for (Lump lump: wad.lumpsBetween(wad.lump("F_START"), wad.lump("F_END"))) {
             if (lump.getName().matches("F[12]_(START|END)")) {
                 continue;
             }
 
-            Flat flat = new Flat(lump);
-
-            flats.put(flat.getName(), flat);
+            flats.put(lump.getName(), new Flat(lump));
         }
     }
 

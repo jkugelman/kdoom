@@ -12,8 +12,8 @@ import name.kugelman.john.kdoom.file.*;
 public class PatchList extends AbstractList<Patch> {
     List<Patch> patches;
 
-    public PatchList(Wad wad) throws IOException {
-        ByteBuffer buffer     = wad.getLump("PNAMES").getData();
+    PatchList(Wad wad) throws IOException {
+        ByteBuffer buffer     = wad.lump("PNAMES").getData();
         int        patchCount = buffer.getInt();
         byte[]     nameBytes  = new byte[8];
 

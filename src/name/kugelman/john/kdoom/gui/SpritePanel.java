@@ -9,18 +9,16 @@ import name.kugelman.john.kdoom.model.*;
 public class SpritePanel extends JPanel {
     private Sprite  sprite;
     private String  frameSequence;
-    private Palette palette;
 
     private Image   image;
 
-    public SpritePanel(Palette palette) {
-        this(null, null, palette);
+    public SpritePanel() {
+        this(null, null);
     }
 
-    public SpritePanel(Sprite sprite, String frameSequence, Palette palette) {
+    public SpritePanel(Sprite sprite, String frameSequence) {
         this.sprite        = sprite;
         this.frameSequence = frameSequence;
-        this.palette       = palette;
 
         setPreferredSize(new Dimension(128, 128));
     }
