@@ -31,8 +31,11 @@ public class LevelViewer extends JFrame {
         this.thingPanel  = new ThingPanel (palette);
 
         levelPanel.addSelectionListener(new LevelPanel.SelectionListener() {
-            public void lineSelected(Line line, Side side) {
+            public void lineSelected(Line line) {
                 linePanel.show(line);
+            }
+
+            public void sideSelected(Side side) {
                 sidePanel.show(side);
             }
 
