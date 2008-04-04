@@ -15,10 +15,19 @@ import name.kugelman.john.kdoom.model.*;
 
 public class LevelPanel extends JPanel {
     public interface SelectionListener extends EventListener {
-        void lineSelected  (Line line, Side side);
+        void lineSelected  (Line line);
+        void sideSelected  (Side side);
         void sectorSelected(Sector sector);
         void thingSelected (Thing thing);
     }
+
+    public abstract class SelectionAdapter implements SelectionListener {
+        public void lineSelected  (Line line)     { }
+        public void sideSelected  (Side side)     { }
+        public void sectorSelected(Sector sector) { }
+        public void thingSelected (Thing thing)   { }
+    }
+
 
     private static int LEVEL_LEFT   = Short.MIN_VALUE;
     private static int LEVEL_RIGHT  = Short.MAX_VALUE;
@@ -36,7 +45,7 @@ public class LevelPanel extends JPanel {
     private static final float SECTOR_BRIGHTNESS_MIN          = 0.25f;  // Dark but not black.
     private static final float SECTOR_BRIGHTNESS_MAX          = 0.9f;   // Bright but not white.
     private static final float SELECTED_SECTOR_HUE            = 0.833f; // Slight magenta tint.
-    private static final float SELECTED_SECTOR_SATURATION     = 0.05f;
+    private static final float SELECTED_SECTOR_SATURATION     = 0.08f;
     private static final float SELECTED_SECTOR_BRIGHTNESS_MIN = 0.25f;
     private static final float SELECTED_SECTOR_BRIGHTNESS_MAX = 0.9f;
 
@@ -79,6 +88,10 @@ public class LevelPanel extends JPanel {
     private int     gridSpacingIndex;
     private boolean isFloorVisible, isCeilingVisible;
 
+    private Map<Sector, Area>  sectorAreas;
+    private Map<Sector, Paint> sectorPaints;
+
+
     public LevelPanel(Palette palette) {
         this(null, palette);
     }
@@ -90,6 +103,9 @@ public class LevelPanel extends JPanel {
         this.gridSpacingIndex   = 0;
         this.isFloorVisible     = false;
         this.isCeilingVisible   = false;
+
+        this.sectorAreas        = new HashMap<Sector, Area> ();
+        this.sectorPaints       = new HashMap<Sector, Paint>();
 
         addMouseMotionListener(new MouseMotionAdapter() {
             @Override
@@ -106,7 +122,8 @@ public class LevelPanel extends JPanel {
                 Sector             activeSector  = activeSectors.isEmpty() ? null : activeSectors.iterator().next();
                 Thing              activeThing   = activeThings .isEmpty() ? null : activeThings .iterator().next();
 
-                selectLine  (closestLine, closestSide);
+                selectLine  (closestLine);
+                selectSide  (closestSide);
                 selectSector(activeSector);
                 selectThing (activeThing);
             }
@@ -145,6 +162,23 @@ public class LevelPanel extends JPanel {
             }
         });
 
+        addSelectionListener(new SelectionListener() {
+            private Sector previousSector = null;
+            
+            public void lineSelected (Line  line)  { repaint(); }
+            public void sideSelected (Side  side)  { repaint(); }
+            public void thingSelected(Thing thing) { repaint(); }
+
+            public void sectorSelected(Sector sector) {
+                sectorPaints.remove(previousSector);
+                sectorPaints.remove(sector);
+
+                previousSector = sector;
+
+                repaint();
+            }
+        });
+
         setFocusable(true);
     }
 
@@ -155,6 +189,9 @@ public class LevelPanel extends JPanel {
     }
 
     public void setScale(final int requestedScale) {
+        sectorAreas .clear();
+        sectorPaints.clear();
+        
         EventQueue.invokeLater(new Runnable() {
             public void run() {
                 Rectangle visibleArea = getVisibleRect();
@@ -219,23 +256,30 @@ public class LevelPanel extends JPanel {
         for (SelectionListener selectionListener: selectionListeners) {
             selectionListener.sectorSelected(sector);
         }
-
-        repaint();
     }
 
-    public void selectLine(Line line, Side side) {
-        if (selectedLine == line && selectedSide == side) {
+    public void selectLine(Line line) {
+        if (selectedLine == line) {
             return;
         }
 
         selectedLine = line;
+
+        for (SelectionListener selectionListener: selectionListeners) {
+            selectionListener.lineSelected(line);
+        }
+    }
+
+    public void selectSide(Side side) {
+        if (selectedSide == side) {
+            return;
+        }
+
         selectedSide = side;
 
         for (SelectionListener selectionListener: selectionListeners) {
-            selectionListener.lineSelected(line, side);
+            selectionListener.sideSelected(side);
         }
-
-        repaint();
     }
 
     public void selectThing(Thing thing) {
@@ -248,8 +292,6 @@ public class LevelPanel extends JPanel {
         for (SelectionListener selectionListener: selectionListeners) {
             selectionListener.thingSelected(thing);
         }
-
-        repaint();
     }
 
 
@@ -264,6 +306,7 @@ public class LevelPanel extends JPanel {
         isFloorVisible   = !isFloorVisible;
         isCeilingVisible = false;
 
+        sectorPaints.clear();
         repaint();
     }
 
@@ -271,6 +314,7 @@ public class LevelPanel extends JPanel {
         isCeilingVisible = !isCeilingVisible;
         isFloorVisible   = false;
 
+        sectorPaints.clear();
         repaint();
     }
 
@@ -309,27 +353,21 @@ public class LevelPanel extends JPanel {
 
     private void drawSectors(Graphics2D graphics) throws IOException {
         for (Sector sector: level.sectors()) {
-            Area    area          = createArea(sector);
-            boolean isSelected    = sector == selectedSector;
-            float   brightnessMin = isSelected ? SELECTED_SECTOR_BRIGHTNESS_MIN : SECTOR_BRIGHTNESS_MIN;
-            float   brightnessMax = isSelected ? SELECTED_SECTOR_BRIGHTNESS_MAX : SECTOR_BRIGHTNESS_MAX;
-            float   brightness    = (float) (sector.getLightLevel() / 255.0 * (brightnessMax - brightnessMin) + brightnessMin);
-
-            if (isCeilingVisible) {
-                graphics.setPaint(createFlatPaint(sector.getCeilingFlat(), brightness));
-            }
-            else if (isFloorVisible) {
-                graphics.setPaint(createFlatPaint(sector.getFloorFlat  (), brightness));
-            }
-            else {
-                // Color sector based on light level.
-                float hue        = isSelected ? SELECTED_SECTOR_HUE            : SECTOR_HUE;
-                float saturation = isSelected ? SELECTED_SECTOR_SATURATION     : SECTOR_SATURATION;
-
-                graphics.setColor(Color.getHSBColor(hue, saturation, brightness));
+            Area  area  = sectorAreas .get(sector);
+            Paint paint = sectorPaints.get(sector);
+            
+            if (area == null) {
+                area = createArea(sector);
+                sectorAreas.put(sector, area);
             }
 
-            graphics.fill(area);
+            if (paint == null) {
+                paint = createPaint(sector);
+                sectorPaints.put(sector, paint);
+            }
+
+            graphics.setPaint(paint);
+            graphics.fill    (area);
         }
     }
 
@@ -350,6 +388,27 @@ public class LevelPanel extends JPanel {
         }
 
         return new Area(polygon);
+    }
+
+    private Paint createPaint(Sector sector) throws IOException {
+        boolean isSelected    = sector == selectedSector;
+        float   brightnessMin = isSelected ? SELECTED_SECTOR_BRIGHTNESS_MIN : SECTOR_BRIGHTNESS_MIN;
+        float   brightnessMax = isSelected ? SELECTED_SECTOR_BRIGHTNESS_MAX : SECTOR_BRIGHTNESS_MAX;
+        float   brightness    = (float) (sector.getLightLevel() / 255.0 * (brightnessMax - brightnessMin) + brightnessMin);
+
+        if (isCeilingVisible) {
+            return createFlatPaint(sector.getCeilingFlat(), brightness);
+        }
+        else if (isFloorVisible) {
+            return createFlatPaint(sector.getFloorFlat  (), brightness);
+        }
+        else {
+            // Color sector based on light level.
+            float hue        = isSelected ? SELECTED_SECTOR_HUE            : SECTOR_HUE;
+            float saturation = isSelected ? SELECTED_SECTOR_SATURATION     : SECTOR_SATURATION;
+
+            return Color.getHSBColor(hue, saturation, brightness);
+        }
     }
 
     private Paint createFlatPaint(Flat flat, float brightness) throws IOException {
