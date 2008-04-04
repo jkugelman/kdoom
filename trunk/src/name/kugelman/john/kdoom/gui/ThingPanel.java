@@ -49,7 +49,7 @@ public class ThingPanel extends JPanel {
         add(typeLabel,                "1, 2, LEADING,  TOP");
         add(new JLabel("Flags: "),    "0, 3, TRAILING, TOP");
         add(flagsLabel,               "1, 3, LEADING,  TOP");
-        add(spritePanel,              "1, 5, TRAILING, TOP");
+        add(spritePanel,              "1, 5, LEADING,  TOP");
 
         show(thing);
     }
