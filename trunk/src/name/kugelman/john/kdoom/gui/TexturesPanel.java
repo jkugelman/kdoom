@@ -8,16 +8,10 @@ import name.kugelman.john.kdoom.file.*;
 import name.kugelman.john.kdoom.model.*;
 
 public class TexturesPanel extends JPanel {
-    private TextureList textureList;
-    private Palette     palette;
-
-    public TexturesPanel(TextureList textureList, Palette palette) {
-        this.textureList = textureList;
-        this.palette     = palette;
-
+    public TexturesPanel() {
         setLayout(new GridLayout(0, 4, 8, 8));
 
-        for (Texture texture: textureList.values()) {
+        for (Texture texture: Resources.textures().values()) {
             String        name    = String.format("%s (%dx%d)", texture.getName(), texture.getSize().width, texture.getSize().height);
             StringBuilder patches = new StringBuilder();
 
@@ -45,7 +39,7 @@ public class TexturesPanel extends JPanel {
 
             JPanel       panel        = new JPanel();
             JLabel       nameLabel    = new JLabel(name);
-            TexturePanel texturePanel = new TexturePanel(texture, palette);
+            TexturePanel texturePanel = new TexturePanel(texture);
             JLabel       patchesLabel = new JLabel("<html>" + patches + "</html>");
 
             patchesLabel.setFont(patchesLabel.getFont().deriveFont(Font.ITALIC, 8));
@@ -64,13 +58,13 @@ public class TexturesPanel extends JPanel {
         }
 
         try {
-            Wad           paletteWad  = new Wad      (new File(arguments[0]));
-            Palette       palette     = new Palette  (paletteWad.getLump("PLAYPAL"));
-            Wad           textureWad  = (arguments.length > 1) ? new Wad(new File(arguments[1])) : paletteWad;
-            TextureList   textureList = new TextureList(textureWad);
+            Wad iwad = new Wad(new File(arguments[0]));
+            Wad pwad = (arguments.length > 1) ? new Wad(new File(arguments[1])) : iwad;
 
+            Resources.load(iwad, pwad);
+            
             JFrame        frame       = new JFrame("KDOOM - " + arguments[0] + " - Texture List");
-            TexturesPanel panel       = new TexturesPanel(textureList, palette);
+            TexturesPanel panel       = new TexturesPanel();
             JScrollPane   scrollPane  = new JScrollPane(panel);
 
             scrollPane.setPreferredSize(new Dimension(800, 600));

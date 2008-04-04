@@ -198,7 +198,7 @@ public class Thing {
     private Details  details;
     private Sprite   sprite;
 
-    public Thing(Wad wad, short number, Location location, short angle, short type, short flags) throws IOException {
+    Thing(Wad wad, short number, Location location, short angle, short type, short flags) throws IOException {
         this.number   = number;
         this.location = location;
         this.angle    = angle;

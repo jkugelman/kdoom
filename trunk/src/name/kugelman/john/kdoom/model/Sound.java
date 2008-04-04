@@ -11,7 +11,7 @@ public class Sound {
     private Lump        lump;
     private AudioFormat audioFormat;
 
-    public Sound(Lump lump) throws IOException {
+    Sound(Lump lump) throws IOException {
         ByteBuffer  buffer      = lump.getData();
                                   buffer.getShort();
         float       sampleRate  = buffer.getShort() & 0xFFFF;
@@ -51,8 +51,9 @@ public class Sound {
         }
 
         try {
-            Wad   wad   = new Wad  (new File   (arguments[0]));
-            Sound sound = new Sound(wad.getLump(arguments[1].toUpperCase()));
+            Resources.load(new Wad(new File(arguments[0])));
+
+            Sound sound = Resources.sounds().get(arguments[1].toUpperCase());
             Clip  clip  = AudioSystem.getClip();
 
             clip.open (sound.getAudioInputStream());

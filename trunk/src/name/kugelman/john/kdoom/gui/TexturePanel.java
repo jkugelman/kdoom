@@ -8,21 +8,18 @@ import name.kugelman.john.kdoom.file.*;
 import name.kugelman.john.kdoom.model.*;
 
 public class TexturePanel extends JPanel {
-    private Texture   texture;
-    private Palette   palette;
+    private Texture texture;
+    private boolean isDynamic;
 
-    private boolean   isDynamic;
-
-    public TexturePanel(Palette palette) {
-        this(null, palette, true);
+    public TexturePanel() {
+        this(null, true);
     }
 
-    public TexturePanel(Texture texture, Palette palette) {
-        this(texture, palette, false);
+    public TexturePanel(Texture texture) {
+        this(texture, false);
     }
 
-    public TexturePanel(Texture texture, Palette palette, boolean isDynamic) {
-        this.palette   = palette;
+    public TexturePanel(Texture texture, boolean isDynamic) {
         this.isDynamic = isDynamic;
 
         if (isDynamic) {
@@ -44,13 +41,13 @@ public class TexturePanel extends JPanel {
     }
 
     @Override
-    public void paint(Graphics graphics) {
+    public void paintComponent(Graphics graphics) {
         if (texture == null) {
             return;
         }
 
         try {
-            graphics.drawImage(texture.getImage(palette), 0, 0, this);
+            graphics.drawImage(texture.getImage(), 0, 0, this);
         }
         catch (IOException exception) {
             exception.printStackTrace();

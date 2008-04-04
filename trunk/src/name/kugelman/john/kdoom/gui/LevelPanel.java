@@ -75,9 +75,8 @@ public class LevelPanel extends JPanel {
     private static final Color UNKNOWN_THING_COLOR            = Color.MAGENTA;
 
 
-    private Level   level;
-    private int     scale;
-    private Palette palette;
+    private Level level;
+    private int   scale;
 
     private List<SelectionListener> selectionListeners;
     private Line                    selectedLine;
@@ -92,12 +91,11 @@ public class LevelPanel extends JPanel {
     private Map<Sector, Paint> sectorPaints;
 
 
-    public LevelPanel(Palette palette) {
-        this(null, palette);
+    public LevelPanel() {
+        this(null);
     }
 
-    public LevelPanel(Level level, Palette palette) {
-        this.palette            = palette;
+    public LevelPanel(Level level) {
         this.selectionListeners = new ArrayList<SelectionListener>();
 
         this.gridSpacingIndex   = 0;
@@ -425,7 +423,7 @@ public class LevelPanel extends JPanel {
 
     private Paint createFlatPaint(Flat flat, float brightness) throws IOException {
         RescaleOp     rescaleOp     = new RescaleOp(brightness, 0.0f, null);
-        BufferedImage flatImage     = flat.getImage(palette);
+        BufferedImage flatImage     = flat.getImage();
         BufferedImage scalableImage = new BufferedImage(Flat.WIDTH, Flat.HEIGHT, BufferedImage.TYPE_INT_RGB);
 
         scalableImage.getGraphics().drawImage(flatImage, 0, 0, null);

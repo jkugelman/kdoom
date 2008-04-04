@@ -15,11 +15,11 @@ public class Palette {
     IndexColorModel[] colorModels;
     int               activePalette;
 
-    public Palette(Wad wad) throws IOException {
-        this(wad.getLump("PLAYPAL"));
+    Palette(Wad wad) throws IOException {
+        this(wad.lump("PLAYPAL"));
     }
 
-    public Palette(Lump lump) throws IOException {
+    Palette(Lump lump) throws IOException {
         if (!lump.getName().equals("PLAYPAL")) {
             throw new IllegalArgumentException(lump.getName() + " is not a palette.");
         }

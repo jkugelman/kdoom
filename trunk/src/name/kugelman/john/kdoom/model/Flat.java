@@ -15,7 +15,7 @@ public class Flat {
 
     private Lump lump;
 
-    public Flat(Lump lump) throws IOException {
+    Flat(Lump lump) throws IOException {
         if (lump.getSize() != SIZE) {
             throw new IOException("Flat " + lump.getName() + " is incorrect size.");
         }
@@ -33,8 +33,8 @@ public class Flat {
     }
 
 
-    public BufferedImage getImage(Palette palette) throws IOException {
-        IndexColorModel colorModel = palette.getColorModel();
+    public BufferedImage getImage() throws IOException {
+        IndexColorModel colorModel = Resources.getPalette().getColorModel();
         BufferedImage   image      = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_BYTE_INDEXED, colorModel);
 
         // Read flat pixels.

@@ -20,19 +20,19 @@ public class SectorPanel extends JPanel {
     private JLabel       floorFlatLabel,   ceilingFlatLabel;
     private FlatPanel    floorFlatPanel,   ceilingFlatPanel;
 
-    public SectorPanel(Palette palette) {
-        this(null, palette);
+    public SectorPanel() {
+        this(null);
     }
 
-    public SectorPanel(Sector sector, Palette palette) {
+    public SectorPanel(Sector sector) {
         titledBorder       = new TitledBorder("");
         floorHeightLabel   = new JLabel();
         ceilingHeightLabel = new JLabel();
         lightLevelLabel    = new JLabel();
         floorFlatLabel     = new JLabel();
-        floorFlatPanel     = new FlatPanel(palette);
+        floorFlatPanel     = new FlatPanel();
         ceilingFlatLabel   = new JLabel();
-        ceilingFlatPanel   = new FlatPanel(palette);
+        ceilingFlatPanel   = new FlatPanel();
 
         setBorder(titledBorder);
 

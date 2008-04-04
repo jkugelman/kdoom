@@ -8,9 +8,10 @@ public class Wad {
     File             path;
     RandomAccessFile file;
 
-    private boolean    isComplete;
-    private int        directoryOffset;
-    private List<Lump> lumps;
+    private boolean                 isComplete;
+    private int                     directoryOffset;
+    private List<Lump>              lumps;
+    private SortedMap<String, Lump> lumpsByName;
 
     public Wad(File path) throws IOException {
         this.path = path;
@@ -44,7 +45,8 @@ public class Wad {
         }
 
         // Read number of lumps.
-        lumps = new ArrayList<Lump>(Arrays.asList(new Lump[buffer.getInt()]));
+        lumps       = new ArrayList<Lump>(Arrays.asList(new Lump[buffer.getInt()]));
+        lumpsByName = new TreeMap<String, Lump>();
 
         // Read directory offset.
         directoryOffset = buffer.getInt();
@@ -69,7 +71,10 @@ public class Wad {
 
 //                System.out.printf("Lump %-4d - %-8s (%d bytes)%n", i, lumpName, lumpSize);
 
-                lumps.set(i, new Lump(this, i, lumpOffset, lumpSize, lumpName));
+                Lump lump = new Lump(this, i, lumpOffset, lumpSize, lumpName);
+
+                lumps      .set(i, lump);
+                lumpsByName.put(lumpName, lump);
             }
         }
     }
@@ -95,19 +100,12 @@ public class Wad {
         return Collections.unmodifiableList(lumps);
     }
 
-
-    public Lump lookupLump(String name) throws IOException {
-        for (Lump lump: lumps) {
-            if (lump.getName().equals(name)) {
-                return lump;
-            }
-        }
-
-        return null;
+    public SortedMap<String, Lump> lumpsByName() {
+        return Collections.unmodifiableSortedMap(lumpsByName);
     }
 
-    public Lump getLump(String name) throws IOException {
-        Lump lump = lookupLump(name);
+    public Lump lump(String name) throws IOException {
+        Lump lump = lumpsByName.get(name);
 
         if (lump == null) {
             throw new IOException(name + " not found.");
@@ -116,12 +114,33 @@ public class Wad {
         return lump;
     }
 
-    public Collection<Lump> getLumpsWithPrefix(String prefix) {
+    public Lump lookup(String name) {
+        return lumpsByName.get(name);
+    }
+
+    public List<Lump> lumpsBetween(Lump start, Lump end) {
+        return Collections.unmodifiableList(lumps.subList(start.getIndex() + 1, end.getIndex()));
+    }
+
+    public Collection<Lump> lumpsStartingWith(String prefix) {
+        SortedMap<String, Lump> map = lumpsByName().tailMap(prefix);
+
+        for (String lumpName: map.keySet()) {
+            if (!lumpName.startsWith(prefix)) {
+                map = map.headMap(lumpName);
+                break;
+            }
+        }
+
+        return map.values();
+    }
+
+    public Collection<Lump> lumpsMatching(String regex) {
         List<Lump> lumps = new ArrayList<Lump>();
 
-        for (Lump lump: this.lumps) {
-            if (lump.getName().startsWith(prefix)) {
-                lumps.add(lump);
+        for (String lumpName: lumpsByName.keySet()) {
+            if (lumpName.matches(regex)) {
+                lumps.add(lumpsByName.get(lumpName));
             }
         }
 

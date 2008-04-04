@@ -12,20 +12,14 @@ import name.kugelman.john.kdoom.model.*;
 import static info.clearthought.layout.TableLayoutConstraints.*;
 
 public class PatchesPanel extends JPanel {
-    private PatchList patchList;
-    private Palette   palette;
-
-    public PatchesPanel(PatchList patchList, Palette palette) {
-        this.patchList = patchList;
-        this.palette   = palette;
-
+    public PatchesPanel() {
         setLayout(new GridLayout(0, 4, 8, 8));
         
-        for (Patch patch: patchList) {
+        for (Patch patch: Resources.patches()) {
             JPanel panel = new JPanel();
 
             Component patchComponent = patch.exists()
-                ? new PatchPanel(patch, palette)
+                ? new PatchPanel(patch)
                 : new JLabel("NOT FOUND");
             
             panel.add(new JLabel(patch.getName()), BorderLayout.NORTH);
@@ -43,13 +37,13 @@ public class PatchesPanel extends JPanel {
         }
 
         try {
-            Wad          paletteWad = new Wad      (new File(arguments[0]));
-            Palette      palette    = new Palette  (paletteWad.getLump("PLAYPAL"));
-            Wad          patchWad   = (arguments.length > 1) ? new Wad(new File(arguments[1])) : paletteWad;
-            PatchList    patchList  = new PatchList(patchWad);
+            Wad iwad = new Wad(new File(arguments[0]));
+            Wad pwad = (arguments.length > 1) ? new Wad(new File(arguments[1])) : iwad;
+            
+            Resources.load(iwad, pwad);
 
             JFrame       frame      = new JFrame("KDOOM - " + arguments[0] + " - Patch List");
-            PatchesPanel panel      = new PatchesPanel(patchList, palette);
+            PatchesPanel panel      = new PatchesPanel();
             JScrollPane  scrollPane = new JScrollPane(panel);
 
             scrollPane.setPreferredSize(new Dimension(800, 600));

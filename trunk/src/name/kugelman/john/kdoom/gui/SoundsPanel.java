@@ -14,11 +14,7 @@ import name.kugelman.john.kdoom.model.*;
 import static info.clearthought.layout.TableLayoutConstants.*;
 
 public class SoundsPanel extends JPanel {
-    private SoundList soundList;
-
-    public SoundsPanel(SoundList soundList) throws IOException {
-        this.soundList = soundList;
-
+    public SoundsPanel() throws IOException {
         double[][] size = {
             { PREFERRED, PREFERRED },
             { }
@@ -29,7 +25,7 @@ public class SoundsPanel extends JPanel {
 
         int row = 0;
 
-        for (final Sound sound: soundList) {
+        for (final Sound sound: Resources.sounds().values()) {
             final JButton button = new JButton("\u25B6");
             final JLabel  label  = new JLabel(String.format("%s (%.1fs)", sound.getName(), sound.getAudioInputStream().getFrameLength() / sound.getAudioFormat().getFrameRate()));
 
@@ -77,16 +73,15 @@ public class SoundsPanel extends JPanel {
 
     public static void main(String[] arguments) {
         if (arguments.length < 1 || arguments.length > 2) {
-            System.err.println("Usage: kdoom <doom.wad> [patch.wad]");
+            System.err.println("Usage: kdoom <doom.wad>");
             System.exit(1);
         }
 
         try {
-            Wad         wad        = new Wad      (new File(arguments[0]));
-            SoundList   soundList  = new SoundList(wad);
+            Resources.load(new Wad(new File(arguments[0])));
 
             JFrame      frame      = new JFrame("KDOOM - " + arguments[0] + " - Sound List");
-            SoundsPanel panel      = new SoundsPanel(soundList);
+            SoundsPanel panel      = new SoundsPanel();
             JScrollPane scrollPane = new JScrollPane(panel);
 
             scrollPane.setPreferredSize(new Dimension(800, 600));

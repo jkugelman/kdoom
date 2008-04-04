@@ -8,16 +8,14 @@ import name.kugelman.john.kdoom.file.*;
 import name.kugelman.john.kdoom.model.*;
 
 public class FlatPanel extends JPanel {
-    private Flat    flat;
-    private Palette palette;
+    private Flat flat;
 
-    public FlatPanel(Palette palette) {
-        this(null, palette);
+    public FlatPanel() {
+        this(null);
     }
 
-    public FlatPanel(Flat flat, Palette palette) {
-        this.flat    = flat;
-        this.palette = palette;
+    public FlatPanel(Flat flat) {
+        this.flat = flat;
 
         setMinimumSize  (Flat.getSize());
         setPreferredSize(Flat.getSize());
@@ -35,7 +33,7 @@ public class FlatPanel extends JPanel {
         }
 
         try {
-            graphics.drawImage(flat.getImage(palette), 0, 0, this);
+            graphics.drawImage(flat.getImage(), 0, 0, this);
         }
         catch (IOException exception) {
             exception.printStackTrace();

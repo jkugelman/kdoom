@@ -19,20 +19,20 @@ public class SidePanel extends JPanel {
     private TexturePanel upperTexturePanel, middleTexturePanel, lowerTexturePanel;
     private TitledBorder titledBorder;
 
-    public SidePanel(Palette palette) {
-        this(null, palette);
+    public SidePanel() {
+        this(null);
     }
 
-    public SidePanel(Side side, Palette palette) {
+    public SidePanel(Side side) {
         titledBorder       = new TitledBorder("");
         xOffsetLabel       = new JLabel();
         yOffsetLabel       = new JLabel();
         upperTextureLabel  = new JLabel();
-        upperTexturePanel  = new TexturePanel(palette);
+        upperTexturePanel  = new TexturePanel();
         middleTextureLabel = new JLabel();
-        middleTexturePanel = new TexturePanel(palette);
+        middleTexturePanel = new TexturePanel();
         lowerTextureLabel  = new JLabel();
-        lowerTexturePanel  = new TexturePanel(palette);
+        lowerTexturePanel  = new TexturePanel();
 
         setBorder(titledBorder);
 

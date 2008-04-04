@@ -12,20 +12,14 @@ import name.kugelman.john.kdoom.model.*;
 import static info.clearthought.layout.TableLayoutConstraints.*;
 
 public class FlatsPanel extends JPanel {
-    private FlatList flatList;
-    private Palette  palette;
-
-    public FlatsPanel(FlatList flatList, Palette palette) {
-        this.flatList = flatList;
-        this.palette  = palette;
-
+    public FlatsPanel() {
         setLayout(new GridLayout(0, 8, 8, 8));
 
-        for (Flat flat: flatList.values()) {
+        for (Flat flat: Resources.flats().values()) {
             JPanel panel = new JPanel();
 
             panel.add(new JLabel   (flat.getName()), BorderLayout.NORTH);
-            panel.add(new FlatPanel(flat, palette),  BorderLayout.CENTER);
+            panel.add(new FlatPanel(flat),           BorderLayout.CENTER);
 
             add(panel);
         }
@@ -39,14 +33,14 @@ public class FlatsPanel extends JPanel {
         }
 
         try {
-            Wad         paletteWad = new Wad     (new File(arguments[0]));
-            Palette     palette    = new Palette (paletteWad.getLump("PLAYPAL"));
-            Wad         flatWad    = (arguments.length > 1) ? new Wad(new File(arguments[1])) : paletteWad;
-            FlatList    flatList   = new FlatList(flatWad);
+            Wad iwad = new Wad(new File(arguments[0]));
+            Wad pwad = (arguments.length > 1) ? new Wad(new File(arguments[1])) : iwad;
+            
+            Resources.load(iwad, pwad);
 
-            JFrame      frame      = new JFrame("KDOOM - " + arguments[0] + " - Flat List");
-            FlatsPanel  panel      = new FlatsPanel(flatList, palette);
-            JScrollPane scrollPane = new JScrollPane(panel);
+            JFrame       frame      = new JFrame("KDOOM - " + arguments[0] + " - Flat List");
+            FlatsPanel   panel      = new FlatsPanel();
+            JScrollPane  scrollPane = new JScrollPane(panel);
 
             scrollPane.setPreferredSize(new Dimension(800, 600));
 
