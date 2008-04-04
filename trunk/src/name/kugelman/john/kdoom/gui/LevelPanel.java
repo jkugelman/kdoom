@@ -188,6 +188,17 @@ public class LevelPanel extends JPanel {
         zoomToMax();
     }
 
+
+    // Scaling and zooming
+
+    public void zoomToMax() {
+        setScale((int) Math.ceil(Math.max((level.getMaxX() - level.getMinX()) / (double) getWidth (),
+                                          (level.getMaxY() - level.getMinY()) / (double) getHeight())));
+
+        centerViewAt(new Location((short) ((level.getMinX() + level.getMaxX()) / 2),
+                                  (short) ((level.getMinY() + level.getMaxY()) / 2)));
+    }
+
     public void setScale(final int requestedScale) {
         sectorAreas .clear();
         sectorPaints.clear();
@@ -211,14 +222,6 @@ public class LevelPanel extends JPanel {
         });
     }
 
-    public void zoomToMax() {
-        setScale((int) Math.ceil(Math.max((level.getMaxX() - level.getMinX()) / (double) getWidth (),
-                                          (level.getMaxY() - level.getMinY()) / (double) getHeight())));
-
-        centerViewAt(new Location((short) ((level.getMinX() + level.getMaxX()) / 2),
-                                  (short) ((level.getMinY() + level.getMaxY()) / 2)));
-    }
-
     public void centerViewAt(final Location location) {
         EventQueue.invokeLater(new Runnable() {
             public void run() {
@@ -237,6 +240,8 @@ public class LevelPanel extends JPanel {
         ));
     }
 
+
+    // Selecting objects
 
     public void addSelectionListener(SelectionListener selectionListener) {
         selectionListeners.add(selectionListener);
@@ -295,12 +300,17 @@ public class LevelPanel extends JPanel {
     }
 
 
+    // Grid toggling
+
     public void changeGridSpacing(boolean increase) {
         gridSpacingIndex += increase ? 1 : GRID_SPACINGS.length - 1;
         gridSpacingIndex %= GRID_SPACINGS.length;
 
         repaint();
     }
+
+    
+    // Floor and ceiling toggling
 
     public void toggleFloor() {
         isFloorVisible   = !isFloorVisible;
@@ -318,6 +328,8 @@ public class LevelPanel extends JPanel {
         repaint();
     }
 
+
+    // Repaint algorithm
 
     @Override
     protected void paintComponent(Graphics g) {
