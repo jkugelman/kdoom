@@ -6,9 +6,13 @@ import java.io.*;
 import java.util.*;
 import javax.swing.*;
 
+import info.clearthought.layout.*;
+
 import name.kugelman.john.gui.*;
 import name.kugelman.john.kdoom.file.*;
 import name.kugelman.john.kdoom.model.*;
+
+import static info.clearthought.layout.TableLayoutConstants.*;
 
 public class LevelViewer extends JFrame {
     private Level level;
@@ -31,32 +35,26 @@ public class LevelViewer extends JFrame {
         this.thingPanel  = new ThingPanel (palette);
 
         levelPanel.addSelectionListener(new LevelPanel.SelectionListener() {
-            public void lineSelected(Line line) {
-                linePanel.show(line);
-            }
-
-            public void sideSelected(Side side) {
-                sidePanel.show(side);
-            }
-
-            public void sectorSelected(Sector sector) {
-                sectorPanel.show(sector);
-            }
-
-            public void thingSelected(Thing thing) {
-                thingPanel.show(thing);
-            }
+            public void lineSelected  (Line   line)   { linePanel  .show(line);   }
+            public void sideSelected  (Side   side)   { sidePanel  .show(side);   }
+            public void sectorSelected(Sector sector) { sectorPanel.show(sector); }
+            public void thingSelected (Thing  thing)  { thingPanel .show(thing);  }
         });
 
         JScrollPane levelScrollPane = new JScrollPane(levelPanel);
         levelScrollPane.setPreferredSize(new Dimension(800, 800));
 
-        setLayout(new GridBagLayout());
-        add(levelScrollPane,  new Constraints(0, 0).height(4).weight(1, 1).fillBoth());
-        add(sectorPanel,      new Constraints(1, 0).fillHorizontal());
-        add(linePanel,        new Constraints(1, 1).fillHorizontal());
-        add(sidePanel,        new Constraints(1, 2).fillHorizontal());
-        add(thingPanel,       new Constraints(2, 0).height(3).anchorNorthwest());
+        double[][] size = {
+            { FILL, PREFERRED, PREFERRED },
+            { PREFERRED, PREFERRED, PREFERRED, FILL }
+        };
+
+        setLayout(new TableLayout(size));
+        add(levelScrollPane,  "0, 0, 0, 3, FULL, FULL");
+        add(sectorPanel,      "1, 0,       FULL, TOP");
+        add(linePanel,        "1, 1,       FULL, TOP");
+        add(sidePanel,        "1, 2,       FULL, TOP");
+        add(thingPanel,       "2, 0, 2, 3, FULL, TOP");
 
         setDefaultCloseOperation(EXIT_ON_CLOSE);
 
