@@ -5,8 +5,12 @@ import java.io.*;
 import javax.swing.*;
 import javax.swing.border.*;
 
+import info.clearthought.layout.*;
+
 import name.kugelman.john.gui.*;
 import name.kugelman.john.kdoom.model.*;
+
+import static info.clearthought.layout.TableLayoutConstants.*;
 
 public class LinePanel extends JPanel {
     private Line line;
@@ -30,18 +34,23 @@ public class LinePanel extends JPanel {
 
         setBorder(titledBorder);
 
-        setLayout(new GridBagLayout());
-        add(new JLabel("Start vertex: "), new Constraints(0, 0).anchorNortheast());
-        add(startLabel,                   new Constraints(1, 0).anchorNorthwest());
-        add(new JLabel("End vertex: "),   new Constraints(0, 1).anchorNortheast());
-        add(endLabel,                     new Constraints(1, 1).anchorNorthwest());
-        add(new JLabel("Flags: "),        new Constraints(0, 2).anchorNortheast());
-        add(flagsLabel,                   new Constraints(1, 2).anchorNorthwest());
-        add(new JLabel("Left side: "),    new Constraints(0, 3).anchorNortheast());
-        add(leftSideLabel,                new Constraints(1, 3).anchorNorthwest());
-        add(new JLabel("Right side: "),   new Constraints(0, 4).anchorNortheast());
-        add(rightSideLabel,               new Constraints(1, 4).anchorNorthwest());
-        add(Box.createGlue(),             new Constraints(2, 5).weight(1, 1));
+        double[][] size = {
+            { PREFERRED, PREFERRED },
+            { PREFERRED, PREFERRED, PREFERRED, PREFERRED }
+        };
+
+        setLayout(new TableLayout(size));
+
+        add(new JLabel("Start vertex: "), "0, 0, TRAILING, TOP");
+        add(startLabel,                   "1, 0, LEADING,  TOP");
+        add(new JLabel("End vertex: "),   "0, 1, TRAILING, TOP");
+        add(endLabel,                     "1, 1, LEADING,  TOP");
+        add(new JLabel("Flags: "),        "0, 2, TRAILING, TOP");
+        add(flagsLabel,                   "1, 2, LEADING,  TOP");
+        add(new JLabel("Left side: "),    "0, 3, TRAILING, TOP");
+        add(leftSideLabel,                "1, 3, LEADING,  TOP");
+        add(new JLabel("Right side: "),   "0, 4, TRAILING, TOP");
+        add(rightSideLabel,               "1, 4, LEADING,  TOP");
 
         show(line);
     }
