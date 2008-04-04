@@ -5,8 +5,12 @@ import java.io.*;
 import javax.swing.*;
 import javax.swing.border.*;
 
+import info.clearthought.layout.*;
+
 import name.kugelman.john.gui.*;
 import name.kugelman.john.kdoom.model.*;
+
+import static info.clearthought.layout.TableLayoutConstants.*;
 
 public class SectorPanel extends JPanel {
     private Sector sector;
@@ -33,20 +37,24 @@ public class SectorPanel extends JPanel {
 
         setBorder(titledBorder);
 
-        setLayout(new GridBagLayout());
-        add(new JLabel("Floor height: "),   new Constraints(0, 0).anchorNortheast());
-        add(floorHeightLabel,               new Constraints(1, 0).anchorNorthwest());
-        add(new JLabel("Ceiling height: "), new Constraints(0, 1).anchorNortheast());
-        add(ceilingHeightLabel,             new Constraints(1, 1).anchorNorthwest());
-        add(new JLabel("Light level: "),    new Constraints(0, 2).anchorNortheast());
-        add(lightLevelLabel,                new Constraints(1, 2).anchorNorthwest());
-        add(new JLabel("Floor flat: "),     new Constraints(0, 3).anchorNortheast().height(2));
-        add(floorFlatLabel,                 new Constraints(1, 3).anchorNorthwest());
-        add(floorFlatPanel,                 new Constraints(1, 4).anchorNorthwest());
-        add(new JLabel("Ceiling flat: "),   new Constraints(0, 4).anchorNortheast().height(2));
-        add(ceilingFlatLabel,               new Constraints(1, 4).anchorNorthwest());
-        add(ceilingFlatPanel,               new Constraints(1, 5).anchorNorthwest());
-        add(Box.createGlue(),               new Constraints(2, 6).weight(1, 1));
+        double[][] size = {
+            { PREFERRED, PREFERRED },
+            { PREFERRED, PREFERRED, PREFERRED, PREFERRED, PREFERRED, PREFERRED, PREFERRED }
+        };
+
+        setLayout(new TableLayout(size));
+        add(new JLabel("Floor height: "),   "0, 0,       TRAILING, TOP");
+        add(floorHeightLabel,               "1, 0,       LEADING,  TOP");
+        add(new JLabel("Ceiling height: "), "0, 1,       TRAILING, TOP");
+        add(ceilingHeightLabel,             "1, 1,       LEADING,  TOP");
+        add(new JLabel("Light level: "),    "0, 2,       TRAILING, TOP");
+        add(lightLevelLabel,                "1, 2,       LEADING,  TOP");
+        add(new JLabel("Floor flat: "),     "0, 3, 0, 4, TRAILING, TOP");
+        add(floorFlatLabel,                 "1, 3,       LEADING,  TOP");
+        add(floorFlatPanel,                 "1, 4,       LEADING,  TOP");
+        add(new JLabel("Ceiling flat: "),   "0, 5, 0, 6, TRAILING, TOP");
+        add(ceilingFlatLabel,               "1, 5,       LEADING,  TOP");
+        add(ceilingFlatPanel,               "1, 6,       LEADING,  TOP");
 
         show(sector);
     }

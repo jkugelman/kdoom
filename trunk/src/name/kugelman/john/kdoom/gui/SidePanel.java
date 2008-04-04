@@ -39,11 +39,7 @@ public class SidePanel extends JPanel {
 
         double[][] size = {
             { PREFERRED, PREFERRED },
-            { PREFERRED, PREFERRED,
-              PREFERRED, PREFERRED,
-              PREFERRED, PREFERRED, PREFERRED,
-              PREFERRED, PREFERRED, PREFERRED,
-              PREFERRED, PREFERRED, PREFERRED }
+            { PREFERRED, PREFERRED, PREFERRED, PREFERRED, PREFERRED, PREFERRED, PREFERRED, PREFERRED, }
         };
 
         setLayout(new TableLayout(size));
