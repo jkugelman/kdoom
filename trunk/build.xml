@@ -15,8 +15,8 @@
     <javac srcdir="src" destdir="classes" debug="on">
       <classpath>
         <fileset dir="lib">
-          <include name="**/*.jar"/>
-          <exclude name="lib/kdoom.jar"/>
+          <include name="*.jar"/>
+          <exclude name="kdoom.jar"/>
         </fileset>
       </classpath>
 
