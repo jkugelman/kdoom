@@ -13,13 +13,25 @@
     <depend srcdir="src" destdir="classes" closure="true"/>
     
     <javac srcdir="src" destdir="classes" debug="on">
+      <classpath>
+        <fileset dir="lib">
+          <include name="**/*.jar"/>
+          <exclude name="lib/kdoom.jar"/>
+        </fileset>
+      </classpath>
+
       <compilerarg value="-Xlint"/>
       <compilerarg value="-Xlint:-serial"/>
     </javac>
   </target>
 
   <target name="dist" depends="compile">
-    <jar jarfile="lib/kdoom.jar" basedir="classes"/>
+    <jar jarfile="lib/kdoom.jar" basedir="classes">
+      <manifest>
+        <attribute name="Class-Path" value="TableLayout.jar"/>
+        <attribute name="Main-Class" value="name.kugelman.john.kdoom.gui.LevelViewer"/>
+      </manifest>
+    </jar>
   </target>
 
   <target name="clean">
