@@ -4,7 +4,6 @@ import java.awt.*;
 import java.io.*;
 import javax.swing.*;
 
-import name.kugelman.john.gui.*;
 import name.kugelman.john.kdoom.file.*;
 import name.kugelman.john.kdoom.model.*;
 
@@ -16,11 +15,7 @@ public class TexturesPanel extends JPanel {
         this.textureList = textureList;
         this.palette     = palette;
 
-        setLayout(new GridBagLayout());
-
-        GridBagConstraints constraints = new GridBagConstraints();
-
-        int x = 0, y = 0;
+        setLayout(new GridLayout(0, 4, 8, 8));
 
         for (Texture texture: textureList.values()) {
             String        name    = String.format("%s (%dx%d)", texture.getName(), texture.getSize().width, texture.getSize().height);
@@ -48,20 +43,16 @@ public class TexturesPanel extends JPanel {
                 }
             }
 
+            JPanel       panel        = new JPanel();
             JLabel       nameLabel    = new JLabel(name);
             TexturePanel texturePanel = new TexturePanel(texture, palette);
             JLabel       patchesLabel = new JLabel("<html>" + patches + "</html>");
 
             patchesLabel.setFont(patchesLabel.getFont().deriveFont(Font.ITALIC, 8));
 
-            add(nameLabel,    new Constraints(x, y)    .insets(4, 0, 4,  4));
-            add(texturePanel, new Constraints(x, y + 1).insets(4, 0, 4,  4).anchorNorth());
-            add(patchesLabel, new Constraints(x, y + 2).insets(4, 0, 20, 4).anchorNorth());
-
-            if (++x >= 4) {
-                x  = 0;
-                y += 3;
-            }
+            panel.add(nameLabel,    BorderLayout.NORTH);
+            panel.add(texturePanel, BorderLayout.CENTER);
+            panel.add(patchesLabel, BorderLayout.SOUTH);
         }
     }
 

@@ -4,9 +4,12 @@ import java.awt.*;
 import java.io.*;
 import javax.swing.*;
 
-import name.kugelman.john.gui.*;
+import info.clearthought.layout.*;
+
 import name.kugelman.john.kdoom.file.*;
 import name.kugelman.john.kdoom.model.*;
+
+import static info.clearthought.layout.TableLayoutConstraints.*;
 
 public class FlatsPanel extends JPanel {
     private FlatList flatList;
@@ -16,18 +19,15 @@ public class FlatsPanel extends JPanel {
         this.flatList = flatList;
         this.palette  = palette;
 
-        setLayout(new GridBagLayout());
-
-        int x = 0, y = 0;
+        setLayout(new GridLayout(0, 8, 8, 8));
 
         for (Flat flat: flatList.values()) {
-            add(new JLabel   (flat.getName()), new Constraints(x, y)    .insets(4, 4, 4,  4));
-            add(new FlatPanel(flat, palette),  new Constraints(x, y + 1).insets(4, 4, 20, 4));
+            JPanel panel = new JPanel();
 
-            if (++x >= 8) {
-                x  = 0;
-                y += 2;
-            }
+            panel.add(new JLabel   (flat.getName()), BorderLayout.NORTH);
+            panel.add(new FlatPanel(flat, palette),  BorderLayout.CENTER);
+
+            add(panel);
         }
     }
 

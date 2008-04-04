@@ -6,9 +6,12 @@ import java.io.*;
 import javax.sound.sampled.*;
 import javax.swing.*;
 
-import name.kugelman.john.gui.*;
+import info.clearthought.layout.*;
+
 import name.kugelman.john.kdoom.file.*;
 import name.kugelman.john.kdoom.model.*;
+
+import static info.clearthought.layout.TableLayoutConstants.*;
 
 public class SoundsPanel extends JPanel {
     private SoundList soundList;
@@ -16,7 +19,13 @@ public class SoundsPanel extends JPanel {
     public SoundsPanel(SoundList soundList) throws IOException {
         this.soundList = soundList;
 
-        setLayout(new GridBagLayout());
+        double[][] size = {
+            { PREFERRED, PREFERRED },
+            { }
+        };
+
+        TableLayout layout = new TableLayout(size);
+        setLayout(layout);
 
         int row = 0;
 
@@ -56,8 +65,10 @@ public class SoundsPanel extends JPanel {
                 }
             });
 
-            add(button, new Constraints(0, row));
-            add(label,  new Constraints(1, row).anchorWest());
+            layout.insertRow(row, PREFERRED);
+
+            add(button, new TableLayoutConstraints(0, row, 0, row, TRAILING, TOP));
+            add(label,  new TableLayoutConstraints(1, row, 0, row, LEADING,  TOP));
 
             ++row;
         }

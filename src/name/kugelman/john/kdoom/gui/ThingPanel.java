@@ -5,8 +5,11 @@ import java.io.*;
 import javax.swing.*;
 import javax.swing.border.*;
 
-import name.kugelman.john.gui.*;
+import info.clearthought.layout.*;
+
 import name.kugelman.john.kdoom.model.*;
+
+import static info.clearthought.layout.TableLayoutConstraints.*;
 
 public class ThingPanel extends JPanel {
     private Thing   thing;
@@ -33,21 +36,23 @@ public class ThingPanel extends JPanel {
 
         setBorder(titledBorder);
 
-        setLayout(new GridBagLayout());
-        add(new JLabel("Location: "), new Constraints(0, 0).anchorNortheast());
-        add(locationLabel,            new Constraints(1, 0).anchorNorthwest());
-        add(new JLabel("Angle: "),    new Constraints(0, 1).anchorNortheast());
-        add(angleLabel,               new Constraints(1, 1).anchorNorthwest());
-        add(new JLabel("Type: "),     new Constraints(0, 2).anchorNortheast());
-        add(typeLabel,                new Constraints(1, 2).anchorNorthwest());
-        add(new JLabel("Flags: "),    new Constraints(0, 3).anchorNortheast());
-        add(flagsLabel,               new Constraints(1, 3).anchorNorthwest());
-        add(spritePanel,              new Constraints(1, 4).anchorNorthwest().insets(8, 0, 0, 0));
-        add(Box.createGlue(),         new Constraints(2, 5).weight(1, 1));
+        double[][] size = {
+            { PREFERRED, 200 },
+            { PREFERRED, PREFERRED, PREFERRED, PREFERRED, 8, PREFERRED }
+        };
+
+        setLayout(new TableLayout(size));
+        add(new JLabel("Location: "), "0, 0, TRAILING, TOP");
+        add(locationLabel,            "1, 0, LEADING,  TOP");
+        add(new JLabel("Angle: "),    "0, 1, TRAILING, TOP");
+        add(angleLabel,               "1, 1, LEADING,  TOP");
+        add(new JLabel("Type: "),     "0, 2, TRAILING, TOP");
+        add(typeLabel,                "1, 2, LEADING,  TOP");
+        add(new JLabel("Flags: "),    "0, 3, TRAILING, TOP");
+        add(flagsLabel,               "1, 3, LEADING,  TOP");
+        add(spritePanel,              "1, 5, TRAILING, TOP");
 
         show(thing);
-
-        setPreferredSize(new Dimension(300, getPreferredSize().height));
     }
 
     public void show(Thing thing) {

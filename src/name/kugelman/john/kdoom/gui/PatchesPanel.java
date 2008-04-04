@@ -4,9 +4,12 @@ import java.awt.*;
 import java.io.*;
 import javax.swing.*;
 
-import name.kugelman.john.gui.*;
+import info.clearthought.layout.*;
+
 import name.kugelman.john.kdoom.file.*;
 import name.kugelman.john.kdoom.model.*;
+
+import static info.clearthought.layout.TableLayoutConstraints.*;
 
 public class PatchesPanel extends JPanel {
     private PatchList patchList;
@@ -16,18 +19,19 @@ public class PatchesPanel extends JPanel {
         this.patchList = patchList;
         this.palette   = palette;
 
-        setLayout(new GridBagLayout());
-
-        int x = 0, y = 0;
-
+        setLayout(new GridLayout(0, 4, 8, 8));
+        
         for (Patch patch: patchList) {
-            add(new JLabel(patch.getName()),                                                new Constraints(x, y)    .insets(4, 4, 4,  4));
-            add(!patch.exists() ? new JLabel("NOT FOUND") : new PatchPanel(patch, palette), new Constraints(x, y + 1).insets(4, 4, 20, 4).anchorNorth());
+            JPanel panel = new JPanel();
 
-            if (++x >= 4) {
-                x  = 0;
-                y += 2;
-            }
+            Component patchComponent = patch.exists()
+                ? new PatchPanel(patch, palette)
+                : new JLabel("NOT FOUND");
+            
+            panel.add(new JLabel(patch.getName()), BorderLayout.NORTH);
+            panel.add(patchComponent,              BorderLayout.CENTER);
+        
+            add(panel);
         }
     }
 
