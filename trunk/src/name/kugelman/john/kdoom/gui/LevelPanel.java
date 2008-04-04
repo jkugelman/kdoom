@@ -42,11 +42,11 @@ public class LevelPanel extends JPanel {
 
     private static final float SECTOR_HUE                     = 0.0f;   // Gray.
     private static final float SECTOR_SATURATION              = 0.0f;
-    private static final float SECTOR_BRIGHTNESS_MIN          = 0.25f;  // Dark but not black.
-    private static final float SECTOR_BRIGHTNESS_MAX          = 0.9f;   // Bright but not white.
+    private static final float SECTOR_BRIGHTNESS_MIN          = 0.1f;   // Based on light level.
+    private static final float SECTOR_BRIGHTNESS_MAX          = 0.9f;
     private static final float SELECTED_SECTOR_HUE            = 0.833f; // Slight magenta tint.
     private static final float SELECTED_SECTOR_SATURATION     = 0.08f;
-    private static final float SELECTED_SECTOR_BRIGHTNESS_MIN = 0.25f;
+    private static final float SELECTED_SECTOR_BRIGHTNESS_MIN = 0.1f;
     private static final float SELECTED_SECTOR_BRIGHTNESS_MAX = 0.9f;
 
     private static final Color GRID_COLOR                     = Color.GRAY;
