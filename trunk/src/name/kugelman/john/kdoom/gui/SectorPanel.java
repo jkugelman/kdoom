@@ -17,7 +17,7 @@ public class SectorPanel extends JPanel {
     private TitledBorder titledBorder;
     private JLabel       floorHeightLabel, ceilingHeightLabel;
     private JLabel       lightLevelLabel;
-    private JLabel       typeLabel;
+    private JLabel       specialTypeLabel;
     private JLabel       floorFlatLabel,   ceilingFlatLabel;
     private FlatPanel    floorFlatPanel,   ceilingFlatPanel;
 
@@ -30,7 +30,7 @@ public class SectorPanel extends JPanel {
         floorHeightLabel   = new JLabel();
         ceilingHeightLabel = new JLabel();
         lightLevelLabel    = new JLabel();
-        typeLabel          = new JLabel();
+        specialTypeLabel   = new JLabel();
         floorFlatLabel     = new JLabel();
         floorFlatPanel     = new FlatPanel();
         ceilingFlatLabel   = new JLabel();
@@ -50,8 +50,8 @@ public class SectorPanel extends JPanel {
         add(ceilingHeightLabel,             "1, 1,       LEADING,  TOP");
         add(new JLabel("Light level: "),    "0, 2,       TRAILING, TOP");
         add(lightLevelLabel,                "1, 2,       LEADING,  TOP");
-        add(new JLabel("Sector type: "),    "0, 3,       TRAILING, TOP");
-        add(typeLabel,                      "1, 3,       LEADING,  TOP");
+        add(new JLabel("Special type: "),   "0, 3,       TRAILING, TOP");
+        add(specialTypeLabel,               "1, 3,       LEADING,  TOP");
         add(new JLabel("Floor flat: "),     "0, 4, 0, 5, TRAILING, TOP");
         add(floorFlatLabel,                 "1, 4,       LEADING,  TOP");
         add(floorFlatPanel,                 "1, 5,       LEADING,  TOP");
@@ -71,7 +71,7 @@ public class SectorPanel extends JPanel {
             floorHeightLabel  .setText("N/A");
             ceilingHeightLabel.setText("N/A");
             lightLevelLabel   .setText("N/A");
-            typeLabel         .setText("N/A");
+            specialTypeLabel  .setText("N/A");
 
             floorFlatLabel    .setText("N/A");
             floorFlatPanel    .show   (null);
@@ -84,7 +84,7 @@ public class SectorPanel extends JPanel {
             floorHeightLabel  .setText("" + sector.getFloorHeight  ());
             ceilingHeightLabel.setText("" + sector.getCeilingHeight());
             lightLevelLabel   .setText("" + sector.getLightLevel   ());
-            typeLabel         .setText(sector.getType().getDescription());
+            specialTypeLabel  .setText(sector.getSpecialType().getDescription());
 
             floorFlatLabel    .setText(sector.getFloorFlatName  ());
             floorFlatPanel    .show   (sector.getFloorFlat      ());

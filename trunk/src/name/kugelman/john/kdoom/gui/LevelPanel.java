@@ -515,10 +515,10 @@ public class LevelPanel extends JPanel {
                 graphics.setColor (SELECTED_SECTOR_LINE_COLOR);
                 graphics.setStroke(new BasicStroke(1.5f));
             }
-            else if (line.isSecret()) {
+            else if ((line.getFlags() & Line.SECRET) != 0) {
                 graphics.setColor(SECRET_LINE_COLOR);
             }
-            else if (line.isTwoSided()) {
+            else if ((line.getFlags() & Line.TWO_SIDED) != 0) {
                 graphics.setColor(TWO_SIDED_LINE_COLOR);
             }
             else {
