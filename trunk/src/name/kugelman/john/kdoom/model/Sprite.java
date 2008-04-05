@@ -46,7 +46,7 @@ public class Sprite {
 
     Sprite(String name, boolean isHanging) throws IOException {
         this.name      = name;
-        this.size      = new Dimension(0, 0);
+        this.size      = new Dimension(1, 1);
         this.isHanging = isHanging;
         this.frames    = new TreeMap<String, Frame>();
 
@@ -101,7 +101,7 @@ public class Sprite {
         }
 
         if (!frames.containsKey(frameNumber)) {
-            throw new RuntimeException(name + " frame " + frameNumber + " not found.");
+            System.err.println(name + " frame " + frameNumber + " not found.");
         }
 
         return frames.get(frameNumber);
@@ -212,6 +212,10 @@ public class Sprite {
 
                                 for (int i = 0; !isInterrupted(); i = (i + 1) % frames.size()) {
                                     Frame frame = frames.get(i);
+
+                                    if (frame == null) {
+                                        continue;
+                                    }
 
                                     // Reset buffer to all transparent.
                                     Arrays.fill(pixels, 0);

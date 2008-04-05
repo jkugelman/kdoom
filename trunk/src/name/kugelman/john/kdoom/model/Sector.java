@@ -5,11 +5,65 @@ import java.util.*;
 import static java.lang.Math.*;
 
 public class Sector {
+    public enum Type {
+        NORMAL                       (0,  "Normal", "Normal"),
+        SECRET                       (9,  "Secret", "Player entering this sector gets credit for finding a secret"),
+        LIGHT_BLINK_FAST             (2,  "Light",  "Blink 0.5 second"),
+        LIGHT_BLINK_SLOW             (3,  "Light",  "Blink 1.0 second"),
+        LIGHT_BLINK_FAST_SYNCHRONIZED(12, "Light",  "Blink 0.5 second, synchronized"),
+        LIGHT_BLINK_SLOW_SYNCHRONIZED(13, "Light",  "Blink 1.0 second, synchronized"),
+        LIGHT_BLINK_RANDOM           (1,  "Light",  "Blink random"),
+        LIGHT_FLICKER_RANDOM         (17, "Light",  "Flickers randomly"),
+        LIGHT_OSCILLATE              (8,  "Light",  "Oscillates"),
+        DAMAGE_5                     (7,  "Damage", "5% damage per second"),
+        DAMAGE_10                    (5,  "Damage", "10% damage per second"),
+        DAMAGE_20                    (16, "Damage", "20% damage per second"),
+        DAMAGE_20_LEVEL_END          (11, "Damage", "20% damage per second. When player dies, level ends"),
+        DAMAGE_20_BLINK_FAST         (4,  "Both",   "20% damage per second plus light blink 0.5 second"),
+        DOOR_CLOSE_AFTER_30          (10, "Door",   "30 seconds after level start, ceiling closes like a door"),
+        DOOR_OPEN_AFTER_300          (14, "Door",   "300 seconds after level start, ceiling opens like a door");
+
+
+        private short  number;
+        private String category;
+        private String description;
+
+        private Type(int number, String category, String description) {
+            this.number      = (short) number;
+            this.category    = category;
+            this.description = description;
+        }
+
+        public short getNumber() {
+            return number;
+        }
+
+        public String getCategory() {
+            return category;
+        }
+
+        public String getDescription() {
+            return description;
+        }
+
+
+        public static Type forNumber(short number) {
+            for (Type type: values()) {
+                if (type.number == number) {
+                    return type;
+                }
+            }
+
+            return null;
+        }
+    }
+
+
     private short      number;
     private short      floorHeight,   ceilingHeight;
     private String     floorFlatName, ceilingFlatName;
     private short      lightLevel;
-    private short      type;
+    private Type       type;
     private short      tagNumber;
             List<Side> sides;
 
@@ -29,7 +83,7 @@ public class Sector {
         this.floorFlatName   = floorFlatName;
         this.ceilingFlatName = ceilingFlatName;
         this.lightLevel      = lightLevel;
-        this.type            = type;
+        this.type            = Type.forNumber(type);
         this.tagNumber       = tagNumber;
         this.sides           = new ArrayList<Side>();
     }
@@ -67,7 +121,7 @@ public class Sector {
         return lightLevel & 0xFFFF;
     }
 
-    public short getType() {
+    public Type getType() {
         return type;
     }
 
