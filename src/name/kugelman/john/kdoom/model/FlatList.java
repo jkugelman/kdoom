@@ -12,7 +12,8 @@ import name.kugelman.john.kdoom.file.*;
 public class FlatList extends AbstractMap<String, Flat> implements SortedMap<String, Flat> {
     private SortedMap<String, Flat> flats;
 
-    FlatList(Wad wad) throws IOException {
+    FlatList() throws IOException {
+        Wad  wad   = Resources.getWad();
         this.flats = new TreeMap<String, Flat>();
 
         for (Lump lump: wad.lumpsBetween(wad.lump("F_START"), wad.lump("F_END"))) {

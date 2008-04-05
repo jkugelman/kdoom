@@ -200,7 +200,7 @@ public class Thing {
     private Details  details;
     private Sprite   sprite;
 
-    Thing(Wad wad, short number, Location location, short angle, short type, short flags) throws IOException {
+    Thing(short number, Location location, short angle, short type, short flags) throws IOException {
         this.number   = number;
         this.location = location;
         this.angle    = angle;
@@ -216,7 +216,7 @@ public class Thing {
             this.sprite = sprites.get(details.spriteName);
 
             if (sprite == null) {
-                sprite = new Sprite(wad, details.spriteName, details.isHanging);
+                sprite = new Sprite(details.spriteName, details.isHanging);
                 sprites.put(details.spriteName, sprite);
             }
         }

@@ -8,10 +8,10 @@ import name.kugelman.john.kdoom.file.*;
 public class SoundList extends AbstractMap<String, Sound> implements SortedMap<String, Sound> {
     private SortedMap<String, Sound> sounds;
 
-    SoundList(Wad wad) throws IOException {
+    SoundList() throws IOException {
         this.sounds = new TreeMap<String, Sound>();
 
-        for (Lump lump: wad.lumpsStartingWith("DS")) {
+        for (Lump lump: Resources.getWad().lumpsStartingWith("DS")) {
             sounds.put(lump.getName(), new Sound(lump));
         }
     }

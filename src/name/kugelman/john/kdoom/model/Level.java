@@ -7,7 +7,6 @@ import java.util.*;
 import name.kugelman.john.kdoom.file.*;
 
 public class Level {
-    private Wad           wad;
     private String        name;
 
     private List<Thing>   things;
@@ -18,20 +17,17 @@ public class Level {
 
     private short         minX, minY, maxX, maxY;
 
-    Level(Wad wad, String name)
+    Level(Lump nameLump)
         throws IllegalArgumentException, IOException
     {
-        if (!name.matches("E\\dM\\d|MAP\\d\\d")) {
-            throw new IllegalArgumentException("Invalid map name " + name + ".");
+        if (!nameLump.getName().matches("E\\dM\\d|MAP\\d\\d")) {
+            throw new IllegalArgumentException(nameLump + " is not a map.");
         }
 
-        this.wad  = wad;
-
+        List<Lump> levelLumps = nameLump.getWadFile().lumpGroup(nameLump, 11);
+        
         this.minX = this.minY = Short.MAX_VALUE;
         this.maxX = this.maxY = Short.MIN_VALUE;
-
-        Lump       nameLump   = wad.lump(name);
-        List<Lump> levelLumps = wad.lumpGroup(nameLump, 11);
 
         readName    (levelLumps.get(0));
         readThings  (levelLumps.get(1));
@@ -65,7 +61,7 @@ public class Level {
             short type  = buffer.get();
             short flags = buffer.get();
 
-            things.add(new Thing(wad, (short) things.size(), new Location(x, y), angle, type, flags));
+            things.add(new Thing((short) things.size(), new Location(x, y), angle, type, flags));
 
             if (x < minX) minX = x;
             if (y < minY) minY = y;
@@ -186,10 +182,6 @@ public class Level {
         return name;
     }
 
-    public Wad getWad() {
-        return wad;
-    }
-
     public List<Thing> things() {
         return Collections.unmodifiableList(things);
     }
@@ -271,5 +263,11 @@ public class Level {
         }
 
         return things;
+    }
+
+
+    @Override
+    public String toString() {
+        return getName();
     }
 }

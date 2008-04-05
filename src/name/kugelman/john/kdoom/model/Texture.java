@@ -12,14 +12,16 @@ import name.kugelman.john.kdoom.file.*;
 public class Texture {
     String      name;
     Dimension   size;
-    List<Patch> patches;
-    List<Point> origins;
+
+    List<Short> patchNumbers;
+    List<Point> patchOrigins;
 
     Texture(String name, Dimension size) {
-        this.name    = name;
-        this.size    = size;
-        this.patches = new ArrayList<Patch>();
-        this.origins = new ArrayList<Point>();
+        this.name         = name;
+        this.size         = size;
+
+        this.patchNumbers = new ArrayList<Short>();
+        this.patchOrigins = new ArrayList<Point>();
     }
 
 
@@ -31,17 +33,18 @@ public class Texture {
         return size;
     }
 
-    public void addPatch(Patch patch, Point origin) {
-        patches.add(patch);
-        origins.add(origin);
+
+    void addPatch(short number, Point origin) {
+        patchNumbers.add(number);
+        patchOrigins.add(origin);
     }
 
-    public List<Patch> patches() {
-        return Collections.unmodifiableList(patches);
+    public List<Short> patchNumbers() {
+        return Collections.unmodifiableList(patchNumbers);
     }
 
-    public List<Point> origins() {
-        return Collections.unmodifiableList(origins);
+    public List<Point> patchOrigins() {
+        return Collections.unmodifiableList(patchOrigins);
     }
 
 
@@ -49,11 +52,11 @@ public class Texture {
         BufferedImage image    = new BufferedImage(size.width, size.height, BufferedImage.TYPE_INT_ARGB);
         Graphics      graphics = image.createGraphics();
 
-        for (int i = 0; i < patches.size(); ++i) {
-            final Patch patch  = patches.get(i);
-            final Point origin = origins.get(i);
+        for (int i = 0; i < patchNumbers.size(); ++i) {
+            final Patch patch  = Resources.patches().get(patchNumbers.get(i));
+            final Point origin = patchOrigins.get(i);
 
-            if (!patch.exists()) {
+            if (patch == null) {
                 continue;
             }
 
@@ -61,5 +64,11 @@ public class Texture {
         }
 
         return image;
+    }
+
+
+    @Override
+    public String toString() {
+        return getName();
     }
 }
