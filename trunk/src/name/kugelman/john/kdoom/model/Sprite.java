@@ -10,6 +10,8 @@ import java.util.List;
 
 import name.kugelman.john.kdoom.file.*;
 
+import static java.lang.Math.*;
+
 public class Sprite {
     private static final int FRAME_DELAY = 200;
 
@@ -62,8 +64,8 @@ public class Sprite {
                 addFrame(lump.getName().substring(6, 8), patch, true);
             }
 
-            size.width  = Math.max(size.width,  patch.getSize().width);
-            size.height = Math.max(size.height, patch.getSize().height);
+            size.width  = max(size.width,  patch.getSize().width);
+            size.height = max(size.height, patch.getSize().height);
         }
 
         if (frames.isEmpty()) {

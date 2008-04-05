@@ -13,6 +13,8 @@ import name.kugelman.john.util.*;
 import name.kugelman.john.kdoom.file.*;
 import name.kugelman.john.kdoom.model.*;
 
+import static java.lang.Math.*;
+
 public class LevelPanel extends JPanel {
     public interface SelectionListener extends EventListener {
         void lineSelected  (Line line);
@@ -190,8 +192,8 @@ public class LevelPanel extends JPanel {
     // Scaling and zooming
 
     public void zoomToMax() {
-        setScale((int) Math.ceil(Math.max((level.getMaxX() - level.getMinX()) / (double) getWidth (),
-                                          (level.getMaxY() - level.getMinY()) / (double) getHeight())));
+        setScale((int) ceil(max((level.getMaxX() - level.getMinX()) / (double) getWidth (),
+                                (level.getMaxY() - level.getMinY()) / (double) getHeight())));
 
         centerViewAt(new Location((short) ((level.getMinX() + level.getMaxX()) / 2),
                                   (short) ((level.getMinY() + level.getMaxY()) / 2)));
@@ -207,10 +209,10 @@ public class LevelPanel extends JPanel {
                 short     centerX     = mapX(visibleArea.x + visibleArea.width  / 2);
                 short     centerY     = mapY(visibleArea.y + visibleArea.height / 2);
 
-                scale = Math.max(1, Math.min(32, requestedScale));
+                scale = max(1, min(32, requestedScale));
 
-                setPreferredSize(new Dimension((int) Math.ceil((double) LEVEL_WIDTH  / scale),
-                                               (int) Math.ceil((double) LEVEL_HEIGHT / scale)));
+                setPreferredSize(new Dimension((int) ceil((double) LEVEL_WIDTH  / scale),
+                                               (int) ceil((double) LEVEL_HEIGHT / scale)));
 
                 scrollTo(new Location(centerX, centerY));
 
@@ -549,8 +551,8 @@ public class LevelPanel extends JPanel {
             if (thing.isDirectional()) {
                 double startX = thing.getLocation().getX();
                 double startY = thing.getLocation().getY();
-                double endX   = startX + thing.getRadius() * Math.cos(thing.getAngle() * Math.PI / 180);
-                double endY   = startY + thing.getRadius() * Math.sin(thing.getAngle() * Math.PI / 180);
+                double endX   = startX + thing.getRadius() * cos(thing.getAngle() * PI / 180);
+                double endY   = startY + thing.getRadius() * sin(thing.getAngle() * PI / 180);
 
                 graphics.drawLine(screenX((short) startX), screenY((short) startY),
                                   screenX((short) endX),   screenY((short) endY));
