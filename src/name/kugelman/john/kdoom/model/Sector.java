@@ -6,8 +6,8 @@ import static java.lang.Math.*;
 
 public class Sector {
     private short      number;
-    private short      floorHeight, ceilingHeight;
-    private Flat       floorFlat,   ceilingFlat;
+    private short      floorHeight,   ceilingHeight;
+    private String     floorFlatName, ceilingFlatName;
     private short      lightLevel;
     private short      type;
     private short      tagNumber;
@@ -19,19 +19,19 @@ public class Sector {
 
 
     Sector(short number,
-           short floorHeight, short ceilingHeight,
-           Flat  floorFlat,   Flat  ceilingFlat,
+           short  floorHeight,   short  ceilingHeight,
+           String floorFlatName, String ceilingFlatName,
            short lightLevel, short type, short tagNumber)
     {
-        this.number        = number;
-        this.floorHeight   = floorHeight;
-        this.ceilingHeight = ceilingHeight;
-        this.floorFlat     = floorFlat;
-        this.ceilingFlat   = ceilingFlat;
-        this.lightLevel    = lightLevel;
-        this.type          = type;
-        this.tagNumber     = tagNumber;
-        this.sides         = new ArrayList<Side>();
+        this.number          = number;
+        this.floorHeight     = floorHeight;
+        this.ceilingHeight   = ceilingHeight;
+        this.floorFlatName   = floorFlatName;
+        this.ceilingFlatName = ceilingFlatName;
+        this.lightLevel      = lightLevel;
+        this.type            = type;
+        this.tagNumber       = tagNumber;
+        this.sides           = new ArrayList<Side>();
     }
 
 
@@ -47,12 +47,20 @@ public class Sector {
         return ceilingHeight;
     }
 
+    public String getFloorFlatName() {
+        return floorFlatName;
+    }
+
+    public String getCeilingFlatName() {
+        return ceilingFlatName;
+    }
+
     public Flat getFloorFlat() {
-        return floorFlat;
+        return Resources.flats().get(floorFlatName);
     }
 
     public Flat getCeilingFlat() {
-        return ceilingFlat;
+        return Resources.flats().get(ceilingFlatName);
     }
 
     public int getLightLevel() {

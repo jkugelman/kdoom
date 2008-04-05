@@ -80,10 +80,10 @@ public class SectorPanel extends JPanel {
             ceilingHeightLabel.setText("" + sector.getCeilingHeight());
             lightLevelLabel   .setText("" + sector.getLightLevel   ());
 
-            floorFlatLabel    .setText(sector.getFloorFlat  () == null ? "-" : sector.getFloorFlat  ().getName());
-            floorFlatPanel    .show   (sector.getFloorFlat  ());
-            ceilingFlatLabel  .setText(sector.getCeilingFlat() == null ? "-" : sector.getCeilingFlat().getName());
-            ceilingFlatPanel  .show   (sector.getCeilingFlat());
+            floorFlatLabel    .setText(sector.getFloorFlatName  ());
+            floorFlatPanel    .show   (sector.getFloorFlat      ());
+            ceilingFlatLabel  .setText(sector.getCeilingFlatName());
+            ceilingFlatPanel  .show   (sector.getCeilingFlat    ());
         }
 
         repaint();

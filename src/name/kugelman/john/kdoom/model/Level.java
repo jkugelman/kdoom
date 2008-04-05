@@ -108,8 +108,8 @@ public class Level {
             short  ceilingHeight  = buffer.getShort();
                                     buffer.get(floorBytes);
                                     buffer.get(ceilingBytes);
-            Flat   floorFlat      = Resources.flats().get(new String(floorBytes,   "ISO-8859-1").trim());
-            Flat   ceilingFlat    = Resources.flats().get(new String(ceilingBytes, "ISO-8859-1").trim());
+            String floorFlat      = new String(floorBytes,   "ISO-8859-1").trim();
+            String ceilingFlat    = new String(ceilingBytes, "ISO-8859-1").trim();
             short  lightLevel     = buffer.getShort();
             short  type           = buffer.getShort();
             short  tagNumber      = buffer.getShort();
