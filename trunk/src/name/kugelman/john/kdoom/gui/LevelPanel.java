@@ -91,7 +91,7 @@ public class LevelPanel extends JPanel {
 
     private Map<Sector, Area>  sectorAreas;
     private Map<Sector, Paint> sectorPaints;
-
+    private static Paint       noFlatPaint;
 
     public LevelPanel() {
         this(null);
@@ -435,11 +435,17 @@ public class LevelPanel extends JPanel {
     }
 
     private Paint createFlatPaint(Flat flat, float brightness) throws IOException {
+        if (flat == null) {
+            return getNoFlatPaint();
+        }
+        
         RescaleOp     rescaleOp     = new RescaleOp(brightness, 0.0f, null);
         BufferedImage flatImage     = flat.getImage();
         BufferedImage scalableImage = new BufferedImage(Flat.WIDTH, Flat.HEIGHT, BufferedImage.TYPE_INT_RGB);
+        Graphics2D    graphics      = scalableImage.createGraphics();
 
-        scalableImage.getGraphics().drawImage(flatImage, 0, 0, null);
+        graphics.drawImage(flatImage, 0, 0, null);
+        graphics.dispose  ();
 
         return new TexturePaint(
             rescaleOp.filter(scalableImage, null),
@@ -447,6 +453,26 @@ public class LevelPanel extends JPanel {
                                    (double) Flat.WIDTH / scale, (double) Flat.HEIGHT / scale)
         );
     }
+
+    private Paint getNoFlatPaint() {
+        if (noFlatPaint == null) {
+            BufferedImage noFlatImage = new BufferedImage(8, 8, BufferedImage.TYPE_INT_RGB);
+            Graphics2D    graphics    = noFlatImage.createGraphics();
+
+            graphics.setColor (Color.WHITE);
+            graphics.fillRect (0, 0, 8, 8);
+            graphics.setStroke(new BasicStroke(2));
+            graphics.setColor (Color.MAGENTA);
+            graphics.drawLine (4, 0, 0, 4);
+            graphics.drawLine (8, 4, 4, 8);
+            graphics.dispose  ();
+
+            noFlatPaint = new TexturePaint(noFlatImage, new Rectangle(0, 0, 8, 8));
+        }
+
+        return noFlatPaint;
+    }
+
 
     private void drawGrid(Graphics2D graphics) {
         int spacing = GRID_SPACINGS[gridSpacingIndex];
