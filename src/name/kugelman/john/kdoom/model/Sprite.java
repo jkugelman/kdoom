@@ -69,7 +69,7 @@ public class Sprite {
         }
 
         if (frames.isEmpty()) {
-            throw new IOException("No frames found for sprite " + name);
+            System.err.println("No frames found for sprite " + name + ".");
         }
     }
 

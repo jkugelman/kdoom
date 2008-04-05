@@ -23,7 +23,7 @@ public class LevelViewer extends JFrame {
     private ThingPanel  thingPanel;
 
     public LevelViewer(Level level) {
-        super("KDOOM - " + level.getWad().getName() + " - " + level.getName());
+        super("KDOOM - " + level.getWad() + " - " + level.getName());
 
         this.level = level;
 
@@ -63,15 +63,26 @@ public class LevelViewer extends JFrame {
 
 
     public static void main(String[] arguments) {
-        if (arguments.length != 2) {
-            System.err.println("Usage: kdoom <file.wad> <level>");
+        if (arguments.length < 2 || arguments.length > 3) {
+            System.err.println("Usage: kdoom <doom.wad> [patch.wad] <level>");
             System.exit(1);
         }
 
         try {
-            Resources.load(new Wad(new File(arguments[0])));
+            WadFileSet wad = new WadFileSet(new WadFile(new File(arguments[0])));
+            String     levelName;
+            
+            if (arguments.length == 2) {
+                levelName = arguments[1];
+            }
+            else {
+                wad.addPatch(new WadFile(new File(arguments[1])));
+                levelName = arguments[2];
+            }
 
-            new LevelViewer(Resources.levels().get(arguments[1])).setVisible(true);
+            Resources.load(wad);
+
+            new LevelViewer(Resources.levels().get(levelName)).setVisible(true);
         }
         catch (IllegalArgumentException exception) {
             System.err.println(exception.getLocalizedMessage());

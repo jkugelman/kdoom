@@ -39,10 +39,12 @@ public class Thing {
         }
     }
 
+    private static Map<String, Sprite> sprites;
     private static Map<Short, Details> typeDetails;
     private static Details             unknownDetails;
 
     static {
+        sprites     = new HashMap<String, Sprite>();
         typeDetails = new HashMap<Short, Details>();
 
         addType(1,    Kind.PLAYER,     "PLAY", "A1-D1", 16,  false, "Player 1 Start");
@@ -211,7 +213,12 @@ public class Thing {
         }
 
         if (details.spriteName != null) {
-            this.sprite = new Sprite(wad, details.spriteName, details.isHanging);
+            this.sprite = sprites.get(details.spriteName);
+
+            if (sprite == null) {
+                sprite = new Sprite(wad, details.spriteName, details.isHanging);
+                sprites.put(details.spriteName, sprite);
+            }
         }
     }
 

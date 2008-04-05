@@ -14,16 +14,12 @@ public abstract class Resources {
     
 
     public static void load(Wad wad) throws IOException {
-        load(wad, wad);
-    }
-
-    public static void load(Wad iwad, Wad pwad) throws IOException {
-        palette  = new Palette    (iwad);
-        flats    = new FlatList   (iwad);
-        patches  = new PatchList  (iwad);
-        textures = new TextureList(iwad);
-        sounds   = new SoundList  (iwad);
-        levels   = new LevelList  (pwad);
+        palette  = new Palette    (wad);
+        flats    = new FlatList   (wad);
+        patches  = new PatchList  (wad);
+        textures = new TextureList(wad);
+        sounds   = new SoundList  (wad);
+        levels   = new LevelList  (wad);
     }
 
 

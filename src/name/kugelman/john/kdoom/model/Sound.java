@@ -51,7 +51,7 @@ public class Sound {
         }
 
         try {
-            Resources.load(new Wad(new File(arguments[0])));
+            Resources.load(new WadFile(new File(arguments[0])));
 
             Sound sound = Resources.sounds().get(arguments[1].toUpperCase());
             Clip  clip  = AudioSystem.getClip();

@@ -58,10 +58,13 @@ public class TexturesPanel extends JPanel {
         }
 
         try {
-            Wad iwad = new Wad(new File(arguments[0]));
-            Wad pwad = (arguments.length > 1) ? new Wad(new File(arguments[1])) : iwad;
+            WadFileSet wad = new WadFileSet(new WadFile(new File(arguments[0])));
 
-            Resources.load(iwad, pwad);
+            if (arguments.length > 1) {
+                wad.addPatch(new WadFile(new File(arguments[1])));
+            }
+
+            Resources.load(wad);
             
             JFrame        frame       = new JFrame("KDOOM - " + arguments[0] + " - Texture List");
             TexturesPanel panel       = new TexturesPanel();

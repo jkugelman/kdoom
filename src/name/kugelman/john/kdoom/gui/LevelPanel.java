@@ -385,8 +385,8 @@ public class LevelPanel extends JPanel {
     private Area createArea(Sector sector) {
         Area area = new Area();
         
-        for (List<Side> region: sector.getEnclosingRegions()) area.add     (createArea(region));
-        for (List<Side> region: sector.getExcludingRegions()) area.subtract(createArea(region));
+        for (List<Side> region: sector.getAdditiveRegions   ()) area.add     (createArea(region));
+        for (List<Side> region: sector.getSubtractiveRegions()) area.subtract(createArea(region));
         
         return area;
     }

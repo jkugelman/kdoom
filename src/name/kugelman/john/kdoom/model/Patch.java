@@ -27,7 +27,7 @@ public class Patch {
     }
 
     Patch(Lump lump) throws IOException {
-        this(lump.getWad(), lump.getName());
+        this(lump.getWadFile(), lump.getName());
     }
 
 
