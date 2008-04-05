@@ -4,24 +4,24 @@ import java.io.*;
 import java.nio.*;
 
 public class Lump {
-    private Wad    wad;
-    private int    index;
-    private int    offset;
-    private int    size;
-    private String name;
+    private WadFile wadFile;
+    private int     index;
+    private int     offset;
+    private int     size;
+    private String  name;
 
-    public Lump(Wad wad, int index, int offset, int size, String name) {
-        this.wad    = wad;
+    public Lump(WadFile wadFile, int index, int offset, int size, String name) {
+        this.wadFile = wadFile;
 
-        this.index  = index;
-        this.offset = offset;
-        this.size   = size;
-        this.name   = name;
+        this.index   = index;
+        this.offset  = offset;
+        this.size    = size;
+        this.name    = name;
     }
 
 
-    public Wad getWad() {
-        return wad;
+    public WadFile getWadFile() {
+        return wadFile;
     }
 
     public int getIndex() {
@@ -45,11 +45,17 @@ public class Lump {
         byte[]     data   = new byte[size];
         ByteBuffer buffer = ByteBuffer.wrap(data).order(ByteOrder.LITTLE_ENDIAN);
 
-        synchronized (wad.file) {
-            wad.file.seek     (offset);
-            wad.file.readFully(data);
+        synchronized (wadFile.file) {
+            wadFile.file.seek     (offset);
+            wadFile.file.readFully(data);
         }
 
         return buffer;
+    }
+
+
+    @Override
+    public String toString() {
+        return getName();
     }
 }

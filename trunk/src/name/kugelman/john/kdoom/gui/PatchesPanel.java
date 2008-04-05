@@ -37,12 +37,15 @@ public class PatchesPanel extends JPanel {
         }
 
         try {
-            Wad iwad = new Wad(new File(arguments[0]));
-            Wad pwad = (arguments.length > 1) ? new Wad(new File(arguments[1])) : iwad;
-            
-            Resources.load(iwad, pwad);
+            WadFileSet wad = new WadFileSet(new WadFile(new File(arguments[0])));
 
-            JFrame       frame      = new JFrame("KDOOM - " + arguments[0] + " - Patch List");
+            if (arguments.length > 1) {
+                wad.addPatch(new WadFile(new File(arguments[1])));
+            }
+
+            Resources.load(wad);
+
+            JFrame       frame      = new JFrame("KDOOM - " + wad + " - Patch List");
             PatchesPanel panel      = new PatchesPanel();
             JScrollPane  scrollPane = new JScrollPane(panel);
 

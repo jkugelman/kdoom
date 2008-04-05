@@ -30,14 +30,15 @@ public class Level {
         this.minX = this.minY = Short.MAX_VALUE;
         this.maxX = this.maxY = Short.MIN_VALUE;
 
-        Lump nameLump = wad.lump(name);
+        Lump       nameLump   = wad.lump(name);
+        List<Lump> levelLumps = wad.lumpGroup(nameLump, 11);
 
-        readName    (wad.lumps().get(nameLump.getIndex() + 0));
-        readThings  (wad.lumps().get(nameLump.getIndex() + 1));
-        readVertices(wad.lumps().get(nameLump.getIndex() + 4));
-        readSectors (wad.lumps().get(nameLump.getIndex() + 8));
-        readSides   (wad.lumps().get(nameLump.getIndex() + 3));
-        readLines   (wad.lumps().get(nameLump.getIndex() + 2));
+        readName    (levelLumps.get(0));
+        readThings  (levelLumps.get(1));
+        readVertices(levelLumps.get(4));
+        readSectors (levelLumps.get(8));
+        readSides   (levelLumps.get(3));
+        readLines   (levelLumps.get(2));
 
         for (Sector sector: sectors) {
             sector.updateGeometry();

@@ -73,14 +73,20 @@ public class SoundsPanel extends JPanel {
 
     public static void main(String[] arguments) {
         if (arguments.length < 1 || arguments.length > 2) {
-            System.err.println("Usage: kdoom <doom.wad>");
+            System.err.println("Usage: kdoom <doom.wad> [patch.wad]");
             System.exit(1);
         }
 
         try {
-            Resources.load(new Wad(new File(arguments[0])));
+            WadFileSet wad = new WadFileSet(new WadFile(new File(arguments[0])));
 
-            JFrame      frame      = new JFrame("KDOOM - " + arguments[0] + " - Sound List");
+            if (arguments.length > 1) {
+                wad.addPatch(new WadFile(new File(arguments[1])));
+            }
+
+            Resources.load(wad);
+
+            JFrame      frame      = new JFrame("KDOOM - " + wad + " - Sound List");
             SoundsPanel panel      = new SoundsPanel();
             JScrollPane scrollPane = new JScrollPane(panel);
 

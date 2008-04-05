@@ -13,8 +13,8 @@ public class Sector {
     private short      tagNumber;
             List<Side> sides;
 
-    private Collection<List<Side>> enclosingRegions;
-    private Collection<List<Side>> excludingRegions;
+    private Collection<List<Side>> additiveRegions;
+    private Collection<List<Side>> subtractiveRegions;
     private Collection<List<Side>> unclosedRegions;
 
 
@@ -93,12 +93,12 @@ public class Sector {
     }
 
 
-    public Collection<List<Side>> getEnclosingRegions() {
-        return Collections.unmodifiableCollection(enclosingRegions);
+    public Collection<List<Side>> getAdditiveRegions() {
+        return Collections.unmodifiableCollection(additiveRegions);
     }
 
-    public Collection<List<Side>> getExcludingRegions() {
-        return Collections.unmodifiableCollection(excludingRegions);
+    public Collection<List<Side>> getSubtractiveRegions() {
+        return Collections.unmodifiableCollection(subtractiveRegions);
     }
 
     public Collection<List<Side>> getUnclosedRegions() {
@@ -106,14 +106,14 @@ public class Sector {
     }
 
     void updateGeometry() {
-        enclosingRegions = new ArrayList<List<Side>>();
-        excludingRegions = new ArrayList<List<Side>>();
-        unclosedRegions  = new ArrayList<List<Side>>();
+        additiveRegions    = new ArrayList<List<Side>>();
+        subtractiveRegions = new ArrayList<List<Side>>();
+        unclosedRegions    = new ArrayList<List<Side>>();
 
-        Set<Side> sides  = new LinkedHashSet<Side>(this.sides);
+        Set<Side> sides    = new LinkedHashSet<Side>(this.sides);
 
         nextRegion: while (!sides.isEmpty()) {
-            // System.out.printf("Sector #%d, region #%d%n", number, enclosingRegions.size() + excludingRegions.size() + unclosedRegions.size() + 1);
+            // System.out.printf("Sector #%d, region #%d%n", number, additiveRegions.size() + subtractiveRegions.size() + unclosedRegions.size() + 1);
 
             List<Side> region    = new ArrayList<Side>();
             Side       firstSide = sides.iterator().next();
@@ -162,8 +162,8 @@ public class Sector {
                     // System.out.printf("%-11s %d angles sum to %s%n", angleSum > 0 ? "ADDITIVE" : "SUBTRACTIVE", region.size() - 1, (int) round(angleSum * 180 / PI));
 
                     // Determine if polygon is additive or subtractive.
-                    if (angleSum > 0) enclosingRegions.add(region);
-                    else              excludingRegions.add(region);
+                    if (angleSum > 0) additiveRegions.add(region);
+                    else              subtractiveRegions.add(region);
 
                     continue nextRegion;
                 }
