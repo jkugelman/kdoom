@@ -235,28 +235,44 @@ public class Level {
 
 
     public Collection<Sector> taggedSectors(Line line) {
+        if (line == null) {
+            return Collections.<Sector>emptyList();
+        }
+
         return sectorsWithTag(line.getTagNumber());
     }
 
     public Collection<Sector> sectorsWithTag(short tagNumber) {
+        if (tagNumber == 0) {
+            return Collections.<Sector>emptyList();
+        }
+
         List<Sector> sectors = sectorsByTag.get(tagNumber);
 
         if (sectors == null) {
-            return null;
+            return Collections.<Sector>emptyList();
         }
 
         return Collections.unmodifiableCollection(sectors);
     }
 
-    public Collection<Line> taggedLines(Line line) {
-        return linesWithTag(line.getTagNumber());
+    public Collection<Line> taggedLines(Sector sector) {
+        if (sector == null) {
+            return Collections.<Line>emptyList();
+        }
+
+        return linesWithTag(sector.getTagNumber());
     }
 
     public Collection<Line> linesWithTag(short tagNumber) {
+        if (tagNumber == 0) {
+            return Collections.<Line>emptyList();
+        }
+
         List<Line> lines = linesByTag.get(tagNumber);
 
         if (lines == null) {
-            return null;
+            return Collections.<Line>emptyList();
         }
 
         return Collections.unmodifiableCollection(lines);

@@ -18,6 +18,7 @@ public class SectorPanel extends JPanel {
     private JLabel       floorHeightLabel, ceilingHeightLabel;
     private JLabel       lightLevelLabel;
     private JLabel       specialTypeLabel;
+    private JLabel       tagNumberLabel;
     private JLabel       floorFlatLabel,   ceilingFlatLabel;
     private FlatPanel    floorFlatPanel,   ceilingFlatPanel;
 
@@ -31,6 +32,7 @@ public class SectorPanel extends JPanel {
         ceilingHeightLabel = new JLabel();
         lightLevelLabel    = new JLabel();
         specialTypeLabel   = new JLabel();
+        tagNumberLabel     = new JLabel();
         floorFlatLabel     = new JLabel();
         floorFlatPanel     = new FlatPanel();
         ceilingFlatLabel   = new JLabel();
@@ -40,7 +42,7 @@ public class SectorPanel extends JPanel {
 
         double[][] size = {
             { PREFERRED, PREFERRED },
-            { PREFERRED, PREFERRED, PREFERRED, PREFERRED, PREFERRED, PREFERRED, PREFERRED, PREFERRED }
+            { PREFERRED, PREFERRED, PREFERRED, PREFERRED, PREFERRED, PREFERRED, PREFERRED, PREFERRED, PREFERRED }
         };
 
         setLayout(new TableLayout(size));
@@ -52,12 +54,14 @@ public class SectorPanel extends JPanel {
         add(lightLevelLabel,                "1, 2,       LEADING,  TOP");
         add(new JLabel("Special type: "),   "0, 3,       TRAILING, TOP");
         add(specialTypeLabel,               "1, 3,       LEADING,  TOP");
-        add(new JLabel("Floor flat: "),     "0, 4, 0, 5, TRAILING, TOP");
-        add(floorFlatLabel,                 "1, 4,       LEADING,  TOP");
-        add(floorFlatPanel,                 "1, 5,       LEADING,  TOP");
-        add(new JLabel("Ceiling flat: "),   "0, 6, 0, 7, TRAILING, TOP");
-        add(ceilingFlatLabel,               "1, 6,       LEADING,  TOP");
-        add(ceilingFlatPanel,               "1, 7,       LEADING,  TOP");
+        add(new JLabel("Tag number: "),     "0, 4,       TRAILING, TOP");
+        add(tagNumberLabel,                 "1, 4,       LEADING,  TOP");
+        add(new JLabel("Floor flat: "),     "0, 5, 0, 6, TRAILING, TOP");
+        add(floorFlatLabel,                 "1, 5,       LEADING,  TOP");
+        add(floorFlatPanel,                 "1, 6,       LEADING,  TOP");
+        add(new JLabel("Ceiling flat: "),   "0, 7, 0, 8, TRAILING, TOP");
+        add(ceilingFlatLabel,               "1, 7,       LEADING,  TOP");
+        add(ceilingFlatPanel,               "1, 8,       LEADING,  TOP");
 
         show(sector);
     }
@@ -72,6 +76,7 @@ public class SectorPanel extends JPanel {
             ceilingHeightLabel.setText("N/A");
             lightLevelLabel   .setText("N/A");
             specialTypeLabel  .setText("N/A");
+            tagNumberLabel    .setText("N/A");
 
             floorFlatLabel    .setText("N/A");
             floorFlatPanel    .show   (null);
@@ -85,6 +90,7 @@ public class SectorPanel extends JPanel {
             ceilingHeightLabel.setText("" + sector.getCeilingHeight());
             lightLevelLabel   .setText("" + sector.getLightLevel   ());
             specialTypeLabel  .setText(sector.getSpecialType().getDescription());
+            tagNumberLabel    .setText("" + sector.getTagNumber    ());
 
             floorFlatLabel    .setText(sector.getFloorFlatName  ());
             floorFlatPanel    .show   (sector.getFloorFlat      ());
