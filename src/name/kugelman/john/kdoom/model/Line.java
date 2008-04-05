@@ -1,32 +1,46 @@
 package name.kugelman.john.kdoom.model;
 
+import java.util.*;
+
 import static java.lang.Math.*;
 
 public class Line {
+    public static final short PLAYERS_BLOCKED  = 0x0001;
+    public static final short MONSTERS_BLOCKED = 0x0002;
+    public static final short TWO_SIDED        = 0x0004;
+    public static final short UPPER_UNPEGGED   = 0x0008;
+    public static final short LOWER_UNPEGGED   = 0x0010;
+    public static final short SECRET           = 0x0020;
+    public static final short SOUND_BLOCKED    = 0x0040;
+    public static final short INVISIBLE        = 0x0080;
+    public static final short ALWAYS_VISIBLE   = 0x0100;
+
+
     private short   number;
     private Vertex  start, end;
-    private Side    leftSide, rightSide;
-    private short   flags;
+    private short   flags, specialType, tagNumber;
+    private Side    rightSide, leftSide;
 
     private double  xDiff, yDiff;
     private double  slope;
     private int     leftSign;
 
-    Line(short number, Vertex start, Vertex end, Sidedef leftSidedef, Sidedef rightSidedef, short flags) {
-        this.number     = number;
-        this.start      = start;
-        this.end        = end;
-        this.leftSide   = null;
-        this.rightSide  = null;
-        this.flags      = flags;
+    Line(short number, Vertex start, Vertex end, short flags, short specialType, short tagNumber,
+         Sidedef rightSidedef, Sidedef leftSidedef)
+    {
+        this.number        = number;
+        this.start         = start;
+        this.end           = end;
+        this.flags         = flags;
+        this.specialType   = specialType;
+        this.tagNumber     = tagNumber;
+        this.rightSide     = rightSidedef == null ? null : new Side(this, rightSidedef, true);
+        this.leftSide      = leftSidedef  == null ? null : new Side(this, leftSidedef, false);
 
-        this.xDiff      = end.getX() - start.getX();
-        this.yDiff      = end.getY() - start.getY();
-        this.slope      = yDiff / xDiff;
-        this.leftSign   = end.getX() < start.getX() ? -1 : +1;
-
-        if (leftSidedef  != null) leftSide  = new Side(this, leftSidedef,  false);
-        if (rightSidedef != null) rightSide = new Side(this, rightSidedef, true);
+        this.xDiff         = end.getX() - start.getX();
+        this.yDiff         = end.getY() - start.getY();
+        this.slope         = yDiff / xDiff;
+        this.leftSign      = end.getX() < start.getX() ? -1 : +1;
     }
 
 
@@ -42,6 +56,18 @@ public class Line {
         return end;
     }
 
+    public short getFlags() {
+        return flags;
+    }
+
+    public short getSpecialType() {
+        return specialType;
+    }
+
+    public short getTagNumber() {
+        return tagNumber;
+    }
+
     public Side getLeftSide() {
         return leftSide;
     }
@@ -49,21 +75,6 @@ public class Line {
     public Side getRightSide() {
         return rightSide;
     }
-
-
-    public short getFlags() {
-        return flags;
-    }
-
-    public boolean arePlayersBlocked     () { return (flags & 0x0001) == 0x0001; }
-    public boolean areMonstersBlocked    () { return (flags & 0x0002) == 0x0002; }
-    public boolean isTwoSided            () { return (flags & 0x0004) == 0x0004; }
-    public boolean isUpperTextureUnpegged() { return (flags & 0x0008) == 0x0008; }
-    public boolean isLowerTextureUnpegged() { return (flags & 0x0010) == 0x0010; }
-    public boolean isSecret              () { return (flags & 0x0020) == 0x0020; }
-    public boolean isSoundBlocked        () { return (flags & 0x0040) == 0x0040; }
-    public boolean isInvisible           () { return (flags & 0x0080) == 0x0080; }
-    public boolean isAlwaysVisible       () { return (flags & 0x0100) == 0x0100; }
 
 
     public double getLength() {

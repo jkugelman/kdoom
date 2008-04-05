@@ -5,7 +5,7 @@ import java.util.*;
 import static java.lang.Math.*;
 
 public class Sector {
-    public enum Type {
+    public enum SpecialType {
         NORMAL                       (0,  "Normal", "Normal"),
         SECRET                       (9,  "Secret", "Player entering this sector gets credit for finding a secret"),
         LIGHT_BLINK_FAST             (2,  "Light",  "Blink 0.5 second"),
@@ -28,7 +28,7 @@ public class Sector {
         private String category;
         private String description;
 
-        private Type(int number, String category, String description) {
+        private SpecialType(int number, String category, String description) {
             this.number      = (short) number;
             this.category    = category;
             this.description = description;
@@ -47,8 +47,8 @@ public class Sector {
         }
 
 
-        public static Type forNumber(short number) {
-            for (Type type: values()) {
+        public static SpecialType forNumber(short number) {
+            for (SpecialType type: values()) {
                 if (type.number == number) {
                     return type;
                 }
@@ -59,13 +59,14 @@ public class Sector {
     }
 
 
-    private short      number;
-    private short      floorHeight,   ceilingHeight;
-    private String     floorFlatName, ceilingFlatName;
-    private short      lightLevel;
-    private Type       type;
-    private short      tagNumber;
-            List<Side> sides;
+    private short       number;
+    private short       floorHeight,   ceilingHeight;
+    private String      floorFlatName, ceilingFlatName;
+    private short       lightLevel;
+    private SpecialType specialType;
+    private short       tagNumber;
+
+    Collection<Side>    sides;
 
     private Collection<List<Side>> additiveRegions;
     private Collection<List<Side>> subtractiveRegions;
@@ -75,7 +76,7 @@ public class Sector {
     Sector(short number,
            short  floorHeight,   short  ceilingHeight,
            String floorFlatName, String ceilingFlatName,
-           short lightLevel, short type, short tagNumber)
+           short lightLevel, short specialType, short tagNumber)
     {
         this.number          = number;
         this.floorHeight     = floorHeight;
@@ -83,8 +84,9 @@ public class Sector {
         this.floorFlatName   = floorFlatName;
         this.ceilingFlatName = ceilingFlatName;
         this.lightLevel      = lightLevel;
-        this.type            = Type.forNumber(type);
+        this.specialType     = SpecialType.forNumber(specialType);
         this.tagNumber       = tagNumber;
+
         this.sides           = new ArrayList<Side>();
     }
 
@@ -121,18 +123,18 @@ public class Sector {
         return lightLevel & 0xFFFF;
     }
 
-    public Type getType() {
-        return type;
+    public SpecialType getSpecialType() {
+        return specialType;
     }
 
     public short getTagNumber() {
         return tagNumber;
     }
 
-    public List<Side> sides() {
-        return Collections.unmodifiableList(sides);
-    }
 
+    public Collection<Side> sides() {
+        return Collections.unmodifiableCollection(sides);
+    }
 
     public boolean containsSide(Side side) {
         if (side == null) {

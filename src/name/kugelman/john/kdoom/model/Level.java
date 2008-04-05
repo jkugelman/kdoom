@@ -17,6 +17,9 @@ public class Level {
 
     private short         minX, minY, maxX, maxY;
 
+    private Map<Short, List<Line>>   linesByTag;
+    private Map<Short, List<Sector>> sectorsByTag;
+
     Level(Lump nameLump)
         throws IllegalArgumentException, IOException
     {
@@ -25,7 +28,7 @@ public class Level {
         }
 
         List<Lump> levelLumps = nameLump.getWadFile().lumpGroup(nameLump, 11);
-        
+
         this.minX = this.minY = Short.MAX_VALUE;
         this.maxX = this.maxY = Short.MIN_VALUE;
 
@@ -101,7 +104,8 @@ public class Level {
         byte[]     floorBytes   = new byte[8];
         byte[]     ceilingBytes = new byte[8];
 
-        sectors = new ArrayList<Sector>();
+        sectors      = new ArrayList<Sector>();
+        sectorsByTag = new HashMap<Short, List<Sector>>();
 
         while (buffer.hasRemaining()) {
             short  floorHeight    = buffer.getShort();
@@ -114,7 +118,20 @@ public class Level {
             short  type           = buffer.getShort();
             short  tagNumber      = buffer.getShort();
 
-            sectors.add(new Sector((short) sectors.size(), floorHeight, ceilingHeight, floorFlat, ceilingFlat, lightLevel, type, tagNumber));
+            Sector sector         = new Sector((short) sectors.size(), floorHeight, ceilingHeight,
+                                               floorFlat, ceilingFlat, lightLevel, type, tagNumber);
+
+            sectors.add(sector);
+
+            // Add sector to sectorsByTag.
+            List<Sector> sectorList = sectorsByTag.get(tagNumber);
+
+            if (sectorList == null) {
+                sectorList = new ArrayList<Sector>();
+                sectorsByTag.put(tagNumber, sectorList);
+            }
+
+            sectorList.add(sector);
         }
     }
 
@@ -125,21 +142,35 @@ public class Level {
 
         ShortBuffer buffer = lump.getData().asShortBuffer();
 
-        lines = new ArrayList<Line>();
+        lines      = new ArrayList<Line>();
+        linesByTag = new HashMap<Short, List<Line>>();
 
         while (buffer.hasRemaining()) {
             Vertex  start        = vertices.get(buffer.get());
             Vertex  end          = vertices.get(buffer.get());
             short   flags        = buffer.get();
             short   specialType  = buffer.get();
-            short   sectorTag    = buffer.get();
+            short   tagNumber    = buffer.get();
             short   right        = buffer.get();
             short   left         = buffer.get();
 
-            Sidedef leftSidedef  = left  < 0 ? null : sidedefs.get(left);
             Sidedef rightSidedef = right < 0 ? null : sidedefs.get(right);
+            Sidedef leftSidedef  = left  < 0 ? null : sidedefs.get(left);
 
-            lines.add(new Line((short) lines.size(), start, end, leftSidedef, rightSidedef, flags));
+            Line    line         = new Line((short) lines.size(), start, end, flags, specialType, tagNumber,
+                                            rightSidedef, leftSidedef);
+            
+            lines.add(line);
+
+            // Add line to linesByTag.
+            List<Line> lineList = linesByTag.get(tagNumber);
+
+            if (lineList == null) {
+                lineList = new ArrayList<Line>();
+                linesByTag.put(tagNumber, lineList);
+            }
+
+            lineList.add(line);
         }
     }
 
@@ -200,6 +231,35 @@ public class Level {
 
     public List<Sector> sectors() {
         return Collections.unmodifiableList(sectors);
+    }
+
+
+    public Collection<Sector> taggedSectors(Line line) {
+        return sectorsWithTag(line.getTagNumber());
+    }
+
+    public Collection<Sector> sectorsWithTag(short tagNumber) {
+        List<Sector> sectors = sectorsByTag.get(tagNumber);
+
+        if (sectors == null) {
+            return null;
+        }
+
+        return Collections.unmodifiableCollection(sectors);
+    }
+
+    public Collection<Line> taggedLines(Line line) {
+        return linesWithTag(line.getTagNumber());
+    }
+
+    public Collection<Line> linesWithTag(short tagNumber) {
+        List<Line> lines = linesByTag.get(tagNumber);
+
+        if (lines == null) {
+            return null;
+        }
+
+        return Collections.unmodifiableCollection(lines);
     }
 
 
