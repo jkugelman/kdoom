@@ -2,6 +2,8 @@ package name.kugelman.john.kdoom.model;
 
 import java.util.*;
 
+import static java.lang.Math.*;
+
 public class Sector {
     private short      number;
     private short      floorHeight, ceilingHeight;
@@ -155,9 +157,9 @@ public class Sector {
                     angleSum += Side.angleBetween(nextSide, firstSide);
 
                     // Angles should add up to either 360 or -360.
-                    assert Math.abs((int) Math.round(angleSum * 180 / Math.PI)) == 360;
+                    assert abs((int) round(angleSum * 180 / PI)) == 360;
 
-                    // System.out.printf("%-11s %d angles sum to %s%n", angleSum > 0 ? "ADDITIVE" : "SUBTRACTIVE", region.size() - 1, (int) Math.round(angleSum * 180 / Math.PI));
+                    // System.out.printf("%-11s %d angles sum to %s%n", angleSum > 0 ? "ADDITIVE" : "SUBTRACTIVE", region.size() - 1, (int) round(angleSum * 180 / PI));
 
                     // Determine if polygon is additive or subtractive.
                     if (angleSum > 0) enclosingRegions.add(region);

@@ -1,5 +1,7 @@
 package name.kugelman.john.kdoom.model;
 
+import static java.lang.Math.*;
+
 public class Line {
     private short   number;
     private Vertex  start, end;
@@ -80,12 +82,12 @@ public class Line {
         double r            = rNumerator / rDenominator;
 
         if (r >= 0 && r <= 1) {
-            return Math.abs(xDiff * (start.getY() - location.getY())
-                          - yDiff * (start.getX() - location.getX()))
-                 / Math.sqrt(rDenominator);
+            return abs(xDiff * (start.getY() - location.getY())
+                     - yDiff * (start.getX() - location.getX()))
+                 / sqrt(rDenominator);
         }
         else {
-            return Math.min(location.distanceTo(start), location.distanceTo(end));
+            return min(location.distanceTo(start), location.distanceTo(end));
         }
     }
 
@@ -98,8 +100,8 @@ public class Line {
 
     public Side sideFacing(Location location) {
         // See http://mathforum.org/library/drmath/view/54823.html
-        int sign = (int) Math.signum((location.getY() - start.getY())
-                           - slope * (location.getX() - start.getX()));
+        int sign = (int) signum((location.getY() - start.getY())
+                      - slope * (location.getX() - start.getX()));
 
         // Vertex is on line, neither side is facing.
         if (sign == 0) {
