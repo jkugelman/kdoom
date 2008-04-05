@@ -50,14 +50,19 @@ public class LevelPanel extends JPanel {
     private static final float SELECTED_SECTOR_SATURATION     = 0.08f;
     private static final float SELECTED_SECTOR_BRIGHTNESS_MIN = 0.1f;
     private static final float SELECTED_SECTOR_BRIGHTNESS_MAX = 0.9f;
+    private static final float TAGGED_SECTOR_HUE              = 0.5f;   // Slight cyan tint.
+    private static final float TAGGED_SECTOR_SATURATION       = 0.2f;
+    private static final float TAGGED_SECTOR_BRIGHTNESS_MIN   = 0.1f;
+    private static final float TAGGED_SECTOR_BRIGHTNESS_MAX   = 0.9f;
 
     private static final Color GRID_COLOR                     = Color.GRAY;
 
     private static final Color LINE_COLOR                     = Color.BLACK;
+    private static final Color SELECTED_SECTOR_LINE_COLOR     = Color.MAGENTA;
+    private static final Color TAGGED_LINE_COLOR              = Color.CYAN;
     private static final Color TWO_SIDED_LINE_COLOR           = Color.DARK_GRAY;
     private static final Color SELECTED_LINE_COLOR            = Color.YELLOW;
     private static final Color SECRET_LINE_COLOR              = Color.GREEN.darker();
-    private static final Color SELECTED_SECTOR_LINE_COLOR     = Color.MAGENTA;
 
     private static final Color VERTEX_COLOR                   = Color.BLUE;
 
@@ -89,20 +94,22 @@ public class LevelPanel extends JPanel {
     private int     gridSpacingIndex;
     private boolean isFloorVisible, isCeilingVisible;
 
+    private Set<Sector>        taggedSectors;
+    private Set<Line>          taggedLines;
+
     private Map<Sector, Area>  sectorAreas;
     private Map<Sector, Paint> sectorPaints;
     private static Paint       noFlatPaint;
 
     public LevelPanel() {
-        this(null);
-    }
-
-    public LevelPanel(Level level) {
         this.selectionListeners = new ArrayList<SelectionListener>();
 
         this.gridSpacingIndex   = 0;
         this.isFloorVisible     = false;
         this.isCeilingVisible   = false;
+
+        this.taggedSectors      = new HashSet<Sector>();
+        this.taggedLines        = new HashSet<Line>  ();
 
         this.sectorAreas        = new HashMap<Sector, Area> ();
         this.sectorPaints       = new HashMap<Sector, Paint>();
@@ -163,26 +170,61 @@ public class LevelPanel extends JPanel {
         });
 
         addSelectionListener(new SelectionListener() {
+            private Line   previousLine   = null;
             private Sector previousSector = null;
             
-            public void lineSelected (Line  line)  { repaint(); }
             public void sideSelected (Side  side)  { repaint(); }
             public void thingSelected(Thing thing) { repaint(); }
+
+            public void lineSelected(Line line) {
+                for (Sector sector: level.taggedSectors(previousLine)) {
+                    sectorPaints.remove(sector);
+                }
+
+                for (Sector sector: level.taggedSectors(line)) {
+                    sectorPaints.remove(sector);
+                }
+
+                updateTags();
+                repaint   ();
+
+                previousLine = line;
+            }
 
             public void sectorSelected(Sector sector) {
                 sectorPaints.remove(previousSector);
                 sectorPaints.remove(sector);
 
-                previousSector = sector;
+                updateTags();
+                repaint   ();
 
-                repaint();
+                previousSector = sector;
+            }
+
+            private void updateTags() {
+                taggedSectors.clear();
+                taggedLines  .clear();
+
+                taggedSectors.addAll(level.taggedSectors(selectedLine));
+                taggedLines  .addAll(level.taggedLines  (selectedSector));
+
+                for (Sector sector: taggedSectors) {
+                    for (Side side: sector.sides()) {
+                        taggedLines.add(side.getLine());
+                    }
+                }
             }
         });
 
         setFocusable(true);
     }
 
-    public void show(final Level level) {
+    public LevelPanel(Level level) {
+        this();
+        show(level);
+    }
+
+    public void show(Level level) {
         this.level = level;
 
         zoomToMax();
@@ -415,8 +457,13 @@ public class LevelPanel extends JPanel {
 
     private Paint createPaint(Sector sector) throws IOException {
         boolean isSelected    = sector == selectedSector;
-        float   brightnessMin = isSelected ? SELECTED_SECTOR_BRIGHTNESS_MIN : SECTOR_BRIGHTNESS_MIN;
-        float   brightnessMax = isSelected ? SELECTED_SECTOR_BRIGHTNESS_MAX : SECTOR_BRIGHTNESS_MAX;
+        boolean isTagged      = taggedSectors.contains(sector);
+        float   brightnessMin = isSelected ? SELECTED_SECTOR_BRIGHTNESS_MIN
+                              : isTagged   ? TAGGED_SECTOR_BRIGHTNESS_MIN
+                                           : SECTOR_BRIGHTNESS_MIN;
+        float   brightnessMax = isSelected ? SELECTED_SECTOR_BRIGHTNESS_MAX
+                              : isTagged   ? TAGGED_SECTOR_BRIGHTNESS_MAX
+                                           : SECTOR_BRIGHTNESS_MAX;
         float   brightness    = (float) (sector.getLightLevel() / 255.0 * (brightnessMax - brightnessMin) + brightnessMin);
 
         if (isCeilingVisible) {
@@ -427,8 +474,12 @@ public class LevelPanel extends JPanel {
         }
         else {
             // Color sector based on light level.
-            float hue        = isSelected ? SELECTED_SECTOR_HUE            : SECTOR_HUE;
-            float saturation = isSelected ? SELECTED_SECTOR_SATURATION     : SECTOR_SATURATION;
+            float hue        = isSelected ? SELECTED_SECTOR_HUE
+                             : isTagged   ? TAGGED_SECTOR_HUE
+                                          : SECTOR_HUE;
+            float saturation = isSelected ? SELECTED_SECTOR_SATURATION
+                             : isTagged   ? TAGGED_SECTOR_SATURATION
+                                          : SECTOR_SATURATION;
 
             return Color.getHSBColor(hue, saturation, brightness);
         }
@@ -509,6 +560,10 @@ public class LevelPanel extends JPanel {
 
             if (line == selectedLine) {
                 graphics.setColor (SELECTED_LINE_COLOR);
+                graphics.setStroke(new BasicStroke(1.5f));
+            }
+            else if (taggedLines.contains(line)) {
+                graphics.setColor (TAGGED_LINE_COLOR);
                 graphics.setStroke(new BasicStroke(1.5f));
             }
             else if (selectedSector != null && selectedSector.containsLine(line)) {
