@@ -74,4 +74,10 @@ public class Sound {
             System.exit(2);
         }
     }
+
+
+    @Override
+    public String toString() {
+        return getName();
+    }
 }

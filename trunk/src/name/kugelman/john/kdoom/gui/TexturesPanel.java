@@ -15,24 +15,26 @@ public class TexturesPanel extends JPanel {
             String        name    = String.format("%s (%dx%d)", texture.getName(), texture.getSize().width, texture.getSize().height);
             StringBuilder patches = new StringBuilder();
 
-            for (int i = 0; i < texture.patches().size(); ++i) {
-                Patch patch  = texture.patches().get(i);
-                Point origin = texture.origins().get(i);
+            for (int i = 0; i < texture.patchNumbers().size(); ++i) {
+                short  patchNumber = texture.patchNumbers().get(i);
+                Point  patchOrigin = texture.patchOrigins().get(i);
+                String patchName   = Resources.patches().getName(patchNumber);
+                Patch  patch       = Resources.patches().get    (patchNumber);
 
                 if (patches.length() > 0) {
                     patches.append("<br>");
                 }
 
-                if (patch.exists()) {
+                if (patch != null) {
                     patches.append(String.format("%s %dx%d at (%d, %d)",
-                        patch.getName(),
+                        patchName,
                         patch.getSize().width, patch.getSize().height,
-                        origin.x, origin.y
+                        patchOrigin.x, patchOrigin.y
                     ));
                 }
                 else {
                     patches.append(String.format("%s <b>***NOT FOUND***</b> at (%d, %d)",
-                        patch.getName(), origin.x, origin.y
+                        patchName, patchOrigin.x, patchOrigin.y
                     ));
                 }
             }

@@ -44,13 +44,13 @@ public class Sprite {
     boolean                  isHanging;
     SortedMap<String, Frame> frames;
 
-    Sprite(Wad wad, String name, boolean isHanging) throws IOException {
+    Sprite(String name, boolean isHanging) throws IOException {
         this.name      = name;
         this.size      = new Dimension(0, 0);
         this.isHanging = isHanging;
         this.frames    = new TreeMap<String, Frame>();
 
-        for (Lump lump: wad.lumpsStartingWith(name)) {
+        for (Lump lump: Resources.getWad().lumpsStartingWith(name)) {
             if (!lump.getName().matches("....([A-Z][0-8])+")) {
                 continue;
             }
@@ -280,5 +280,11 @@ public class Sprite {
                 // Ignore.
             }
         };
+    }
+
+
+    @Override
+    public String toString() {
+        return getName();
     }
 }

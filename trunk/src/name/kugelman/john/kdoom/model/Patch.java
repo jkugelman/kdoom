@@ -9,34 +9,21 @@ import java.util.*;
 import name.kugelman.john.kdoom.file.*;
 
 public class Patch {
-    private String    name;
     private Lump      lump;
     private Dimension size;
     private Point     offset;
 
-    Patch(Wad wad, String name) throws IOException {
-        this.name = name;
-        this.lump = wad.lookup(name);
-
-        if (lump != null) {
-            ShortBuffer buffer = lump.getData().asShortBuffer();
-
-            this.size   = new Dimension(buffer.get(), buffer.get());
-            this.offset = new Point    (buffer.get(), buffer.get());
-        }
-    }
-
     Patch(Lump lump) throws IOException {
-        this(lump.getWadFile(), lump.getName());
+        ShortBuffer buffer = lump.getData().asShortBuffer();
+
+        this.lump   = lump;
+        this.size   = new Dimension(buffer.get(), buffer.get());
+        this.offset = new Point    (buffer.get(), buffer.get());
     }
 
 
     public String getName() {
-        return name;
-    }
-
-    public boolean exists() {
-        return lump != null;
+        return lump.getName();
     }
 
     public Dimension getSize() {
@@ -105,5 +92,11 @@ public class Patch {
         }
 
         return image;
+    }
+
+
+    @Override
+    public String toString() {
+        return String.format("%s (%dx%d)", getName(), size.width, size.height);
     }
 }

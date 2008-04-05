@@ -23,7 +23,7 @@ public class LevelViewer extends JFrame {
     private ThingPanel  thingPanel;
 
     public LevelViewer(Level level) {
-        super("KDOOM - " + level.getWad() + " - " + level.getName());
+        super("KDOOM - " + Resources.getWad() + " - " + level.getName());
 
         this.level = level;
 

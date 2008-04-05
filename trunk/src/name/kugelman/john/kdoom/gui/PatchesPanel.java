@@ -2,6 +2,7 @@ package name.kugelman.john.kdoom.gui;
 
 import java.awt.*;
 import java.io.*;
+import java.util.*;
 import javax.swing.*;
 
 import info.clearthought.layout.*;
@@ -15,15 +16,15 @@ public class PatchesPanel extends JPanel {
     public PatchesPanel() {
         setLayout(new GridLayout(0, 4, 8, 8));
         
-        for (Patch patch: Resources.patches()) {
+        for (Map.Entry<String, Patch> entry: Resources.patches().entrySet()) {
             JPanel panel = new JPanel();
 
-            Component patchComponent = patch.exists()
-                ? new PatchPanel(patch)
+            Component patchComponent = entry.getValue() != null
+                ? new PatchPanel(entry.getValue())
                 : new JLabel("NOT FOUND");
             
-            panel.add(new JLabel(patch.getName()), BorderLayout.NORTH);
-            panel.add(patchComponent,              BorderLayout.CENTER);
+            panel.add(new JLabel(entry.getKey()), BorderLayout.NORTH);
+            panel.add(patchComponent,             BorderLayout.CENTER);
         
             add(panel);
         }

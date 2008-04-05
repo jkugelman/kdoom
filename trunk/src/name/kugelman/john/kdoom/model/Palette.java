@@ -15,14 +15,8 @@ public class Palette {
     IndexColorModel[] colorModels;
     int               activePalette;
 
-    Palette(Wad wad) throws IOException {
-        this(wad.lump("PLAYPAL"));
-    }
-
-    Palette(Lump lump) throws IOException {
-        if (!lump.getName().equals("PLAYPAL")) {
-            throw new IllegalArgumentException(lump.getName() + " is not a palette.");
-        }
+    Palette() throws IOException {
+        Lump lump = Resources.getWad().lump("PLAYPAL");
 
         if (lump.getSize() % SIZE != 0) {
             throw new IOException("PLAYPAL not multiple of " + SIZE + " bytes.");

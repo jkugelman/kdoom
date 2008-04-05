@@ -8,11 +8,11 @@ import name.kugelman.john.kdoom.file.*;
 public class LevelList extends AbstractMap<String, Level> implements SortedMap<String, Level> {
     private SortedMap<String, Level> levels;
     
-    LevelList(Wad wad) throws IOException {
+    LevelList() throws IOException {
         this.levels = new TreeMap<String, Level>();
 
-        for (Lump lump: wad.lumpsMatching("E\\dM\\d|MAP\\d\\d")) {
-            levels.put(lump.getName(), new Level(wad, lump.getName()));
+        for (Lump lump: Resources.getWad().lumpsMatching("E\\dM\\d|MAP\\d\\d")) {
+            levels.put(lump.getName(), new Level(lump));
         }
     }
 

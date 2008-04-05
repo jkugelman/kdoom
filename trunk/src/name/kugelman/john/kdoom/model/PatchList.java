@@ -9,33 +9,45 @@ import java.util.List;
 
 import name.kugelman.john.kdoom.file.*;
 
-public class PatchList extends AbstractList<Patch> {
-    List<Patch> patches;
+public class PatchList extends AbstractMap<String, Patch> {
+    List<String>       patchNames;
+    List<Patch>        patches;
+    Map<String, Patch> patchesByName;
 
-    PatchList(Wad wad) throws IOException {
+    PatchList() throws IOException {
+        Wad        wad        = Resources.getWad();
         ByteBuffer buffer     = wad.lump("PNAMES").getData();
         int        patchCount = buffer.getInt();
         byte[]     nameBytes  = new byte[8];
 
-        this.patches = new ArrayList<Patch>(patchCount);
+        this.patchNames    = new ArrayList    <String>       (patchCount);
+        this.patches       = new ArrayList    <Patch>        (patchCount);
+        this.patchesByName = new LinkedHashMap<String, Patch>(patchCount);
 
         for (int i = 0; i < patchCount; ++i) {
             buffer.get(nameBytes);
 
             String name  = new String(nameBytes, "ISO-8859-1").trim().toUpperCase();
-            Patch  patch = new Patch(wad, name);
+            Lump   lump  = wad.lookup(name);
+            Patch  patch = lump == null ? null : new Patch(lump);
 
-            patches.add(patch);
+            patches      .add(patch);
+            patchesByName.put(name, patch);
         }
     }
 
-    @Override
-    public int size() {
-        return patches.size();
-    }
 
     @Override
-    public Patch get(int index) throws IndexOutOfBoundsException {
-        return patches.get(index);
+    public Set<Entry<String, Patch>> entrySet() {
+        return patchesByName.entrySet();
+    }
+
+
+    public String getName(short number) throws IndexOutOfBoundsException {
+        return patchNames.get(number);
+    }
+
+    public Patch get(short number) throws IndexOutOfBoundsException {
+        return patches.get(number);
     }
 }

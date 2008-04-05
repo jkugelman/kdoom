@@ -12,16 +12,14 @@ import name.kugelman.john.kdoom.file.*;
 public class TextureList extends AbstractMap<String, Texture> implements SortedMap<String, Texture> {
     SortedMap<String, Texture> textures;
 
-    TextureList(Wad wad) throws IOException {
-        PatchList patchList = new PatchList(wad);
-
+    TextureList() throws IOException {
         this.textures = new TreeMap<String, Texture>();
 
-        readTextures(wad.lump  ("TEXTURE1"), patchList);
-        readTextures(wad.lookup("TEXTURE2"), patchList);
+        readTextures(Resources.getWad().lump  ("TEXTURE1"));
+        readTextures(Resources.getWad().lookup("TEXTURE2"));
     }
 
-    private void readTextures(Lump lump, PatchList patchList) throws IOException {
+    private void readTextures(Lump lump) throws IOException {
         if (lump == null) {
             return;
         }
@@ -52,7 +50,7 @@ public class TextureList extends AbstractMap<String, Texture> implements SortedM
             for (int i = 0; i < patchCount; ++i) {
                 short x     = buffer.getShort();
                 short y     = buffer.getShort();
-                Patch patch = patchList.get(buffer.getShort());
+                short patch = buffer.getShort();
                               buffer.getShort();
                               buffer.getShort();
 

@@ -170,4 +170,10 @@ public class Sector {
             }
         }
     }
+
+
+    @Override
+    public String toString() {
+        return "Sector #" + number;
+    }
 }
