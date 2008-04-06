@@ -30,14 +30,14 @@ public class LinePanel extends JPanel {
         flagsLabel       = new JLabel();
         specialTypeLabel = new JLabel();
         tagNumberLabel   = new JLabel();
-        leftSideLabel    = new JLabel();
         rightSideLabel   = new JLabel();
+        leftSideLabel    = new JLabel();
 
         setBorder(titledBorder);
 
         double[][] size = {
             { PREFERRED, PREFERRED },
-            { PREFERRED, PREFERRED, PREFERRED, PREFERRED, PREFERRED, PREFERRED }
+            { PREFERRED, PREFERRED, PREFERRED, PREFERRED, PREFERRED, PREFERRED, PREFERRED }
         };
 
         setLayout(new TableLayout(size));
@@ -52,10 +52,10 @@ public class LinePanel extends JPanel {
         add(specialTypeLabel,             "1, 3, LEADING,  TOP");
         add(new JLabel("Sector tag: "),   "0, 4, TRAILING, TOP");
         add(tagNumberLabel,               "1, 4, LEADING,  TOP");
-        add(new JLabel("Left side: "),    "0, 5, TRAILING, TOP");
-        add(leftSideLabel,                "1, 5, LEADING,  TOP");
-        add(new JLabel("Right side: "),   "0, 6, TRAILING, TOP");
-        add(rightSideLabel,               "1, 6, LEADING,  TOP");
+        add(new JLabel("Right side: "),   "0, 5, TRAILING, TOP");
+        add(rightSideLabel,               "1, 5, LEADING,  TOP");
+        add(new JLabel("Left side: "),    "0, 6, TRAILING, TOP");
+        add(leftSideLabel,                "1, 6, LEADING,  TOP");
 
         show(line);
     }
@@ -70,8 +70,8 @@ public class LinePanel extends JPanel {
             flagsLabel      .setText ("N/A");
             specialTypeLabel.setText ("N/A");
             tagNumberLabel  .setText ("N/A");
-            leftSideLabel   .setText ("N/A");
             rightSideLabel  .setText ("N/A");
+            leftSideLabel   .setText ("N/A");
         }
         else {
             titledBorder    .setTitle("Line #" + line.getNumber());
@@ -80,8 +80,8 @@ public class LinePanel extends JPanel {
             flagsLabel      .setText (String.format("0x%04X", line.getFlags()));
             specialTypeLabel.setText ("" + line.getSpecialType());
             tagNumberLabel  .setText ("" + line.getTagNumber  ());
-            leftSideLabel   .setText (line.getLeftSide () == null ? "-" : "#" + line.getLeftSide ().getNumber());
             rightSideLabel  .setText (line.getRightSide() == null ? "-" : "#" + line.getRightSide().getNumber());
+            leftSideLabel   .setText (line.getLeftSide () == null ? "-" : "#" + line.getLeftSide ().getNumber());
         }
 
         repaint();
